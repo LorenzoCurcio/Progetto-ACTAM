@@ -23,7 +23,7 @@ tau0_1 = 35;
 tau2_0 = numpecore;
 tau1_0 = 8;
 eta = 0.13;
-re = 1;
+re = 20;
 beta = 0.8;
 
 //Initial Conditions
@@ -66,10 +66,12 @@ function physics() {
 function probstartrun(i) {
   //Distanza media delle altre pecore
   l = 0;
+  count=0
   for (k = 0; k < numpecore*fraction_neighbour; k++) {
-    l = l + alldistances[k];
+    l = l + alldistances[k]*re+re;
+    count++
   }
-  l = l / (numpecore - 1);
+  l = l / (count - 1);
 
   //numero pecore che corrono
   n_pecore_run = 0;
@@ -221,10 +223,12 @@ function stop(i) {
 function probinchioda(i) {
   //Distanza media delle altre pecore
   l = 0;
+  count=0
   for (k = 0; k < fraction_neighbour*numpecore; k++) {
-    l = l + alldistances[k];
+    l = l + alldistances[k]*re + re;
+    count++
   }
-  l = l / (numpecore - 1);
+  l = l / (count - 1);
 
   p = Math.pow(tau2_0, -1) * Math.pow((ds / l) * (1 + alpha * ms), delta);
   return p;
