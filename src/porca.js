@@ -67,8 +67,7 @@ function probstartrun(i) {
   //Distanza media delle altre pecore
   l = 0;
   for (k = 0; k < numpecore*fraction_neighbour; k++) {
-    l =
-      l + alldistances[k];
+    l = l + alldistances[k];
   }
   l = l / (numpecore - 1);
 
@@ -80,9 +79,7 @@ function probstartrun(i) {
     }
   }
 
-  p =
-    Math.pow(tau01_2, -1) *
-    Math.pow((l / dr) * (alpha * n_pecore_run + 1), delta);
+  p = Math.pow(tau01_2, -1) * Math.pow((l / dr) * (alpha * n_pecore_run + 1), delta);
   return p;
 }
 
@@ -189,8 +186,8 @@ function probstartwalk() {
   for (k = 0; k < numpecore; k++) {
     if (
       currentv[k] <= mediumSpeed + 0.01 &&
-      currentv[k] >= mediumSpeed - 0.01 && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]
-    ) {
+      currentv[k] >= mediumSpeed - 0.01 && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]){
+        
       n_pecore_walk = n_pecore_walk + 1;
     }
   }
@@ -225,10 +222,7 @@ function probinchioda(i) {
   //Distanza media delle altre pecore
   l = 0;
   for (k = 0; k < fraction_neighbour*numpecore; k++) {
-    l =
-      l +
-      alldistances[k]
-      ;
+    l = l + alldistances[k];
   }
   l = l / (numpecore - 1);
 
@@ -246,13 +240,9 @@ function attract_repulse(i) {
     ) {
       sumcos = sumcos + Math.cos(currentarg[k]);
       sumsin = sumsin + Math.sin(currentarg[k]);
-    
-
-    
-    sumcos =
-      sumcos + beta * alldistances[k] * Math.cos(allunitdirectional(i, k));
-    sumsin =
-      sumsin + beta * alldistances[k] * Math.sin(allunitdirectional(i, k));
+  
+    sumcos = sumcos + beta * alldistances[k] * Math.cos(allunitdirectional(i, k));
+    sumsin = sumsin + beta * alldistances[k] * Math.sin(allunitdirectional(i, k));
   }}
   if (sumcos == 0 && sumsin > 0) {
     return Math.PI / 2;
@@ -272,11 +262,7 @@ function alldistancesnorm(i) {
   for (q = 0; q < numpecore; q++) {
     alldistances[q] =
       (Math.pow(
-        Math.pow(rectx[q] - rectx[i], 2) + Math.pow(recty[q] - recty[i], 2),
-        1 / 2
-      ) -
-        re) /
-      re;
+        Math.pow(rectx[q] - rectx[i], 2) + Math.pow(recty[q] - recty[i], 2),1 / 2) -re) / re;
     if (Math.abs(alldistances[q]) < 1 && alldistances[q] > 0) {
       alldistances[q] = 1;
     }
@@ -289,6 +275,7 @@ function alldistancesnorm(i) {
 function allunitdirectional(i, j) {
   xdis = rectx[j] - rectx[i];
   ydis = recty[j] - recty[i];
+
   if (xdis == 0 && ydis > 0) {
     dir = Math.PI / 2;
   }
