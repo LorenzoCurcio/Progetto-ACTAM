@@ -307,3 +307,5 @@ function allunitdirectional(i, j) {
 function go() {
   setInterval(step, 10);
 }
+
+//Commentodimmerda
