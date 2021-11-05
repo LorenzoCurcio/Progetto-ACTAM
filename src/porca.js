@@ -1,7 +1,7 @@
-height = 500;
-width = 500;
-heightRect = 5;
-widthRect = 5;
+height = 800;
+width = 800;
+heightRect = 2;
+widthRect = 2;
 numpecore = 100;
 rectx = Array(numpecore).fill(0);
 recty = Array(numpecore).fill(0);
@@ -10,32 +10,31 @@ vy = Array(numpecore).fill(0);
 currentv = Array(numpecore).fill(0);
 currentarg = Array(numpecore).fill(0);
 alldistances = Array(numpecore).fill(0);
-fraction_neighbour = 1/10
+fraction_neighbour = 1/20
 fastSpeed = 1;
 slowSpeed = 0;
 mediumSpeed = 0.1;
 alpha = 15;
 delta = 4;
-dr = 31.6;
-ds = 6.3;
-tau01_2 = numpecore;
+dr = 5*31.6;
+ds = 5*6.3;
+tau01_2 = numpecore/20;
 tau0_1 = 35;
 tau2_0 = numpecore;
 tau1_0 = 8;
 eta = 0.13;
-re = 20;
+re = 5;
 beta = 0.8;
 
 //Initial Conditions
 for (i = 0; i < numpecore; i++) {
-  rectx[i] = (Math.random()-0.5) * 100 + width/2
-  recty[i] = (Math.random()-0.5) *100 + height/2
+  rectx[i] = (Math.random()-0.5) * 300 + width/2
+  recty[i] = (Math.random()-0.5) *300 + height/2
   currentarg[i] = Math.random() * 2 * Math.PI;
 }
 
 function creacampo() {
   c = document.createElement("canvas");
-  h = document.createElement("h1");
   document.body.appendChild(c);
   c.width = width;
   c.height = height;
