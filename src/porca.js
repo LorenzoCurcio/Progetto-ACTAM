@@ -30,8 +30,9 @@ beta = 0.8;
 for (i = 0; i < numpecore; i++) {
   rectx[i] = (Math.random()-0.5) * 300 + width/2
   recty[i] = (Math.random()-0.5) *300 + height/2
-  currentarg[i] = Math.random() * 2 * Math.PI;
+  currentarg[i] = Math.random() * 2 * Math.PI; //angolo
 }
+
 
 function creacampo() {
   c = document.createElement("canvas");
@@ -239,13 +240,16 @@ function attract_repulse(i) {
   for (k = 0; k < numpecore; k++) {
     if (
       currentv[k] <= fastSpeed + 0.01 * fastSpeed &&
-      currentv[k] >= fastSpeed - 0.01 * fastSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]
+      currentv[k] >= fastSpeed - 0.01 * fastSpeed
     ) {
-      sumcos = sumcos + Math.cos(currentarg[k]);
-      sumsin = sumsin + Math.sin(currentarg[k]);
+      
   
     sumcos = sumcos + beta * alldistances[k] * Math.cos(allunitdirectional(i, k));
     sumsin = sumsin + beta * alldistances[k] * Math.sin(allunitdirectional(i, k));
+    }
+    if  (alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]){
+      sumcos = sumcos + Math.cos(currentarg[k]);
+      sumsin = sumsin + Math.sin(currentarg[k]);
   }}
   if (sumcos == 0 && sumsin > 0) {
     return Math.PI / 2;
