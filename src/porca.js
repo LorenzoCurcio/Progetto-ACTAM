@@ -1,3 +1,5 @@
+fps = 100
+scale = 5
 height = 800;
 width = 800;
 heightRect = 2;
@@ -16,14 +18,14 @@ slowSpeed = 0;
 mediumSpeed = 0.1;
 alpha = 15;
 delta = 4;
-dr = 5*31.6;
-ds = 5*6.3;
+dr = scale*31.6;
+ds = scale*6.3;
 tau01_2 = numpecore/20;
 tau0_1 = 35;
 tau2_0 = numpecore;
 tau1_0 = 8;
 eta = 0.13;
-re = 5;
+re = scale;
 beta = 0.8;
 flag = false
 
@@ -298,7 +300,7 @@ function allunitdirectional(i, j) {
 }
 
 function go() {
-  interval = setInterval(step, 10);
+  interval = setInterval(step, 1000/fps);
   flag = true
 }
 
@@ -315,4 +317,10 @@ var gsbutton = document.getElementById("gostop");
 function changeGS() {
   if (gsbutton.innerHTML == "Stop") {gsbutton.innerHTML = "Go";}
   else gsbutton.innerHTML = "Stop";
+}
+
+function changetime(element){
+  var fps = document.getElementById("time").value;
+  clearInterval(interval);
+  interval = setInterval(step, 1000/fps);
 }
