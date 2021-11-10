@@ -162,6 +162,7 @@ function step() {
 
 function run(i) {
   currentv[i] = fastSpeed;
+  play(17)
 }
 
 function sumarg() {
@@ -203,6 +204,7 @@ function probstartwalk() {
 
 function walk(i) {
   currentv[i] = mediumSpeed;
+  
 }
 
 function probstop() {
@@ -221,6 +223,7 @@ function probstop() {
 function stop(i) {
   ms = ms + 1;
   currentv[i] = slowSpeed;
+  
 }
 
 function probinchioda(i) {
@@ -313,14 +316,25 @@ function GoStop(){
 }
 
 var gsbutton = document.getElementById("gostop");
-
 function changeGS() {
   if (gsbutton.innerHTML == "Stop") {gsbutton.innerHTML = "Go";}
   else gsbutton.innerHTML = "Stop";
 }
 
-function changetime(element){
-  var fps = document.getElementById("time").value;
-  clearInterval(interval);
-  interval = setInterval(step, 1000/fps);
+
+//Cose suoni
+var c = new AudioContext();
+
+function play(n) {
+  const o = c.createOscillator();
+  const g = c.createGain();
+  o.frequency.value = 440 * Math.pow(2, n / 12);
+  o.connect(g);
+  g.connect(c.destination);
+  const now = c.currentTime;
+  g.gain.setValueAtTime(0, now);
+  g.gain.linearRampToValueAtTime(1, now + 0.2);
+  g.gain.linearRampToValueAtTime(0, now + 0.2 + 0.3);
+  o.start(now);
+  o.stop(now + 0.2 + 0.3);
 }
