@@ -162,7 +162,7 @@ function step() {
 
 function run(i) {
   currentv[i] = fastSpeed;
-  play(17)
+  play(2)
 }
 
 function sumarg() {
@@ -323,18 +323,31 @@ function changeGS() {
 
 
 //Cose suoni
-var c = new AudioContext();
+var con = new AudioContext();
+var tiempoDelay = 0;
 
 function play(n) {
-  const o = c.createOscillator();
-  const g = c.createGain();
-  o.frequency.value = 440 * Math.pow(2, n / 12);
-  o.connect(g);
-  g.connect(c.destination);
-  const now = c.currentTime;
-  g.gain.setValueAtTime(0, now);
-  g.gain.linearRampToValueAtTime(1, now + 0.2);
-  g.gain.linearRampToValueAtTime(0, now + 0.2 + 0.3);
-  o.start(now);
-  o.stop(now + 0.2 + 0.3);
+  const now =con.currentTime;
+  var osc = con.createOscillator();
+  osc.type = "triangle";
+  osc.frequency.value = 440 * Math.pow(2, n / 12);
+  var osc_amp = con.createGain();
+  osc_amp.gain.value = 0.1;
+  osc.connect(osc_amp);
+
+  var del = con.createDelay();
+  osc_amp.connect(del);
+  var fb = con.createGain();
+  del.connect(fb);
+  fb.connect(del);
+  del.delayTime.value = tiempoDelay;
+  fb.gain.value = 0.75
+
+  del.connect(con.destination)
+
+  //osc_amp.connect(con.destination)
+ 
+  
+   osc.start();
+   osc.stop(now+0.5) ;
 }
