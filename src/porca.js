@@ -25,6 +25,7 @@ tau1_0 = 8;
 eta = 0.13;
 re = 5;
 beta = 0.8;
+flag = false
 
 //Initial Conditions
 for (i = 0; i < numpecore; i++) {
@@ -238,18 +239,16 @@ function attract_repulse(i) {
   sumcos = 0;
   sumsin = 0;
   for (k = 0; k < numpecore; k++) {
+    if  (alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]){
     if (
       currentv[k] <= fastSpeed + 0.01 * fastSpeed &&
       currentv[k] >= fastSpeed - 0.01 * fastSpeed
     ) {
-      
-  
-    sumcos = sumcos + beta * alldistances[k] * Math.cos(allunitdirectional(i, k));
-    sumsin = sumsin + beta * alldistances[k] * Math.sin(allunitdirectional(i, k));
-    }
-    if  (alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]){
       sumcos = sumcos + Math.cos(currentarg[k]);
       sumsin = sumsin + Math.sin(currentarg[k]);
+    }
+    sumcos = sumcos + beta * alldistances[k] * Math.cos(allunitdirectional(i, k));
+    sumsin = sumsin + beta * alldistances[k] * Math.sin(allunitdirectional(i, k));
   }}
   if (sumcos == 0 && sumsin > 0) {
     return Math.PI / 2;
@@ -299,5 +298,21 @@ function allunitdirectional(i, j) {
 }
 
 function go() {
-  setInterval(step, 10);
+  interval = setInterval(step, 10);
+  flag = true
+}
+
+function stopAll(){clearInterval(interval); flag=false}
+
+function GoStop(){
+  if (flag==false){go()}
+  else{stopAll()}
+  changeGS()
+}
+
+var gsbutton = document.getElementById("gostop");
+
+function changeGS() {
+  if (gsbutton.innerHTML == "Stop") {gsbutton.innerHTML = "Go";}
+  else gsbutton.innerHTML = "Stop";
 }
