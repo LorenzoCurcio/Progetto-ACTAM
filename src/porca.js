@@ -20,7 +20,7 @@ alpha = 15;
 delta = 4;
 dr = scale*31.6;
 ds = scale*6.3;
-tau01_2 = numpecore;
+tau01_2 = numpecore/20;
 tau0_1 = 35;
 tau2_0 = numpecore;
 tau1_0 = 8;
@@ -28,6 +28,7 @@ eta = 0.13;
 re = scale;
 beta = 0.8;
 flag = false
+rootfreq = 200
 
 
 //Initial Conditions
@@ -338,7 +339,7 @@ function play(n) {
   const now =con.currentTime;
   var osc = con.createOscillator();
   osc.type = "sawtooth";
-  osc.frequency.value = 200 * Math.pow(2, n / 12);
+  osc.frequency.value = rootfreq * Math.pow(2, n / 12);
   var osc_amp = con.createGain();
   osc_amp.gain.value = 0.01;
   osc.connect(osc_amp);
