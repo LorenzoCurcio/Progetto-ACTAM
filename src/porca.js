@@ -1,4 +1,4 @@
-fps = 100;
+fps = 10;
 scale = 5;
 height = 800;
 width = 800;
@@ -20,7 +20,7 @@ alpha = 15;
 delta = 4;
 dr = scale*31.6;
 ds = scale*6.3;
-tau01_2 = numpecore/20;
+tau01_2 = numpecore;
 tau0_1 = 35;
 tau2_0 = numpecore;
 tau1_0 = 8;
@@ -28,6 +28,7 @@ eta = 0.13;
 re = scale;
 beta = 0.8;
 flag = false
+
 
 //Initial Conditions
 for (i = 0; i < numpecore; i++) {
@@ -90,6 +91,8 @@ function probstartrun(i) {
 
 function step() {
   ms = 0;
+  mr = 0;
+  mw = 0;
   //velocità attuale
   for (i = 0; i < numpecore; i++) {
     currentv[i] = Math.pow(Math.pow(vx[i], 2) + Math.pow(vy[i], 2), 1 / 2);
@@ -155,6 +158,10 @@ function step() {
       vy[i] *= -1;
     }
   }
+  
+setTimeout(function(){play(ms)},3*fps)
+setTimeout(function(){play(mw)},6*fps)
+setTimeout(function(){play(mr)},9*fps)
 
   physics();
   distancing()
@@ -163,7 +170,7 @@ function step() {
 
 function run(i) {
   currentv[i] = fastSpeed;
-  play(2)
+  mr++
 }
 
 function sumarg() {
@@ -205,7 +212,7 @@ function probstartwalk() {
 
 function walk(i) {
   currentv[i] = mediumSpeed;
-  
+  mw++
 }
 
 function probstop() {
@@ -330,10 +337,10 @@ var tiempoDelay = 0;
 function play(n) {
   const now =con.currentTime;
   var osc = con.createOscillator();
-  osc.type = "triangle";
-  osc.frequency.value = 440 * Math.pow(2, n / 12);
+  osc.type = "sawtooth";
+  osc.frequency.value = 200 * Math.pow(2, n / 12);
   var osc_amp = con.createGain();
-  osc_amp.gain.value = 0.1;
+  osc_amp.gain.value = 0.01;
   osc.connect(osc_amp);
 
   var del = con.createDelay();
@@ -350,11 +357,11 @@ function play(n) {
  
   
    osc.start();
-   osc.stop(now+0.5) ;
+   osc.stop(now+0.1) ;
 }
 
 
-//Guarda se ci sono pecore che si sovrappongono. Alcuni casi potrebbe non prenderli, in caso ricontrollare
+//SOVRAPPOSIZIONE
 function distancing(){
   count = 0;
   for(i = 0; i<numpecore-1; i++){
