@@ -366,7 +366,7 @@ function distancing(){
       }
     }
   }
-  if(count > 2)
+  if(count > 5)
     expand();
 }
 
@@ -407,20 +407,19 @@ function expand(){
       for(i = 0; i<numpecore; i++){
         outx = rectx[i] - xCM;
         outy = recty[i] - yCM;
-        if(Math.abs(outx) <= 20 && Math.abs(outy) <= 20){
-          if (outx == 0 && outy > 0) {
-            outarg[i] = Math.PI / 2;
-          }
-          if (outx == 0 && outy <= 0) {
-            outarg[i] = -Math.PI / 2;
-          }
-          if (outx > 0) {
-            outarg[i] = Math.atan(outy / outx);
-          }
-          if (outx < 0) {
-            outarg[i] = Math.atan(outy / outx) + Math.PI;
-          }
+        if (outx == 0 && outy > 0) {
+          outarg[i] = Math.PI / 2;
         }
+        if (outx == 0 && outy <= 0) {
+          outarg[i] = -Math.PI / 2;
+        }
+        if (outx > 0) {
+          outarg[i] = Math.atan(outy / outx);
+        }
+        if (outx < 0) {
+          outarg[i] = Math.atan(outy / outx) + Math.PI;
+        }
+        
       }
       for(i = 0; i<numpecore; i++){
         rectx[i] = rectx[i] + 0.5*Math.cos(outarg[i]);
