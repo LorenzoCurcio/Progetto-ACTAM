@@ -407,7 +407,7 @@ function expand(){
       for(i = 0; i<numpecore; i++){
         outx = rectx[i] - xCM;
         outy = recty[i] - yCM;
-        if(Math.abs(outx) <= 20 && Math.abs(outy) <= 20)
+        
           if (outx == 0 && outy > 0) {
             outarg[i] = Math.PI / 2;
           }
