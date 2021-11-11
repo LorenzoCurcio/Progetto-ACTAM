@@ -1,5 +1,5 @@
-fps = 100
-scale = 5
+fps = 100;
+scale = 5;
 height = 800;
 width = 800;
 heightRect = 2;
@@ -157,6 +157,7 @@ function step() {
   }
 
   physics();
+  distancing()
   render();
 }
 
@@ -350,4 +351,79 @@ function play(n) {
   
    osc.start();
    osc.stop(now+0.5) ;
+}
+
+
+//Guarda se ci sono pecore che si sovrappongono. Alcuni casi potrebbe non prenderli, in caso ricontrollare
+function distancing(){
+  count = 0;
+  for(i = 0; i<numpecore-1; i++){
+    for(j = i+1; j<numpecore;j++){
+      if(rectx[j] >= rectx[i] - widthRect && rectx[j] <= rectx[i] + widthRect &&
+         recty[j] >= recty[i] - heightRect && recty[j] <= recty[i] + heightRect){
+          move(i,j); 
+          count++;
+      }
+    }
+  }
+  if(count > 2)
+    expand();
+}
+
+//Muove le pecore sovrapposte
+function move(staticP, currentP){
+
+  deltaX = rectx[currentP] - rectx[staticP];
+  deltaY = recty[currentP] - recty[staticP];
+
+  if(Math.abs(deltaX) < widthRect && Math.abs(deltaY) < heightRect){
+    if(deltaX > 0)
+      rectx[currentP] = rectx[currentP] + (widthRect - deltaX);
+    else if(deltaX < 0)
+      rectx[currentP] = rectx[currentP] + deltaX;
+    
+    if(deltaY > 0)
+      recty[currentP] = recty[currentP] + (heightRect - deltaY);
+    else if(deltaY < 0)
+      recty[currentP] = recty[currentP] + deltaY;
+      
+    if( deltaX == 0 || deltaY == 0){
+      rectx[currentP] = rectx[currentP] - vx[currentP];
+      recty[currentP] = recty[currentP] - vy[currentP];
+    } 
+  }
+}
+//Se ci sono troppe pecore sovrapposte le faccio espandere un po' rispetto al loro centro di massa entro un certo raggio da questo
+// Il raggio potrebbe essere da editare in caso
+function expand(){
+  outarg = Array(numpecore).fill(0);
+      for(i = 0, xCM = 0, yCM = 0; i<numpecore; i++){
+          xCM = xCM + rectx[i];
+          yCM = yCM + recty[i];
+      }
+      xCM = xCM/numpecore;
+      yCM = yCM/numpecore;
+
+      for(i = 0; i<numpecore; i++){
+        outx = rectx[i] - xCM;
+        outy = recty[i] - yCM;
+        if(Math.abs(outx) <= 20 && Math.abs(outy) <= 20){
+          if (outx == 0 && outy > 0) {
+            outarg[i] = Math.PI / 2;
+          }
+          if (outx == 0 && outy <= 0) {
+            outarg[i] = -Math.PI / 2;
+          }
+          if (outx > 0) {
+            outarg[i] = Math.atan(outy / outx);
+          }
+          if (outx < 0) {
+            outarg[i] = Math.atan(outy / outx) + Math.PI;
+          }
+        }
+      }
+      for(i = 0; i<numpecore; i++){
+        rectx[i] = rectx[i] + 0.5*Math.cos(outarg[i]);
+        recty[i] = recty[i] + 0.5*Math.sin(outarg[i]);
+      }
 }
