@@ -56,8 +56,22 @@ function render() {
   ctx.clearRect(0, 0, width, height);
   ctx.beginPath();
   for (i = 0; i < numpecore; i++) {
-    ctx.rect(rectx[i], recty[i], widthRect, heightRect);
-    ctx.stroke();
+    if(currentv[i] >= fastSpeed - 0.4 && currentv[i] <= fastSpeed + 0.4){
+      ctx.rect(rectx[i], recty[i], widthRect, heightRect);
+      ctx.strokeStyle = 'red';
+      ctx.stroke();
+    }
+    else if (currentv[i] != slowSpeed){
+      ctx.rect(rectx[i], recty[i], widthRect, heightRect);
+      ctx.strokeStyle = 'white';
+      ctx.stroke();
+    }
+    else{
+      ctx.rect(rectx[i], recty[i], widthRect, heightRect);
+      ctx.strokeStyle = 'black';
+      ctx.stroke();
+    }
+
   }
 }
 
