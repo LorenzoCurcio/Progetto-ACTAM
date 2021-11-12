@@ -13,9 +13,9 @@ currentv = Array(numpecore).fill(0);
 currentarg = Array(numpecore).fill(0);
 alldistances = Array(numpecore).fill(0);
 fraction_neighbour = 1/20;
-fastSpeed = 4;
+fastSpeed = 10;
 slowSpeed = 0;
-mediumSpeed = 0.4;
+mediumSpeed = 1;
 alpha = 15;
 delta = 4;
 dr = scale*31.6;
@@ -318,7 +318,7 @@ var tiempoDelay = 0;
 function play(n) {
   const now =con.currentTime;
   var osc = con.createOscillator();
-  osc.type = "sawtooth";
+  osc.type = "triangle";
 
   oscFreq = rootfreq * Math.pow(2, n / 12);
   while(oscFreq > 10000){
@@ -327,7 +327,7 @@ function play(n) {
 
   osc.frequency.value = oscFreq;
   var osc_amp = con.createGain();
-  osc_amp.gain.value = 0.01;
+  osc_amp.gain.value = 0.1;
   osc.connect(osc_amp);
 
   var del = con.createDelay();
