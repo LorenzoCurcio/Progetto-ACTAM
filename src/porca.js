@@ -157,7 +157,7 @@ function step() {
   setTimeout(function(){play(mr)},9*fps)
 
   physics();
-  distancing()
+  distancing();
   render();
 }
 
@@ -322,7 +322,13 @@ function play(n) {
   const now =con.currentTime;
   var osc = con.createOscillator();
   osc.type = "sawtooth";
-  osc.frequency.value = rootfreq * Math.pow(2, n / 12);
+
+  oscFreq = rootfreq * Math.pow(2, n / 12);
+  while(oscFreq > 10000){
+    oscFreq = oscFreq/2;
+  }
+
+  osc.frequency.value = oscFreq;
   var osc_amp = con.createGain();
   osc_amp.gain.value = 0.01;
   osc.connect(osc_amp);
@@ -338,8 +344,6 @@ function play(n) {
   del.connect(con.destination)
 
   //osc_amp.connect(con.destination)
- 
-  
    osc.start();
    osc.stop(now+0.1) ;
 }
