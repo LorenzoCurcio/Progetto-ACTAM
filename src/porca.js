@@ -12,7 +12,7 @@ vy = Array(numpecore).fill(0);
 currentv = Array(numpecore).fill(0);
 currentarg = Array(numpecore).fill(0);
 alldistances = Array(numpecore).fill(0);
-fraction_neighbour = 1/20
+fraction_neighbour = 1/20;
 fastSpeed = 1;
 slowSpeed = 0;
 mediumSpeed = 0.1;
@@ -56,12 +56,12 @@ function render() {
   ctx.clearRect(0, 0, width, height);
   ctx.beginPath();
   for (i = 0; i < numpecore; i++) {
-    if(currentv[i] >= fastSpeed - 0.4 && currentv[i] <= fastSpeed + 0.4){
+    if(currentv[i] == fastSpeed){
       ctx.rect(rectx[i], recty[i], widthRect, heightRect);
       ctx.strokeStyle = 'red';
       ctx.stroke();
     }
-    else if (currentv[i] != slowSpeed){
+    else if (currentv[i] == mediumSpeed){
       ctx.rect(rectx[i], recty[i], widthRect, heightRect);
       ctx.strokeStyle = 'white';
       ctx.stroke();
@@ -71,7 +71,6 @@ function render() {
       ctx.strokeStyle = 'black';
       ctx.stroke();
     }
-
   }
 }
 
@@ -95,7 +94,7 @@ function probstartrun(i) {
   //numero pecore che corrono
   n_pecore_run = 0;
   for (k = 0; k < numpecore; k++) {
-    if (currentv[k] <= fastSpeed + 0.01 && currentv[k] >= fastSpeed - 0.01 && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]) {
+    if (currentv[k] == fastSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]) {
       n_pecore_run = n_pecore_run + 1;
     }
   }
@@ -110,55 +109,34 @@ function step() {
   mw = 0;
   //velocità attuale
   for (i = 0; i < numpecore; i++) {
-    currentv[i] = Math.pow(Math.pow(vx[i], 2) + Math.pow(vy[i], 2), 1 / 2);
-
     alldistancesnorm(i);
     alldistances.sort();
     
     //inizia a correre
-    if (
-      ((currentv[i] <= slowSpeed + 0.01 && currentv[i] >= slowSpeed - 0.01) ||
-        (currentv[i] <= mediumSpeed + 0.01 &&
-          currentv[i] >= mediumSpeed - 0.01)) &&
-      probstartrun(i) >= Math.random()
-    ) {
+    if ((currentv[i] == slowSpeed || currentv[i] == mediumSpeed) && probstartrun(i) >= Math.random()){
       run(i);
     }
 
     //da lenta a media
     else {
-      if (
-        currentv[i] <= slowSpeed + 0.01 &&
-        currentv[i] >= slowSpeed - 0.01 &&
-        probstartwalk() >= Math.random()
-      ) {
+      if (currentv[i] == slowSpeed && probstartwalk() >= Math.random()){
         walk(i);
       }
       //da media a lenta
       else {
-        if (
-          currentv[i] <= mediumSpeed + 0.01 &&
-          currentv[i] >= mediumSpeed - 0.01 &&
-          probstop() >= Math.random()
-        ) {
+        if (currentv[i] == mediumSpeed && probstop() >= Math.random()){
           stop(i);
         }
         //da veloce a lenta
         else {
-          if (
-            currentv[i] <= fastSpeed + 0.01 &&
-            currentv[i] >= fastSpeed - 0.01 &&
-            probinchioda(i) >= Math.random()
-          ) {
+          if (currentv[i] == fastSpeed &&probinchioda(i) >= Math.random()){
             stop(i);
           }
         }
       }
     }
     if (
-      currentv[i] <= fastSpeed + 0.01 * fastSpeed &&
-      currentv[i] >= fastSpeed - 0.01 * fastSpeed
-    ) {
+      currentv[i] == fastSpeed){
       currentarg[i] = attract_repulse(i);
     } else {
       currentarg[i] = sumarg() + (Math.random() - 0.5) * 2 * Math.PI * eta;
@@ -174,9 +152,9 @@ function step() {
     }
   }
   
-setTimeout(function(){play(ms)},3*fps)
-setTimeout(function(){play(mw)},6*fps)
-setTimeout(function(){play(mr)},9*fps)
+  setTimeout(function(){play(ms)},3*fps)
+  setTimeout(function(){play(mw)},6*fps)
+  setTimeout(function(){play(mr)},9*fps)
 
   physics();
   distancing()
@@ -195,17 +173,15 @@ function sumarg() {
     sumcos = sumcos + Math.cos(currentarg[k]);
     sumsin = sumsin + Math.sin(currentarg[k]);
   }
-  if (sumcos == 0 && sumsin > 0) {
-    return Math.PI / 2;
-  }
-  if (sumcos == 0 && sumsin >= 0) {
-    return -Math.PI / 2;
-  }
-  if (sumcos > 0) {
+  if (sumcos > 0)
     return Math.atan(sumsin / sumcos);
-  }
-  if (sumcos < 0) {
-    return Math.atan(sumsin / sumcos) + Math.PI;
+  else if (sumcos < 0)
+    return (Math.atan(sumsin / sumcos) + Math.PI);
+  else if (sumcos == 0) {
+    if (sumsin > 0)
+      return Math.PI / 2;
+    else
+      return -Math.PI / 2;
   }
 }
 
@@ -214,8 +190,7 @@ function probstartwalk() {
   n_pecore_walk = 0;
   for (k = 0; k < numpecore; k++) {
     if (
-      currentv[k] <= mediumSpeed + 0.01 &&
-      currentv[k] >= mediumSpeed - 0.01 && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]){
+      currentv[k] == mediumSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]){
         
       n_pecore_walk = n_pecore_walk + 1;
     }
@@ -234,7 +209,7 @@ function probstop() {
   //numero pecore ferme
   n_pecore_stay = 0;
   for (k = 0; k < numpecore; k++) {
-    if (currentv[k] <= slowSpeed+0.01 && currentv[k] >= slowSpeed-0.01 && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]) {
+    if (currentv[k] == slowSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]) {
       n_pecore_stay = n_pecore_stay + 1;
     }
   }
@@ -268,35 +243,32 @@ function attract_repulse(i) {
   sumsin = 0;
   for (k = 0; k < numpecore; k++) {
     if  (alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]){
-    if (
-      currentv[k] <= fastSpeed + 0.01 * fastSpeed &&
-      currentv[k] >= fastSpeed - 0.01 * fastSpeed
-    ) {
-      sumcos = sumcos + Math.cos(currentarg[k]);
-      sumsin = sumsin + Math.sin(currentarg[k]);
+      if (currentv[k] == fastSpeed){
+        sumcos = sumcos + Math.cos(currentarg[k]);
+        sumsin = sumsin + Math.sin(currentarg[k]);
+      }
+      sumcos = sumcos + beta * alldistances[k] * Math.cos(allunitdirectional(i, k));
+      sumsin = sumsin + beta * alldistances[k] * Math.sin(allunitdirectional(i, k));
     }
-    sumcos = sumcos + beta * alldistances[k] * Math.cos(allunitdirectional(i, k));
-    sumsin = sumsin + beta * alldistances[k] * Math.sin(allunitdirectional(i, k));
-  }}
-  if (sumcos == 0 && sumsin > 0) {
-    return Math.PI / 2;
   }
-  if (sumcos == 0 && sumsin <= 0) {
-    return -Math.PI / 2;
-  }
-  if (sumcos > 0) {
+  //Caso standard: 1 e 4 quadrante, l'arcotangente ancora va come Dio comanda
+  if (sumcos > 0)
     return Math.atan(sumsin / sumcos);
-  }
-  if (sumcos < 0) {
-    return Math.atan(sumsin / sumcos) + Math.PI;
+  //Caso meno particolare: 2 e 3 quadrante, l'arcotangente inizia a fare schifo
+  else if (sumcos < 0)
+    return (Math.atan(sumsin / sumcos) + Math.PI);
+  //Caso particolare se X = 0 perchè la trigonometria è bella
+  else if (sumcos == 0) {
+    if (sumsin > 0)
+      return Math.PI / 2;
+    else
+      return -Math.PI / 2;
   }
 }
 
 function alldistancesnorm(i) {
   for (q = 0; q < numpecore; q++) {
-    alldistances[q] =
-      (Math.pow(
-        Math.pow(rectx[q] - rectx[i], 2) + Math.pow(recty[q] - recty[i], 2),1 / 2) -re) / re;
+    alldistances[q] = (Math.pow(Math.pow(rectx[q] - rectx[i], 2) + Math.pow(recty[q] - recty[i], 2),1 / 2) -re) / re;
     if (Math.abs(alldistances[q]) < 1 && alldistances[q] > 0) {
       alldistances[q] = 1;
     }
@@ -310,19 +282,16 @@ function allunitdirectional(i, j) {
   xdis = rectx[j] - rectx[i];
   ydis = recty[j] - recty[i];
 
-  if (xdis == 0 && ydis > 0) {
-    dir = Math.PI / 2;
+  if (xdis > 0)
+    return Math.atan(ydis / xdis);
+  else if (xdis < 0)
+    return (Math.atan(ydis / xdis) + Math.PI);
+  else if (xdis == 0) {
+    if (ydis > 0)
+      return Math.PI / 2;
+    else
+      return -Math.PI / 2;
   }
-  if (xdis == 0 && ydis <= 0) {
-    dir = -Math.PI / 2;
-  }
-  if (xdis > 0) {
-    dir = Math.atan(ydis / xdis);
-  }
-  if (xdis < 0) {
-    dir = Math.atan(ydis / xdis) + Math.PI;
-  }
-  return dir;
 }
 
 function go() {
@@ -419,32 +388,29 @@ function move(staticP, currentP){
 // Il raggio potrebbe essere da editare in caso
 function expand(){
   outarg = Array(numpecore).fill(0);
-      for(i = 0, xCM = 0, yCM = 0; i<numpecore; i++){
-          xCM = xCM + rectx[i];
-          yCM = yCM + recty[i];
-      }
-      xCM = xCM/numpecore;
-      yCM = yCM/numpecore;
+    for(i = 0, xCM = 0, yCM = 0; i<numpecore; i++){
+        xCM = xCM + rectx[i];
+        yCM = yCM + recty[i];
+    }
+  xCM = xCM/numpecore;
+  yCM = yCM/numpecore;
 
-      for(i = 0; i<numpecore; i++){
-        outx = rectx[i] - xCM;
-        outy = recty[i] - yCM;
-        
-          if (outx == 0 && outy > 0) {
-            outarg[i] = Math.PI / 2;
-          }
-          if (outx == 0 && outy <= 0) {
-            outarg[i] = -Math.PI / 2;
-          }
-          if (outx > 0) {
-            outarg[i] = Math.atan(outy / outx);
-          }
-          if (outx < 0) {
-            outarg[i] = Math.atan(outy / outx) + Math.PI;
-          }
+  for(i = 0; i<numpecore; i++){
+      outx = rectx[i] - xCM;
+      outy = recty[i] - yCM;
+      if (outx > 0)
+        outarg[i] = Math.atan(outy / outx);
+      else if (outx < 0)
+        outarg[i] = (Math.atan(outy / outx) + Math.PI);
+      else if (outx == 0) {
+        if (outy > 0)
+          outarg[i] = Math.PI / 2;
+        else
+          outarg[i] = -Math.PI / 2;
       }
-      for(i = 0; i<numpecore; i++){
-        rectx[i] = rectx[i] + 0.5*Math.cos(outarg[i]);
-        recty[i] = recty[i] + 0.5*Math.sin(outarg[i]);
-      }
+    }
+  for(i = 0; i<numpecore; i++){
+    rectx[i] = rectx[i] + 0.5*Math.cos(outarg[i]);
+    recty[i] = recty[i] + 0.5*Math.sin(outarg[i]);
+  }
 }
