@@ -1,4 +1,4 @@
-fps = 10;
+fps = 2.5;
 scale = 5;
 height = 800;
 width = 800;
@@ -13,14 +13,14 @@ currentv = Array(numpecore).fill(0);
 currentarg = Array(numpecore).fill(0);
 alldistances = Array(numpecore).fill(0);
 fraction_neighbour = 1/20;
-fastSpeed = 1;
+fastSpeed = 4;
 slowSpeed = 0;
-mediumSpeed = 0.1;
+mediumSpeed = 0.4;
 alpha = 15;
 delta = 4;
 dr = scale*31.6;
 ds = scale*6.3;
-tau01_2 = numpecore/100;
+tau01_2 = numpecore/300;
 tau0_1 = 35;
 tau2_0 = numpecore;
 tau1_0 = 8;
@@ -54,24 +54,21 @@ ctx = c.getContext("2d");
 
 function render() {
   ctx.clearRect(0, 0, width, height);
-  ctx.beginPath();
-  for (i = 0; i < numpecore; i++) {
-    if(currentv[i] == fastSpeed){
-      ctx.rect(rectx[i], recty[i], widthRect, heightRect);
+
+  for (j = 0; j < numpecore; j++) {
+    ctx.beginPath()
+    ctx.rect(rectx[j], recty[j], widthRect, heightRect);
+    if(currentv[j] == fastSpeed){ 
       ctx.strokeStyle = 'red';
-      ctx.stroke();
     }
-    else if (currentv[i] == mediumSpeed){
-      ctx.rect(rectx[i], recty[i], widthRect, heightRect);
-      ctx.strokeStyle = 'white';
-      ctx.stroke();
+    else if (currentv[j] == mediumSpeed){ 
+      ctx.strokeStyle = 'blue';
     }
     else{
-      ctx.rect(rectx[i], recty[i], widthRect, heightRect);
-      ctx.strokeStyle = 'black';
-      ctx.stroke();
+      ctx.strokeStyle = 'black';  
     }
-  }
+    ctx.closePath()
+    ctx.stroke();}
 }
 
 function physics() {
@@ -152,9 +149,9 @@ function step() {
     }
   }
   
-  setTimeout(function(){play(ms)},3*fps)
-  setTimeout(function(){play(mw)},6*fps)
-  setTimeout(function(){play(mr)},9*fps)
+  setTimeout(function(){play(ms)},0)
+  setTimeout(function(){play(mw)},3/(10*fps)*1000)
+  setTimeout(function(){play(mr)},6/(10*fps)*1000)
 
   physics();
   distancing();
