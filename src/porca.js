@@ -14,9 +14,9 @@ currentv = Array(numpecore).fill(0);
 currentarg = Array(numpecore).fill(0);
 alldistances = Array(numpecore).fill(0);
 fraction_neighbour = 1/20;
-fastSpeed = 10;
+fastSpeed = 5;
 slowSpeed = 0;
-mediumSpeed = 1;
+mediumSpeed = 0.5;
 alpha = 15;
 delta = 4;
 dr = scale*31.6;
@@ -131,7 +131,7 @@ function step() {
         }
         //da veloce a lenta
         else {
-          if (currentv[i] == fastSpeed &&probinchioda(i) >= Math.random()){
+          if (currentv[i] == fastSpeed && probinchioda(i) >= Math.random()){
             stop(i);
           }
         }
@@ -328,11 +328,23 @@ var con = new AudioContext();
 var tiempoDelay = 0;
 
 function play(n) {
+
+  majScale = [0,2,4,5,7,9,11,12]
+  minScale = [0,2,3,5,7,8,10,12]
+  octavedown = 0
+  if (n>=8){
+    octavedown = Math.floor(n/8);
+    n = n - 8*octavedown
+  }
+//if maggiore
+ //nScale = majScale[n]+12*octavedown;
+//if minore....
+nScale = minScale[n]+12*octavedown; 
   const now =con.currentTime;
   var osc = con.createOscillator();
   osc.type = "triangle";
 
-  oscFreq = rootfreq * Math.pow(2, n / 12);
+  oscFreq = rootfreq * Math.pow(2, nScale / 12);
   while(oscFreq > 10000){
     oscFreq = oscFreq/2;
   }
