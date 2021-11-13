@@ -33,3 +33,11 @@
       border-color: var(--hover);
       color: #fff;
   }
+
+  .bar{position:relative;
+  }
+
+  .vertical{display:block;}
+
+
+  

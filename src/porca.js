@@ -1,10 +1,11 @@
 fps = 2.5;
 scale = 5;
-height = 800;
-width = 800;
+height = 500;
+width = 1000;
 heightRect = 2;
 widthRect = 2;
 numpecore = 100;
+spread = 300
 rectx = Array(numpecore).fill(0);
 recty = Array(numpecore).fill(0);
 vx = Array(numpecore).fill(0);
@@ -27,7 +28,7 @@ tau1_0 = 8;
 eta = 0.13;
 re = scale;
 beta = 0.8;
-flag = false
+flagButton = false
 rootfreq = 200
 
 
@@ -35,7 +36,7 @@ rootfreq = 200
 for (i = 0; i < numpecore; i++) {
   rectx[i] = (Math.random()-0.5) * 300 + width/2
   recty[i] = (Math.random()-0.5) *300 + height/2
-  currentarg[i] = Math.random() * 2 * Math.PI; //angolo
+  currentarg[i] = Math.random() * 2 * Math.PI;
 }
 
 
@@ -44,10 +45,12 @@ function creacampo() {
   document.body.appendChild(c);
   c.width = width;
   c.height = height;
-  c.setAttribute("style", "border: 1px solid black");
-  c.setAttribute("style", "background-color:green");
+  c.style = "border:5px solid #662f0f"; //NON RIESCO A FARE IL RECINTO PORCO ***
+  c.setAttribute("style","background-color:green")
+  c.style.position = 'absolute'
+  c.style.left = "220px"
+  c.style.top = "70px"
 }
-
 creacampo();
 
 ctx = c.getContext("2d");
@@ -70,6 +73,8 @@ function render() {
     ctx.closePath()
     ctx.stroke();}
 }
+
+render()
 
 function physics() {
   for (i = 0; i < numpecore; i++) {
@@ -293,13 +298,13 @@ function allunitdirectional(i, j) {
 
 function go() {
   interval = setInterval(step, 1000/fps);
-  flag = true
+  flagButton = true
 }
 
-function stopAll(){clearInterval(interval); flag=false}
+function stopAll(){clearInterval(interval); flagButton=false}
 
 function GoStop(){
-  if (flag==false){go()}
+  if (flagButton==false){go()}
   else{stopAll()}
   changeGS()
 }
@@ -310,6 +315,13 @@ function changeGS() {
   else gsbutton.innerHTML = "Stop";
 }
 
+function changespread(spr){spread=spr;
+  for (i = 0; i < numpecore; i++) {
+    rectx[i] = (Math.random()-0.5) * spread + width/2
+    recty[i] = (Math.random()-0.5) * spread + height/2
+    currentarg[i] = Math.random() * 2 * Math.PI; //angolo
+  }
+  render()}
 
 //Cose suoni
 var con = new AudioContext();
