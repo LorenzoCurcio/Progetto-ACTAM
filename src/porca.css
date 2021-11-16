@@ -38,6 +38,28 @@
   }
 
   .vertical{display:block;}
-
+  
+.horizontal{
+    position:absolute;
+    display:inline-flex;
+    left:230px;
+    top:10px;
+}
+.keybutton{
+      width:40px;
+      height:40px;
+      border: 5px solid black;
+      transform: rotate(45deg);
+      margin-left: 20px;
+  }
+.not_rotated{
+    width:40px;
+    height:40px;
+    position:relative;
+    transform: rotate(-45deg);
+    top:-2px;
+    left:7px; 
+    /* NON SI ALLINEANO */
+}
 
   
