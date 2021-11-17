@@ -1,7 +1,7 @@
 fps = 2.5;
 scale = 5;
 height = 500;
-width = 1000;
+width = 880;
 heightRect = 2;
 widthRect = 2;
 numpecore = 100;
@@ -45,11 +45,19 @@ function creacampo() {
   document.body.appendChild(c);
   c.width = width;
   c.height = height;
-  c.style = "border:5px solid #662f0f"; //NON RIESCO A FARE IL RECINTO PORCO ***
   c.setAttribute("style","background-color:green")
   c.style.position = 'absolute'
   c.style.left = "220px"
-  c.style.top = "70px"
+  c.style.top = "76px"
+  
+  c2 = document.createElement("canvas");
+  document.body.appendChild(c2);
+  c2.width = width-1;
+  c2.height = height-1;
+  c2.style = "border:5px solid #662f0f";
+  c2.style.position = 'absolute'
+  c2.style.left = "215px"
+  c2.style.top = "72px"
 }
 creacampo();
 
