@@ -1,14 +1,13 @@
 c=document.getElementById("canvas");
 document.body.appendChild(c);
-//c.width = 500;
-//c.height= 500;
+c.width = 500;
+c.height= 500;
 c.setAttribute("style","border: 1px solid black");
 ctx = c.getContext("2d") ;
 c.style.position = 'absolute'
 c.style.left = "185px"
 c.style.top = "29px"
 
-ctx.fillRect(0,0, 500, 500);
 
 //setting position for both, the listener and the source
 
@@ -38,7 +37,7 @@ listener.positionY.value = posY;
 listener.positionZ.value = posZ;
 
 listener.forwardX.value = 0;
-listener.forwardY.value = -1;
+listener.forwardY.value = 1;
 listener.forwardZ.value = 0;
 listener.upX.value = 0;
 listener.upY.value = 0;
@@ -49,8 +48,9 @@ listener.upZ.value = -1;
 //reading and playing audio file
 const audioElement = document.querySelector('audio');
 const track = con.createMediaElementSource(audioElement);
-audioElement.play();
-
+function playSample(){
+	audioElement.play();
+}
 //creating gain control
 const track_amp = con.createGain();
 
@@ -156,7 +156,7 @@ function render(){
 	ctx.moveTo(posX,posY)
 	ctx.lineTo(posX + listener.forwardX.value*400, posY + listener.forwardY.value*400)
 	ctx.stroke()
-    //audioElement.muted = true;
+    //document.getElementById('sample').muted = false;
 }
 
 
