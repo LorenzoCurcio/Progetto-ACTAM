@@ -1,5 +1,5 @@
 .coolButton{
-    width:200px;
+    width:130px;
     height:50px;
     background-color: orange;
     border: solid 2px; 
@@ -44,7 +44,7 @@
 .horizontal{
     position:absolute;
     display:inline-flex;
-    left:230px;
+    left:160px;
     top:10px;
 }
 .keybutton{
@@ -75,5 +75,12 @@
     border: 5px solid black;
     margin-top: 20px;
     cursor:pointer;
-    left:60px;
+    left:10px;
+    text-align: center;
+}
+
+.text{
+    position:relative;
+    top: 50%;
+    transform: translate(0,-50%);
 }
