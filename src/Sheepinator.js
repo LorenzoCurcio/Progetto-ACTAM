@@ -1,4 +1,4 @@
-fps = 2.5;
+fps = 50;
 scale = 5;
 height = 500;
 width = 880;
@@ -14,9 +14,9 @@ currentv = Array(numpecore).fill(0);
 currentarg = Array(numpecore).fill(0);
 alldistances = Array(numpecore).fill(0);
 fraction_neighbour = 1/20;
-fastSpeed = 5;
+fastSpeed = 1;
 slowSpeed = 0;
-mediumSpeed = 0.5;
+mediumSpeed = 0.2;
 alpha = 15;
 delta = 4;
 dr = scale*31.6;
@@ -31,6 +31,11 @@ beta = 0.8;
 flagButton = false
 rootfreq = 200
 scale = [0,2,3,5,7,8,10,12]
+loudThreshold = 100;
+maxChaosTime = 2*fps;
+maxRecoverTime = 5*fps;
+framesPerNote = 20
+playtime = framesPerNote + 1
 
 
 //Initial Conditions
@@ -40,8 +45,9 @@ for (i = 0; i < numpecore; i++) {
   currentarg[i] = Math.random() * 2 * Math.PI;
 }
 
+//Gestione interfaccia grafica
 
-function creacampo() {
+//CAMPO
   c = document.createElement("canvas");
   document.body.appendChild(c);
   c.width = width;
@@ -59,10 +65,35 @@ function creacampo() {
   c2.style.position = 'absolute'
   c2.style.left = "145px"
   c2.style.top = "72px"
+
+function go() {
+  interval = setInterval(step, 1000/fps);
+  flagButton = true
 }
-creacampo();
+
+function stopAll(){clearInterval(interval); flagButton=false}
+
+function GoStop(){
+  if (flagButton==false){go()}
+  else{stopAll()}
+  changeGS()
+}
+
+var gsbutton = document.getElementById("gostop");
+function changeGS() {
+  if (gsbutton.innerHTML == "Stop") {gsbutton.innerHTML = "Go";}
+  else gsbutton.innerHTML = "Stop";
+}
 
 ctx = c.getContext("2d");
+//STALLA
+widthstalla = 120
+heightstalla = 60
+stalla = new Image;
+stalla.src = "Stalla.png";
+stalla.onload = function(){
+  ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla);
+}
 
 function render() {
   ctx.clearRect(0, 0, width, height);
@@ -70,7 +101,7 @@ function render() {
   for (j = 0; j < numpecore; j++) {
     ctx.beginPath()
     ctx.rect(rectx[j], recty[j], widthRect, heightRect);
-    if(currentv[j] == fastSpeed){ 
+    if(currentv[j] == fastSpeed){
       ctx.strokeStyle = 'red';
     }
     else if (currentv[j] == mediumSpeed){ 
@@ -79,45 +110,87 @@ function render() {
     else{
       ctx.strokeStyle = 'black';  
     }
+    ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla)
     ctx.closePath()
     ctx.stroke();}
 }
-
 render()
 
+//Gestione del movimento
 function physics() {
   for (i = 0; i < numpecore; i++) {
+    vx[i] = currentv[i] * Math.cos(currentarg[i]);
+    vy[i] = currentv[i] * Math.sin(currentarg[i]);
+    //bouncy-sheep
+    if (rectx[i] + widthRect > width || rectx[i] <= 0) {
+      vx[i] *= -1;
+    }
+    if (recty[i] + heightRect > height || recty[i] <= 0) {
+      vy[i] *= -1;
+    }
     rectx[i] += vx[i];
     recty[i] += vy[i];
   }
 }
-
-function probstartrun(i) {
-  //Distanza media delle altre pecore
-  l = 0;
-  count=0
-  for (k = 0; k < numpecore*fraction_neighbour; k++) {
-    l = l + alldistances[k]*re+re;
-    count++
-  }
-  l = l / (count - 1);
-
-  //numero pecore che corrono
-  n_pecore_run = 0;
-  for (k = 0; k < numpecore; k++) {
-    if (currentv[k] == fastSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]) {
-      n_pecore_run = n_pecore_run + 1;
-    }
-  }
-
-  p = Math.pow(tau01_2, -1) * Math.pow((l / dr) * (alpha * n_pecore_run + 1), delta);
-  return p;
+//Ottengo accesso al microfono
+async function getmedia(){
+  stream = await navigator.mediaDevices.getUserMedia({audio : true});
+  microphone = con.createMediaStreamSource(stream);
+  analyser = con.createAnalyser();
+  analyser.smoothingTimeConstant = 0.3;
+  analyser.fftSize = 1024;
+  microphone.connect(analyser);
 }
+getmedia()
+
+//Logiche del movimento
+var chaosTime = 0;
+var chaosState = new Boolean(false);
+var recoverTime = 0;
+var recoverState = new Boolean(false);
 
 function step() {
+  volume = loudness();
+
+  if(volume < loudThreshold && chaosState == false && recoverState == false)
+    stdBehaviour();
+  //quando da tranquille diventano agitate
+  else if (volume >= loudThreshold && chaosState == false && recoverState == false){
+    chaosState = true;
+    chaosTime = maxChaosTime;
+    chaos();
+  }
+  //se sono impaurite e non devono smettere
+  else if(chaosState == true){
+    chaosTime--;
+    chaosVariation();
+    if(chaosTime == 0){
+      chaosState = false;
+      recoverState = true;
+      recoverTime = maxRecoverTime;
+    }
+  }
+  //se stanno recuperando dallo spaventoh
+  else if(recoverState == true){
+    stdBehaviour();
+    recoverTime--;
+    if(recoverTime == 0)
+      recoverState = false;
+  }
+
+  
+  physics();
+  if(chaosState == 0)
+    distancing();
+  render();
+}
+
+function stdBehaviour() {
   ms = 0;
   mr = 0;
   mw = 0;
+  playtime--
+  if (playtime==0){playtime=framesPerNote}
   //velocità attuale
   for (i = 0; i < numpecore; i++) {
     alldistancesnorm(i);
@@ -152,48 +225,39 @@ function step() {
     } else {
       currentarg[i] = sumarg() + (Math.random() - 0.5) * 2 * Math.PI * eta;
     }
-    vx[i] = currentv[i] * Math.cos(currentarg[i]);
-    vy[i] = currentv[i] * Math.sin(currentarg[i]);
-    //bouncy-sheep
-    if (rectx[i] + widthRect > width || rectx[i] <= 0) {
-      vx[i] *= -1;
-    }
-    if (recty[i] + heightRect > height || recty[i] <= 0) {
-      vy[i] *= -1;
-    }
   }
-  
+  if (playtime==framesPerNote){
   setTimeout(function(){play(ms)},0)
-  setTimeout(function(){play(mw)},3/(10*fps)*1000)
-  setTimeout(function(){play(mr)},6/(10*fps)*1000)
+  setTimeout(function(){play(mw)},3/(10*fps)*1000*framesPerNote)
+  setTimeout(function(){play(mr)},6/(10*fps)*1000*framesPerNote)
+}}
 
-  physics();
-  distancing();
-  render();
+function chaos(){
+  for(i = 0; i<numpecore; i++){
+    currentarg[i] = Math.random()*Math.PI*2;
+    currentv[i] = fastSpeed;
+  }
 }
 
-function run(i) {
-  currentv[i] = fastSpeed;
-  mr++
+function chaosVariation(){
+  for(i = 0; i<numpecore; i++){
+    if(Math.random() > 0.3)
+      currentarg[i] = currentarg[i] + (Math.random()-0.5)*Math.PI/2;
+  }
 }
 
-function sumarg() {
-  sumcos = 0;
-  sumsin = 0;
+//Funzioni di calcolo probabilistico
+function probstop() {
+  //numero pecore ferme
+  n_pecore_stay = 0;
   for (k = 0; k < numpecore; k++) {
-    sumcos = sumcos + Math.cos(currentarg[k]);
-    sumsin = sumsin + Math.sin(currentarg[k]);
+    if (currentv[k] == slowSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]) {
+      n_pecore_stay = n_pecore_stay + 1;
+    }
   }
-  if (sumcos > 0)
-    return Math.atan(sumsin / sumcos);
-  else if (sumcos < 0)
-    return (Math.atan(sumsin / sumcos) + Math.PI);
-  else if (sumcos == 0) {
-    if (sumsin > 0)
-      return Math.PI / 2;
-    else
-      return -Math.PI / 2;
-  }
+
+  p = Math.pow(tau1_0, -1) * (1 + alpha * n_pecore_stay);
+  return p;
 }
 
 function probstartwalk() {
@@ -211,28 +275,26 @@ function probstartwalk() {
   return p;
 }
 
-function walk(i) {
-  currentv[i] = mediumSpeed;
-  mw++
-}
+function probstartrun(i) {
+  //Distanza media delle altre pecore
+  l = 0;
+  count=0
+  for (k = 0; k < numpecore*fraction_neighbour; k++) {
+    l = l + alldistances[k]*re+re;
+    count++
+  }
+  l = l / (count - 1);
 
-function probstop() {
-  //numero pecore ferme
-  n_pecore_stay = 0;
+  //numero pecore che corrono
+  n_pecore_run = 0;
   for (k = 0; k < numpecore; k++) {
-    if (currentv[k] == slowSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]) {
-      n_pecore_stay = n_pecore_stay + 1;
+    if (currentv[k] == fastSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]) {
+      n_pecore_run = n_pecore_run + 1;
     }
   }
 
-  p = Math.pow(tau1_0, -1) * (1 + alpha * n_pecore_stay);
+  p = Math.pow(tau01_2, -1) * Math.pow((l / dr) * (alpha * n_pecore_run + 1), delta);
   return p;
-}
-
-function stop(i) {
-  ms = ms + 1;
-  currentv[i] = slowSpeed;
-  
 }
 
 function probinchioda(i) {
@@ -249,6 +311,23 @@ function probinchioda(i) {
   return p;
 }
 
+//Funzioni di cambio di stato
+function stop(i) {
+  ms = ms + 1;
+  currentv[i] = slowSpeed;
+}
+
+function walk(i) {
+  currentv[i] = mediumSpeed;
+  mw++
+}
+
+function run(i) {
+  currentv[i] = fastSpeed;
+  mr++
+}
+
+//Utilities per il movimento
 function attract_repulse(i) {
   sumcos = 0;
   sumsin = 0;
@@ -305,36 +384,47 @@ function allunitdirectional(i, j) {
   }
 }
 
-function go() {
-  interval = setInterval(step, 1000/fps);
-  flagButton = true
+function sumarg() {
+  sumcos = 0;
+  sumsin = 0;
+  for (k = 0; k < numpecore; k++) {
+    sumcos = sumcos + Math.cos(currentarg[k]);
+    sumsin = sumsin + Math.sin(currentarg[k]);
+  }
+  if (sumcos > 0)
+    return Math.atan(sumsin / sumcos);
+  else if (sumcos < 0)
+    return (Math.atan(sumsin / sumcos) + Math.PI);
+  else if (sumcos == 0) {
+    if (sumsin > 0)
+      return Math.PI / 2;
+    else
+      return -Math.PI / 2;
+  }
 }
 
-function stopAll(){clearInterval(interval); flagButton=false}
-
-function GoStop(){
-  if (flagButton==false){go()}
-  else{stopAll()}
-  changeGS()
-}
-
-var gsbutton = document.getElementById("gostop");
-function changeGS() {
-  if (gsbutton.innerHTML == "Stop") {gsbutton.innerHTML = "Go";}
-  else gsbutton.innerHTML = "Stop";
-}
-
-function changespread(spr){spread=spr;
+function changespread(spr){
+  spread=spr;
   for (i = 0; i < numpecore; i++) {
     rectx[i] = (Math.random()-0.5) * spread + width/2
     recty[i] = (Math.random()-0.5) * spread + height/2
     currentarg[i] = Math.random() * 2 * Math.PI; //angolo
   }
-  render()}
+  render()
+}
 
 //Cose suoni
 var con = new AudioContext();
-var tiempoDelay = 0;
+var tiempoDelay = 0.2;
+
+var osc_amp = con.createGain();
+osc_amp.gain.value = 0.1;
+
+var del = con.createDelay();
+var fb = con.createGain();
+fb.gain.value = 0.75;
+
+
 
 function play(n) {
   octavedown = 0
@@ -342,7 +432,7 @@ function play(n) {
     octavedown = Math.floor(n/8);
     n = n - 8*octavedown
   }
-nScale = scale[n]+12*octavedown;
+  nScale = scale[n]+12*octavedown;
   const now =con.currentTime;
   var osc = con.createOscillator();
   osc.type = "triangle";
@@ -353,17 +443,12 @@ nScale = scale[n]+12*octavedown;
   }
 
   osc.frequency.value = oscFreq;
-  var osc_amp = con.createGain();
-  osc_amp.gain.value = 0.1;
   osc.connect(osc_amp);
 
-  var del = con.createDelay();
+  del.delayTime.value = tiempoDelay;
   osc_amp.connect(del);
-  var fb = con.createGain();
   del.connect(fb);
   fb.connect(del);
-  del.delayTime.value = tiempoDelay;
-  fb.gain.value = 0.75
 
   del.connect(con.destination)
 
@@ -371,6 +456,30 @@ nScale = scale[n]+12*octavedown;
    osc.start();
    osc.stop(now+0.1) ;
 }
+
+//Modes
+function Ionian(){scale = [0,2,4,5,7,9,11,12]}
+function Dorian(){scale = [0,2,3,5,7,9,11,12]}
+function Phrygian(){scale = [0,1,3,5,7,8,10,12]}
+function Lydian(){scale = [0,2,4,6,7,9,11,12]}
+function Myxolydian(){scale = [0,2,4,5,7,9,10,12]}
+function Aeolian(){scale = [0,2,3,5,7,8,10,12]}
+function Locrian(){scale = [0,1,3,5,6,8,10,12]}
+
+//Notes
+function C(){rootfreq=261.63}
+function Cs(){rootfreq=277.18}
+function D(){rootfreq=293.66}
+function Ds(){rootfreq=311.13}
+function E(){rootfreq=329.63}
+function F(){rootfreq=349.23}
+function Fs(){rootfreq=369.99}
+function G(){rootfreq=392}
+function Gs(){rootfreq=415.30}
+function A(){rootfreq=440}
+function As(){rootfreq=466.16}
+function B(){rootfreq=493.88}
+
 
 
 //SOVRAPPOSIZIONE
@@ -443,25 +552,23 @@ function expand(){
   }
 }
 
-//Modes
-function Ionian(){scale = [0,2,4,5,7,9,11,12]}
-function Dorian(){scale = [0,2,3,5,7,9,11,12]}
-function Phrygian(){scale = [0,1,3,5,7,8,10,12]}
-function Lydian(){scale = [0,2,4,6,7,9,11,12]}
-function Myxolydian(){scale = [0,2,4,5,7,9,10,12]}
-function Aeolian(){scale = [0,2,3,5,7,8,10,12]}
-function Locrian(){scale = [0,1,3,5,6,8,10,12]}
+//Ottengo il volume in ingresso dal microfono
+function loudness(){
+  // get the average, bincount is fftsize / 2
+  var array =  new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(array);
+  
+  var values = 0;
+  var average;
 
-//Notes
-function C(){rootfreq=261.63}
-function Cs(){rootfreq=277.18}
-function D(){rootfreq=293.66}
-function Ds(){rootfreq=311.13}
-function E(){rootfreq=329.63}
-function F(){rootfreq=349.23}
-function Fs(){rootfreq=369.99}
-function G(){rootfreq=392}
-function Gs(){rootfreq=415.30}
-function A(){rootfreq=440}
-function As(){rootfreq=466.16}
-function B(){rootfreq=493.88}
+  var length = array.length;
+
+  // get all the frequency amplitudes
+  for (var i = 0; i < length; i++) {
+    values += array[i];
+  }
+  average = values / length;
+
+  console.log(Math.round(average));
+  return Math.round(average);
+}
