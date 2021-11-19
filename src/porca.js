@@ -30,6 +30,7 @@ re = scale;
 beta = 0.8;
 flagButton = false
 rootfreq = 200
+scale = [0,2,3,5,7,8,10,12]
 
 
 //Initial Conditions
@@ -47,7 +48,7 @@ function creacampo() {
   c.height = height;
   c.setAttribute("style","background-color:green")
   c.style.position = 'absolute'
-  c.style.left = "220px"
+  c.style.left = "150px"
   c.style.top = "76px"
   
   c2 = document.createElement("canvas");
@@ -56,7 +57,7 @@ function creacampo() {
   c2.height = height-1;
   c2.style = "border:5px solid #662f0f";
   c2.style.position = 'absolute'
-  c2.style.left = "215px"
+  c2.style.left = "145px"
   c2.style.top = "72px"
 }
 creacampo();
@@ -336,24 +337,18 @@ var con = new AudioContext();
 var tiempoDelay = 0;
 
 function play(n) {
-
-  majScale = [0,2,4,5,7,9,11,12]
-  minScale = [0,2,3,5,7,8,10,12]
   octavedown = 0
   if (n>=8){
     octavedown = Math.floor(n/8);
     n = n - 8*octavedown
   }
-//if maggiore
- //nScale = majScale[n]+12*octavedown;
-//if minore....
-nScale = minScale[n]+12*octavedown; 
+nScale = scale[n]+12*octavedown;
   const now =con.currentTime;
   var osc = con.createOscillator();
   osc.type = "triangle";
 
   oscFreq = rootfreq * Math.pow(2, nScale / 12);
-  while(oscFreq > 10000){
+  while(oscFreq > 3000){
     oscFreq = oscFreq/2;
   }
 
@@ -447,3 +442,26 @@ function expand(){
     recty[i] = recty[i] + 0.5*Math.sin(outarg[i]);
   }
 }
+
+//Modes
+function Ionian(){scale = [0,2,4,5,7,9,11,12]}
+function Dorian(){scale = [0,2,3,5,7,9,11,12]}
+function Phrygian(){scale = [0,1,3,5,7,8,10,12]}
+function Lydian(){scale = [0,2,4,6,7,9,11,12]}
+function Myxolydian(){scale = [0,2,4,5,7,9,10,12]}
+function Aeolian(){scale = [0,2,3,5,7,8,10,12]}
+function Locrian(){scale = [0,1,3,5,6,8,10,12]}
+
+//Notes
+function C(){rootfreq=261.63}
+function Cs(){rootfreq=277.18}
+function D(){rootfreq=293.66}
+function Ds(){rootfreq=311.13}
+function E(){rootfreq=329.63}
+function F(){rootfreq=349.23}
+function Fs(){rootfreq=369.99}
+function G(){rootfreq=392}
+function Gs(){rootfreq=415.30}
+function A(){rootfreq=440}
+function As(){rootfreq=466.16}
+function B(){rootfreq=493.88}
