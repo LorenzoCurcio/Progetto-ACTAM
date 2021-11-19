@@ -31,9 +31,11 @@ beta = 0.8;
 flagButton = false
 rootfreq = 200
 scale = [0,2,3,5,7,8,10,12]
-loudThreshold = 222220;
+loudThreshold = 100;
 maxChaosTime = 5*fps;
 maxRecoverTime = 5*fps;
+framesPerNote = 20
+playtime = framesPerNote + 1
 
 
 //Initial Conditions
@@ -92,7 +94,7 @@ function render() {
   for (j = 0; j < numpecore; j++) {
     ctx.beginPath()
     ctx.rect(rectx[j], recty[j], widthRect, heightRect);
-    if(currentv[j] == fastSpeed){ 
+    if(currentv[j] == fastSpeed){
       ctx.strokeStyle = 'red';
     }
     else if (currentv[j] == mediumSpeed){ 
@@ -179,6 +181,8 @@ function stdBehaviour() {
   ms = 0;
   mr = 0;
   mw = 0;
+  playtime--
+  if (playtime==0){playtime=framesPerNote}
   //velocità attuale
   for (i = 0; i < numpecore; i++) {
     alldistancesnorm(i);
@@ -214,11 +218,11 @@ function stdBehaviour() {
       currentarg[i] = sumarg() + (Math.random() - 0.5) * 2 * Math.PI * eta;
     }
   }
-  
+  if (playtime==framesPerNote){
   setTimeout(function(){play(ms)},0)
-  setTimeout(function(){play(mw)},3/(10*fps)*1000)
-  setTimeout(function(){play(mr)},6/(10*fps)*1000)
-}
+  setTimeout(function(){play(mw)},3/(10*fps)*1000*framesPerNote)
+  setTimeout(function(){play(mr)},6/(10*fps)*1000*framesPerNote)
+}}
 
 function chaos(){
   for(i = 0; i<numpecore; i++){
@@ -405,6 +409,15 @@ function changespread(spr){
 var con = new AudioContext();
 var tiempoDelay = 0;
 
+var osc_amp = con.createGain();
+osc_amp.gain.value = 0.1;
+
+var del = con.createDelay();
+var fb = con.createGain();
+fb.gain.value = 0.75;
+
+
+
 function play(n) {
   octavedown = 0
   if (n>=8){
@@ -422,17 +435,12 @@ function play(n) {
   }
 
   osc.frequency.value = oscFreq;
-  var osc_amp = con.createGain();
-  osc_amp.gain.value = 0.1;
   osc.connect(osc_amp);
 
-  var del = con.createDelay();
+  del.delayTime.value = tiempoDelay;
   osc_amp.connect(del);
-  var fb = con.createGain();
   del.connect(fb);
   fb.connect(del);
-  del.delayTime.value = tiempoDelay;
-  fb.gain.value = 0.75
 
   del.connect(con.destination)
 
