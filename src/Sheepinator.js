@@ -32,7 +32,7 @@ flagButton = false
 rootfreq = 200
 scale = [0,2,3,5,7,8,10,12]
 loudThreshold = 100;
-maxChaosTime = 5*fps;
+maxChaosTime = 2*fps;
 maxRecoverTime = 5*fps;
 framesPerNote = 20
 playtime = framesPerNote + 1
@@ -46,7 +46,8 @@ for (i = 0; i < numpecore; i++) {
 }
 
 //Gestione interfaccia grafica
-function creacampo() {
+
+//CAMPO
   c = document.createElement("canvas");
   document.body.appendChild(c);
   c.width = width;
@@ -64,8 +65,6 @@ function creacampo() {
   c2.style.position = 'absolute'
   c2.style.left = "145px"
   c2.style.top = "72px"
-}
-creacampo();
 
 function go() {
   interval = setInterval(step, 1000/fps);
@@ -87,6 +86,14 @@ function changeGS() {
 }
 
 ctx = c.getContext("2d");
+//STALLA
+widthstalla = 120
+heightstalla = 60
+stalla = new Image;
+stalla.src = "Stalla.png";
+stalla.onload = function(){
+  ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla);
+}
 
 function render() {
   ctx.clearRect(0, 0, width, height);
@@ -103,6 +110,7 @@ function render() {
     else{
       ctx.strokeStyle = 'black';  
     }
+    ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla)
     ctx.closePath()
     ctx.stroke();}
 }
@@ -407,7 +415,7 @@ function changespread(spr){
 
 //Cose suoni
 var con = new AudioContext();
-var tiempoDelay = 0;
+var tiempoDelay = 0.2;
 
 var osc_amp = con.createGain();
 osc_amp.gain.value = 0.1;
