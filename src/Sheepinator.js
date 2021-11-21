@@ -37,6 +37,14 @@ maxRecoverTime = 5*fps;
 framesPerNote = 20
 playtime = framesPerNote + 1
 
+var posX = width/2;
+var posY = height/4;
+var posZ = 0;
+
+var posSourceX = width/2;
+var posSourceY = height/2;
+var posSourceZ = 0;
+
 
 //Initial Conditions
 for (i = 0; i < numpecore; i++) {
@@ -57,7 +65,7 @@ for (i = 0; i < numpecore; i++) {
   c.style.left = "150px"
   c.style.top = "76px"
   
-  c2 = document.createElement("canvas");
+  c2 = document.getElementById("canvas");
   document.body.appendChild(c2);
   c2.width = width-1;
   c2.height = height-1;
@@ -95,6 +103,22 @@ stalla.onload = function(){
   ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla);
 }
 
+//setting listener
+var con = new AudioContext();
+
+var listener = con.listener;
+
+listener.positionX.value = posX;
+listener.positionY.value = posY;
+listener.positionZ.value = posZ;
+
+listener.forwardX.value = 0;
+listener.forwardY.value = 1;
+listener.forwardZ.value = 0;
+listener.upX.value = 0;
+listener.upY.value = 0;
+listener.upZ.value = -1;
+
 function render() {
   ctx.clearRect(0, 0, width, height);
 
@@ -113,6 +137,18 @@ function render() {
     ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla)
     ctx.closePath()
     ctx.stroke();}
+
+    //drawing listener
+    ctx.beginPath()
+    ctx.rect(posX,posY,5,5)
+    ctx.stroke()
+
+	
+	  ctx.beginPath()
+	  ctx.moveTo(posX,posY)
+	  ctx.lineTo(posX + listener.forwardX.value*400, posY + listener.forwardY.value*400)
+	  ctx.stroke()
+
 }
 render()
 
@@ -414,7 +450,7 @@ function changespread(spr){
 }
 
 //Cose suoni
-var con = new AudioContext();
+
 var tiempoDelay = 0.2;
 
 var osc_amp = con.createGain();
@@ -424,7 +460,55 @@ var del = con.createDelay();
 var fb = con.createGain();
 fb.gain.value = 0.75;
 
+//Change listner position
 
+function listenerXY(event){
+	posX = event.clientX -145;
+	posY = event.clientY - 72;
+	listener.positionX.value = posX;
+	listener.positionY.value = posY;
+}
+
+//binaural panner
+
+const pannerModel = 'HRTF';
+
+	const innerCone = 60;
+	const outerCone = 90;
+	const outerGain = 0.3;
+
+	const distanceModel = 'linear';
+
+	const maxDistance = 10000;
+
+	const refDistance = 1;
+
+	const rollOff = 10;
+
+	const positionX = posSourceX;
+	const positionY = posSourceY;
+	const positionZ = posSourceZ;
+
+	const orientationX = 0;
+	const orientationY = 0;
+	const orientationZ = -1.0;
+
+	const pannerB = new PannerNode(con, {
+		panningModel: pannerModel,
+		distanceModel: distanceModel,
+		positionX: positionX,
+		positionY: positionY,
+		positionZ: positionZ,
+		orientationX: orientationX,
+		orientationY: orientationY,
+		orientationZ: orientationZ,
+		refDistance: refDistance,
+		maxDistance: maxDistance,
+		rolloffFactor: rollOff,
+		coneInnerAngle: innerCone,
+		coneOuterAngle: outerCone,
+		coneOuterGain: outerGain
+	})
 
 function play(n) {
   octavedown = 0
@@ -450,7 +534,7 @@ function play(n) {
   del.connect(fb);
   fb.connect(del);
 
-  del.connect(con.destination)
+  del.connect(pannerB).connect(con.destination)
 
   //osc_amp.connect(con.destination)
    osc.start();
