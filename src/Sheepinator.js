@@ -463,8 +463,8 @@ fb.gain.value = 0.75;
 //Change listner position
 
 function listenerXY(event){
-	posX = event.clientX -145;
-	posY = event.clientY - 72;
+	posX = event.clientX -150;
+	posY = event.clientY - 76;
 	listener.positionX.value = posX;
 	listener.positionY.value = posY;
 }
