@@ -703,3 +703,7 @@ document.onkeydown = function(event){
     }
   }
 }
+
+function highlight(element){
+  element.style.backgroundColor = "black"
+}
