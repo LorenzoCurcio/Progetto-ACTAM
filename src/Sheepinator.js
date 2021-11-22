@@ -726,6 +726,8 @@ document.onkeydown = function(event){
       listener.forwardX.value = 1;
       listener.forwardY.value = 0;
     }
+    listener.positionX.value = posX;
+    listener.positionY.value = posY;
   }
 }
 
