@@ -460,7 +460,7 @@ var del = con.createDelay();
 var fb = con.createGain();
 fb.gain.value = 0.75;
 
-//Change listner position
+//Change listener position
 
 function listenerXY(event){
 	posX = event.clientX -150;
