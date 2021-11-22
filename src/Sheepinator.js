@@ -38,7 +38,7 @@ framesPerNote = 20
 playtime = framesPerNote + 1
 
 var posX = width/2;
-var posY = height/4;
+var posY = height/1.5;
 var posZ = 0;
 
 var posSourceX = width/2;
@@ -113,11 +113,13 @@ listener.positionY.value = posY;
 listener.positionZ.value = posZ;
 
 listener.forwardX.value = 0;
-listener.forwardY.value = 1;
+listener.forwardY.value = -1;
 listener.forwardZ.value = 0;
 listener.upX.value = 0;
 listener.upY.value = 0;
 listener.upZ.value = -1;
+
+
 
 function render() {
   ctx.clearRect(0, 0, width, height);
@@ -143,6 +145,12 @@ function render() {
     ctx.rect(posX,posY,5,5)
     ctx.stroke()
 
+    //drawing CM
+    ctx.beginPath()
+    ctx.rect(xCM,yCM,5,5)
+    ctx.strokeStyle = 'white';
+    ctx.closePath();
+    ctx.stroke()
 	
 	  ctx.beginPath()
 	  ctx.moveTo(posX,posY)
@@ -184,12 +192,14 @@ var chaosTime = 0;
 var chaosState = new Boolean(false);
 var recoverTime = 0;
 var recoverState = new Boolean(false);
+var xCM;
+var yCM;
 
 function step() {
   volume = loudness();
-
+  
   if(volume < loudThreshold && chaosState == false && recoverState == false)
-    stdBehaviour();
+  stdBehaviour();
   //quando da tranquille diventano agitate
   else if (volume >= loudThreshold && chaosState == false && recoverState == false){
     chaosState = true;
@@ -211,9 +221,14 @@ function step() {
     stdBehaviour();
     recoverTime--;
     if(recoverTime == 0)
-      recoverState = false;
+    recoverState = false;
   }
+  
+  massCentre();
 
+  //createPanner(pannerB);
+  pannerB.positionX.value = xCM;
+  pannerB.positionY.value = yCM;
   
   physics();
   if(chaosState == 0)
@@ -449,6 +464,15 @@ function changespread(spr){
   render()
 }
 
+function massCentre(){
+  for(i = 0, xCM = 0, yCM = 0; i<numpecore; i++){
+    xCM = xCM + rectx[i];
+    yCM = yCM + recty[i];
+}
+xCM = xCM/numpecore;
+yCM = yCM/numpecore;
+}
+
 //Cose suoni
 
 var tiempoDelay = 0.2;
@@ -461,54 +485,53 @@ var fb = con.createGain();
 fb.gain.value = 0.75;
 
 //Change listner position
-
 function listenerXY(event){
-	posX = event.clientX -150;
-	posY = event.clientY - 76;
-	listener.positionX.value = posX;
-	listener.positionY.value = posY;
+  if(flagButton == true){
+    posX = event.clientX -150;
+    posY = event.clientY - 76;
+    listener.positionX.value = posX;
+    listener.positionY.value = posY;
+  }
 }
 
 //binaural panner
 
-const pannerModel = 'HRTF';
+pannerModel = 'HRTF';
 
-	const innerCone = 60;
-	const outerCone = 90;
-	const outerGain = 0.3;
+const innerCone = 60;
+const outerCone = 90;
+const outerGain = 0.3;
 
-	const distanceModel = 'linear';
+const distanceModel = 'linear';
 
-	const maxDistance = 10000;
+const maxDistance = 700;
 
-	const refDistance = 1;
+const refDistance = 1;
 
-	const rollOff = 10;
+const rollOff = 10;
+const positionZ = posSourceZ;
 
-	const positionX = posSourceX;
-	const positionY = posSourceY;
-	const positionZ = posSourceZ;
+const orientationX = 0;
+const orientationY = 0;
+const orientationZ = -1.0;
 
-	const orientationX = 0;
-	const orientationY = 0;
-	const orientationZ = -1.0;
 
-	const pannerB = new PannerNode(con, {
-		panningModel: pannerModel,
-		distanceModel: distanceModel,
-		positionX: positionX,
-		positionY: positionY,
-		positionZ: positionZ,
-		orientationX: orientationX,
-		orientationY: orientationY,
-		orientationZ: orientationZ,
-		refDistance: refDistance,
-		maxDistance: maxDistance,
-		rolloffFactor: rollOff,
-		coneInnerAngle: innerCone,
-		coneOuterAngle: outerCone,
-		coneOuterGain: outerGain
-	})
+pannerB = new PannerNode(con, {
+  panningModel: pannerModel,
+  distanceModel: distanceModel,
+  positionX: xCM,
+  positionY: yCM,
+  positionZ: positionZ,
+  orientationX: orientationX,
+  orientationY: orientationY,
+  orientationZ: orientationZ,
+  refDistance: refDistance,
+  maxDistance: maxDistance,
+  rolloffFactor: rollOff,
+  coneInnerAngle: innerCone,
+  coneOuterAngle: outerCone,
+  coneOuterGain: outerGain
+})
 
 function play(n) {
   octavedown = 0
@@ -652,7 +675,31 @@ function loudness(){
     values += array[i];
   }
   average = values / length;
-
-  console.log(Math.round(average));
   return Math.round(average);
+}
+
+
+document.onkeydown = function(event){
+  if(flagButton == true){
+    if(event.key == 'w' && posY > 5){
+      posY -= 5;
+      listener.forwardY.value = -1;
+      listener.forwardX.value = 0;
+    }
+    else if(event.key == 's' && posY < height -5){
+      posY += 5;
+      listener.forwardY.value = 1;
+      listener.forwardX.value = 0; 
+    }
+    else if(event.key == 'a' && posX > 5){
+      posX -= 5;
+      listener.forwardX.value = -1;
+      listener.forwardY.value = 0;
+    }
+    else if(event.key == 'd' && posX < width - 10){
+      posX += 5;
+      listener.forwardX.value = 1;
+      listener.forwardY.value = 0;
+    }
+  }
 }
