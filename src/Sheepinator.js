@@ -703,3 +703,34 @@ document.onkeydown = function(event){
     }
   }
 }
+
+document.onkeydown = function(event){
+  if(flagButton == true){
+    if(event.key == 'w' && posY > 5){
+      posY -= 5;
+      listener.forwardY.value = -1;
+      listener.forwardX.value = 0;
+    }
+    else if(event.key == 's' && posY < height -5){
+      posY += 5;
+      listener.forwardY.value = 1;
+      listener.forwardX.value = 0; 
+    }
+    else if(event.key == 'a' && posX > 5){
+      posX -= 5;
+      listener.forwardX.value = -1;
+      listener.forwardY.value = 0;
+    }
+    else if(event.key == 'd' && posX < width - 10){
+      posX += 5;
+      listener.forwardX.value = 1;
+      listener.forwardY.value = 0;
+    }
+  }
+}
+
+function highlight(element){
+  element.style.backgroundColor = "black"
+  console.log(Math.round(average));
+  return Math.round(average);
+}
