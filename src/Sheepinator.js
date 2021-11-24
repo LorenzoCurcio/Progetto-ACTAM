@@ -780,4 +780,4 @@ function highlight(element){
   for (i=0;i<modes.length;i++){
     modes[i].style.backgroundColor = notselected;
   }
-  if (element.style.backgroundColor == notselected){element.style.backgroundColor = 'black'}}
+  if (element.style.backgroundColor == notselected){element.style.backgroundColor = 'black'}
