@@ -1,10 +1,10 @@
 fps = 50;
-scale = 5;
+scale = 10;
 height = 500;
 width = 880;
 heightRect = 2;
 widthRect = 2;
-numpecore = 100;
+numpecore = 50;
 spread = 300
 rectx = Array(numpecore).fill(0);
 recty = Array(numpecore).fill(0);
@@ -21,7 +21,7 @@ alpha = 15;
 delta = 4;
 dr = scale*31.6;
 ds = scale*6.3;
-tau01_2 = numpecore/300;
+tau01_2 = numpecore/350;
 tau0_1 = 35;
 tau2_0 = numpecore*5
 tau1_0 = 8;
@@ -32,8 +32,8 @@ flagButton = false
 rootfreq = 200
 scale = [0,2,3,5,7,8,10,12]
 loudThreshold = 100;
-maxChaosTime = 2*fps;
-maxRecoverTime = 5*fps;
+maxChaosTime = 1*fps;
+maxRecoverTime = 3*fps;
 framesPerNote = 20
 playtime = framesPerNote + 1
 var startupState = new Boolean(false)
@@ -119,52 +119,61 @@ listener.positionY.value = posY;
 listener.positionZ.value = posZ;
 
 listener.forwardX.value = 0;
-listener.forwardY.value = -1;
+listener.forwardY.value = 1;
 listener.forwardZ.value = 0;
 listener.upX.value = 0;
 listener.upY.value = 0;
 listener.upZ.value = -1;
 
+pecora = new Image;
+pecora.src = "PNGs/Pecora10x10.png";
 
+angrypecora = new Image;
+angrypecora.src = "PNGs/PecoraAngry10x10.png";
 
+sheperdF = new Image
+sheperdF.src = "PNGs/Pastore Front.png"
+
+sheperdB = new Image
+sheperdB.src = "PNGs/Pastore Back.png"
+
+sheperdL = new Image
+sheperdL.src = "PNGs/Pastore Left.png"
+
+sheperdR = new Image
+sheperdR.src = "PNGs/Pastore Right.png"
+
+for (i=0;i<numpecore;i++){rectx[i] = width;recty[i]=0}
 function render() {
   ctx.clearRect(0, 0, width, height);
-
   for (j = 0; j < numpecore; j++) {
     ctx.beginPath()
-    ctx.rect(rectx[j], recty[j], widthRect, heightRect);
-    if(currentv[j] == fastSpeed){
-      ctx.strokeStyle = 'red';
-    }
-    else if (currentv[j] == mediumSpeed){ 
-      ctx.strokeStyle = 'blue';
-    }
-    else{
-      ctx.strokeStyle = 'black';  
-    }
+    ctx.save();
+    ctx.translate(rectx[j] + 10 * 1 / 2, recty[j] + 10 * 1 / 2);
+    ctx.rotate(currentarg[j]+Math.PI/2);
+    ctx.translate(- rectx[j] - 10 * 1 / 2, - recty[j] - 10 * 1 / 2);
+    if (currentv[j] == fastSpeed){ctx.drawImage(angrypecora, rectx[j], recty[j],10,10)}
+    else {ctx.drawImage(pecora, rectx[j], recty[j],10,10)}
+    ctx.restore();
     ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla)
     ctx.closePath()
     ctx.stroke();}
 
     //drawing listener
-    ctx.beginPath()
-    ctx.rect(posX,posY,5,5)
-    ctx.stroke()
+    ctx.beginPath();
+    ctx.drawImage(sheperdF,posX,posY);
+    ctx.closePath();
+    ctx.stroke();
 
     //drawing CM
     ctx.beginPath()
     ctx.rect(xCM,yCM,5,5)
     ctx.strokeStyle = 'white';
     ctx.closePath();
-    ctx.stroke()
-	
-	  ctx.beginPath()
-	  ctx.moveTo(posX,posY)
-	  ctx.lineTo(posX + listener.forwardX.value*400, posY + listener.forwardY.value*400)
-	  ctx.stroke()
+    ctx.stroke();
 
 }
-render()
+render();
 
 //Gestione del movimento
 function physics() {
@@ -214,11 +223,10 @@ function startup() {
 
 function startupLoop(){
   massCentre();
-
   physics();
   render();
   
-  if(xCM < width/2){
+  if(xCM < width*7/10){
     for(i = 0; i<numpecore; i++){
       currentv[i] = slowSpeed;
     }
@@ -242,7 +250,6 @@ function step() {
   //se sono impaurite e non devono smettere
   else if(chaosState == true){
     chaosTime--;
-    chaosVariation();
     if(chaosTime == 0){
       chaosState = false;
       recoverState = true;
@@ -318,16 +325,20 @@ function stdBehaviour() {
 
 function chaos(){
   for(i = 0; i<numpecore; i++){
-    currentarg[i] = Math.random()*Math.PI*2;
-    currentv[i] = fastSpeed;
-  }
-}
+    x_sheep_sheperd = rectx[i] - posX;
+    y_sheep_sheperd = recty[i] - posY;
 
-function chaosVariation(){
-  for(i = 0; i<numpecore; i++){
-    if(Math.random() > 0.6)
-      currentarg[i] = currentarg[i] + (Math.random()-0.5)*Math.PI/2;
+    if (x_sheep_sheperd > 0)
+      currentarg[i] = Math.atan(y_sheep_sheperd / x_sheep_sheperd);
+    else if (x_sheep_sheperd < 0)
+      currentarg[i] = (Math.atan(y_sheep_sheperd / x_sheep_sheperd) + Math.PI);
+    else if (x_sheep_sheperd == 0) {
+      if (y_sheep_sheperd > 0)
+        currentarg[i] = Math.PI/2
+      else
+        currentarg[i] = -Math.PI/2
   }
+  currentv[i] = fastSpeed;}
 }
 
 //Funzioni di calcolo probabilistico
@@ -719,17 +730,17 @@ document.onkeydown = function(event){
       listener.forwardY.value = -1;
       listener.forwardX.value = 0;
     }
-    else if(event.key == 's' && posY < height -5){
+    if(event.key == 's' && posY < height -5){
       posY += 5;
       listener.forwardY.value = 1;
       listener.forwardX.value = 0; 
     }
-    else if(event.key == 'a' && posX > 5){
+    if(event.key == 'a' && posX > 5){
       posX -= 5;
       listener.forwardX.value = -1;
       listener.forwardY.value = 0;
     }
-    else if(event.key == 'd' && posX < width - 10){
+    if(event.key == 'd' && posX < width - 10){
       posX += 5;
       listener.forwardX.value = 1;
       listener.forwardY.value = 0;
@@ -769,15 +780,8 @@ notselected = "rgb(56, 28, 28)"
 modes = document.getElementsByClassName("modebutton")
 modes[5].style.backgroundColor = notselected;
 function highlight(element){
-  element.style.backgroundColor = "black"
-  console.log(Math.round(average));
-  return Math.round(average);
-}
-
-
-
-
   for (i=0;i<modes.length;i++){
     modes[i].style.backgroundColor = notselected;
   }
   if (element.style.backgroundColor == notselected){element.style.backgroundColor = 'black'}
+}
