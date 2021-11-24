@@ -764,6 +764,10 @@ document.onkeydown = function(event){
   }
 }
 
+
+notselected = "rgb(56, 28, 28)"
+modes = document.getElementsByClassName("modebutton")
+modes[5].style.backgroundColor = notselected;
 function highlight(element){
   element.style.backgroundColor = "black"
   console.log(Math.round(average));
@@ -773,3 +777,7 @@ function highlight(element){
 
 
 
+  for (i=0;i<modes.length;i++){
+    modes[i].style.backgroundColor = notselected;
+  }
+  if (element.style.backgroundColor == notselected){element.style.backgroundColor = 'black'}}

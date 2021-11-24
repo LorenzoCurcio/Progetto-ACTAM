@@ -77,13 +77,14 @@
     cursor:pointer;
     left:10px;
     text-align: center;
-    background-color: snow;
+    background-color: rgb(56, 28, 28);
 }
 
 .text{
     position:relative;
     top: 50%;
     transform: translate(0,-50%);
+    color:snow
 }
 
 .background{
