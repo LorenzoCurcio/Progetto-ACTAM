@@ -36,6 +36,7 @@ maxChaosTime = 2*fps;
 maxRecoverTime = 5*fps;
 framesPerNote = 20
 playtime = framesPerNote + 1
+var startupState = new Boolean(false)
 
 var posX = width/2;
 var posY = height/1.5;
@@ -46,12 +47,6 @@ var posSourceY = height/2;
 var posSourceZ = 0;
 
 
-//Initial Conditions
-for (i = 0; i < numpecore; i++) {
-  rectx[i] = (Math.random()-0.5) * 300 + width/2
-  recty[i] = (Math.random()-0.5) *300 + height/2
-  currentarg[i] = Math.random() * 2 * Math.PI;
-}
 
 //Gestione interfaccia grafica
 
@@ -82,9 +77,18 @@ function go() {
 function stopAll(){clearInterval(interval); flagButton=false}
 
 function GoStop(){
-  if (flagButton==false){go()}
-  else{stopAll()}
-  changeGS()
+  if (flagButton==false && startupState == false){
+    startup();
+    changeGS();
+  }
+  else if(flagButton == false && startupState == true){
+    go()
+    changeGS()
+  }
+  else if(flagButton == true && startupState == true){
+    stopAll()
+    changeGS()
+  }
 }
 
 var gsbutton = document.getElementById("gostop");
@@ -94,6 +98,7 @@ function changeGS() {
 }
 
 ctx = c.getContext("2d");
+
 //STALLA
 widthstalla = 120
 heightstalla = 60
@@ -102,6 +107,7 @@ stalla.src = "Stalla.png";
 stalla.onload = function(){
   ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla);
 }
+
 
 //setting listener
 var con = new AudioContext();
@@ -195,6 +201,33 @@ var recoverState = new Boolean(false);
 var xCM;
 var yCM;
 
+function startup() {
+  flagButton = true
+  for(i = 0; i<numpecore; i++){
+    currentv[i] = 0.7 + 0.3*Math.random();
+    currentarg[i] = -(35/360)*2*Math.PI + (Math.PI/4)*(Math.random()/2) + Math.PI;
+    rectx[i] = width - widthRect ;
+    recty[i] = heightRect;
+  }
+  loop = setInterval(startupLoop, 1000/fps);
+}
+
+function startupLoop(){
+  massCentre();
+
+  physics();
+  render();
+  
+  if(xCM < width/2){
+    for(i = 0; i<numpecore; i++){
+      currentv[i] = slowSpeed;
+    }
+    clearInterval(loop);
+    startupState = true;
+    go();
+  }
+}
+
 function step() {
   volume = loudness();
   
@@ -278,9 +311,9 @@ function stdBehaviour() {
     }
   }
   if (playtime==framesPerNote){
-  setTimeout(function(){play(ms)},0)
-  setTimeout(function(){play(mw)},3/(10*fps)*1000*framesPerNote)
-  setTimeout(function(){play(mr)},6/(10*fps)*1000*framesPerNote)
+    setTimeout(function(){play(ms)},0)
+    setTimeout(function(){play(mw)},3/(10*fps)*1000*framesPerNote)
+    setTimeout(function(){play(mr)},6/(10*fps)*1000*framesPerNote)
 }}
 
 function chaos(){
@@ -292,7 +325,7 @@ function chaos(){
 
 function chaosVariation(){
   for(i = 0; i<numpecore; i++){
-    if(Math.random() > 0.3)
+    if(Math.random() > 0.6)
       currentarg[i] = currentarg[i] + (Math.random()-0.5)*Math.PI/2;
   }
 }
@@ -736,3 +769,7 @@ function highlight(element){
   console.log(Math.round(average));
   return Math.round(average);
 }
+
+
+
+
