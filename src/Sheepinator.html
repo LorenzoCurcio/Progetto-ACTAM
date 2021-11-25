@@ -3,49 +3,36 @@
 
 <body class = "background">
 <div class = "bar vertical">
-    <div id="gostop" onclick="GoStop()" class="coolButton pulse button"> Go </div>
-    <div class="modebutton" onclick = "Ionian();highlight(this)"><div class = "text">Ionian</div></div>
-    <div class="modebutton" onclick = "Dorian();highlight(this)" ><div class = "text">Dorian</div></div>
-    <div class="modebutton" onclick = "Phrygian();highlight(this)"><div class = "text">Phrygian</div></div>
-    <div class="modebutton" onclick = "Lydian();highlight(this)" ><div class = "text">Lydian</div></div>
-    <div class="modebutton" onclick = "Myxolydian();highlight(this)" ><div class = "text">Myxolydian</div></div>
-    <div class="modebutton" onclick = "Aeolian();highlight(this)" ><div class = "text">Aeolian</div></div>
-    <div class="modebutton" onclick = "Locrian();highlight(this)" ><div class = "text">Locrian</div></div>
-    <div>Delay Time</div>
-    <input type="range" min="0.0" max="1" step="0.1" value="0.2" onchange="tiempoDelay=parseFloat(this.value)">
-    <div>Sheeps Spread</div>
-    <input type="range" min="100" max="300" step="1" value="200" onchange="changespread(this.value)">
+    <div id="gostop" onclick="GoStop()" class="coolButton pulse button"> <div>Start </div></div>
+    <div id="home" onclick="goHome()" class="coolButton pulse button"> <div> Cage </div></div>
+
+    <div class="modebutton" onclick = "Ionian();highlightmodes(this)"><div class = "text">Ionian</div></div>
+    <div class="modebutton" onclick = "Dorian();highlightmodes(this)" ><div class = "text">Dorian</div></div>
+    <div class="modebutton" onclick = "Phrygian();highlightmodes(this)"><div class = "text">Phrygian</div></div>
+    <div class="modebutton" onclick = "Lydian();highlightmodes(this)" ><div class = "text">Lydian</div></div>
+    <div class="modebutton" onclick = "Myxolydian();highlightmodes(this)" ><div class = "text">Myxolydian</div></div>
+    <div class="modebutton" onclick = "Aeolian();highlightmodes(this)" ><div class = "text">Aeolian</div></div>
+    <div class="modebutton" onclick = "Locrian();highlightmodes(this)" ><div class = "text">Locrian</div></div>
 </div>
 
 
 
 <div class = "bar horizontal">
-    <div class="keybutton" onclick = "C()"></div>
-    <div class="keybutton" onclick = "Cs()"></div>
-    <div class="keybutton" onclick = "D()"></div>
-    <div class="keybutton" onclick = "Ds()"></div>
-    <div class="keybutton" onclick = "E()"></div>
-    <div class="keybutton" onclick = "F()"></div>
-    <div class="keybutton" onclick = "Fs()"></div>
-    <div class="keybutton" onclick = "G()"></div>
-    <div class="keybutton" onclick = "Gs()"></div>
-    <div class="keybutton" onclick = "A()"></div>
-    <div class="keybutton" onclick = "As()"></div>
-    <div class="keybutton" onclick = "B()"></div>
+    <div class="keybutton" onclick = "C();highlightnotes(this)"><div class="not_rotated " onclick = "C()">C</div></div>
+    <div class="keybutton" onclick = "Cs();highlightnotes(this)"><div class="not_rotated " onclick = "Cs()">C#</div></div>
+    <div class="keybutton" onclick = "D();highlightnotes(this)"><div class="not_rotated " onclick = "D()">D</div></div>
+    <div class="keybutton" onclick = "Ds();highlightnotes(this)"><div class="not_rotated " onclick = "Ds()">D#</div></div>
+    <div class="keybutton" onclick = "E();highlightnotes(this)"><div class="not_rotated " onclick = "E()">E</div></div>
+    <div class="keybutton" onclick = "F();highlightnotes(this)"><div class="not_rotated " onclick = "F()">F</div></div>
+    <div class="keybutton" onclick = "Fs();highlightnotes(this)"><div class="not_rotated " onclick = "Fs()">F#</div></div>
+    <div class="keybutton" onclick = "G();highlightnotes(this)"><div class="not_rotated " onclick = "G()">G</div></div>
+    <div class="keybutton" onclick = "Gs();highlightnotes(this)"><div class="not_rotated " onclick = "Gs()">G#</div></div>
+    <div class="keybutton" onclick = "A();highlightnotes(this)"><div class="not_rotated " onclick = "A()">A</div></div>
+    <div class="keybutton" onclick = "As();highlightnotes(this)"><div class="not_rotated " onclick = "As()">A#</div></div>
+    <div class="keybutton" onclick = "B();highlightnotes(this)"><div class="not_rotated " onclick = "B()">B</div></div>
 
 
-    <div class="not_rotated" onclick = "C()">C</div>
-    <div class="not_rotated" onclick = "Cs()">C#</div>
-    <div class="not_rotated" onclick = "D()">D</div>
-    <div class="not_rotated" onclick = "Ds()">D#</div>
-    <div class="not_rotated" onclick = "E()">E</div>
-    <div class="not_rotated" onclick = "F()">F</div>
-    <div class="not_rotated" onclick = "Fs()">F#</div>
-    <div class="not_rotated" onclick = "G()">G</div>
-    <div class="not_rotated" onclick = "Gs()">G#</div>
-    <div class="not_rotated" onclick = "A()">A</div>
-    <div class="not_rotated" onclick = "As()">A#</div>
-    <div class="not_rotated" onclick = "B()">B</div>
+    
 </div>
 <head>
     <canvas id="canvas"  width="500" height="500" onclick="listenerXY(event)"> </canvas>

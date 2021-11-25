@@ -1,11 +1,10 @@
 fps = 50;
-scale = 10;
+scale = 5;
 height = 500;
 width = 880;
 heightRect = 2;
 widthRect = 2;
 numpecore = 50;
-spread = 300
 rectx = Array(numpecore).fill(0);
 recty = Array(numpecore).fill(0);
 vx = Array(numpecore).fill(0);
@@ -21,7 +20,7 @@ alpha = 15;
 delta = 4;
 dr = scale*31.6;
 ds = scale*6.3;
-tau01_2 = numpecore/350;
+tau01_2 = numpecore/300;
 tau0_1 = 35;
 tau2_0 = numpecore*5
 tau1_0 = 8;
@@ -29,7 +28,7 @@ eta = 0.13;
 re = scale;
 beta = 0.8;
 flagButton = false
-rootfreq = 200
+rootfreq = 440
 scale = [0,2,3,5,7,8,10,12]
 loudThreshold = 100;
 maxChaosTime = 1*fps;
@@ -37,6 +36,7 @@ maxRecoverTime = 3*fps;
 framesPerNote = 20
 playtime = framesPerNote + 1
 var startupHappened = new Boolean(false)
+var allHome = new Boolean(true);
 
 var posX = width/2;
 var posY = height/1.5;
@@ -45,7 +45,7 @@ var posZ = 0;
 var posSourceX = width/2;
 var posSourceY = height/2;
 var posSourceZ = 0;
-
+sheperdposition = 'down'
 
 
 //Gestione interfaccia grafica
@@ -168,7 +168,10 @@ function render() {
   }
   //drawing listener
   ctx.beginPath();
-  ctx.drawImage(sheperdF,posX,posY);
+  if(listener.forwardY.value == 1 && listener.forwardX.value == 0) {ctx.drawImage(sheperdF,posX - 15,posY - 70)};
+  if(listener.forwardY.value == -1 && listener.forwardX.value == 0) {ctx.drawImage(sheperdB,posX - 15,posY - 70)};
+  if(listener.forwardY.value == 0 && listener.forwardX.value == 1) {ctx.drawImage(sheperdR,posX - 15,posY - 70)};
+  if(listener.forwardY.value == 0 && listener.forwardX.value == -1) {ctx.drawImage(sheperdL,posX - 15,posY - 70)};
   ctx.closePath();
   ctx.stroke();
 
@@ -233,7 +236,7 @@ function startupLoop(){
   physics();
   render();
   
-  if(xCM < width*7/10){
+  if(xCM < width*0.7){
     for(i = 0; i<numpecore; i++){
       currentv[i] = slowSpeed;
     }
@@ -505,15 +508,6 @@ function sumarg() {
   }
 }
 
-function changespread(spr){
-  spread=spr;
-  for (i = 0; i < numpecore; i++) {
-    rectx[i] = (Math.random()-0.5) * spread + width/2
-    recty[i] = (Math.random()-0.5) * spread + height/2
-    currentarg[i] = Math.random() * 2 * Math.PI; //angolo
-  }
-  render()
-}
 
 function massCentre(){
   for(i = 0, xCM = 0, yCM = 0; i<numpecore; i++){
@@ -732,65 +726,57 @@ function loudness(){
 
 document.onkeydown = function(event){
   if(flagButton == true){
-    if(event.key == 'w' && posY > 5){
-      posY -= 5;
+    if(event.key == 'w'){
+      if(posY>75)
+        {posY -= 5;}
       listener.forwardY.value = -1;
       listener.forwardX.value = 0;
     }
-    if(event.key == 's' && posY < height -5){
-      posY += 5;
+    if(event.key == 's'){
+      if(posY<height-5)
+        {posY += 5;}
       listener.forwardY.value = 1;
       listener.forwardX.value = 0; 
     }
-    if(event.key == 'a' && posX > 5){
-      posX -= 5;
+    if(event.key == 'a'){
+      if(posX > 15)
+        {posX -= 5;}
       listener.forwardX.value = -1;
       listener.forwardY.value = 0;
     }
-    if(event.key == 'd' && posX < width - 10){
-      posX += 5;
+    if(event.key == 'd'){
+      if(posX < width - 15)
+        {posX += 5;}
       listener.forwardX.value = 1;
       listener.forwardY.value = 0;
     }
   }
 }
 
-document.onkeydown = function(event){
-  if(flagButton == true){
-    if(event.key == 'w' && posY > 5){
-      posY -= 5;
-      listener.forwardY.value = -1;
-      listener.forwardX.value = 0;
-    }
-    else if(event.key == 's' && posY < height -5){
-      posY += 5;
-      listener.forwardY.value = 1;
-      listener.forwardX.value = 0; 
-    }
-    else if(event.key == 'a' && posX > 5){
-      posX -= 5;
-      listener.forwardX.value = -1;
-      listener.forwardY.value = 0;
-    }
-    else if(event.key == 'd' && posX < width - 10){
-      posX += 5;
-      listener.forwardX.value = 1;
-      listener.forwardY.value = 0;
-    }
-    listener.positionX.value = posX;
-    listener.positionY.value = posY;
-  }
-}
-
-
-notselected = "rgb(56, 28, 28)"
+// Bottoni Modi
+selectedmode = 'orange'
 modes = document.getElementsByClassName("modebutton")
-modes[5].style.backgroundColor = notselected;
-function highlight(element){
+modes[5].style.backgroundColor = selectedmode;
+notselectedmode = modes[1].style.backgroundColor
+function highlightmodes(element){
   for (i=0;i<modes.length;i++){
-    modes[i].style.backgroundColor = notselected;
+    modes[i].style.backgroundColor = notselectedmode;
   }
-  if (element.style.backgroundColor == notselected){element.style.backgroundColor = 'black'}
+  if (element.style.backgroundColor == notselectedmode){element.style.backgroundColor = selectedmode}
+}
+
+
+// Bottoni RootNote
+
+selectednote = 'orange'
+notes = document.getElementsByClassName("keybutton")
+notes[9].style.backgroundColor = selectednote;
+notselectednote = notes[1].style.backgroundColor
+function highlightnotes(element){
+  for(i=0;i<notes.length;i++){
+    notes[i].style.backgroundColor = notselectednote
+  }
+  if (element.style.backgroundColor == notselectednote){element.style.backgroundColor = selectednote}
 }
 
 function goHome(){
@@ -805,7 +791,6 @@ function goHome(){
 }
 
 function goHomeLoop(){
-  var allHome = new Boolean(true);
 
   physics();
   render();
