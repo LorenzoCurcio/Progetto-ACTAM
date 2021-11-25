@@ -36,7 +36,7 @@ maxChaosTime = 1*fps;
 maxRecoverTime = 3*fps;
 framesPerNote = 20
 playtime = framesPerNote + 1
-var startupState = new Boolean(false)
+var startupHappened = new Boolean(false)
 
 var posX = width/2;
 var posY = height/1.5;
@@ -51,41 +51,44 @@ var posSourceZ = 0;
 //Gestione interfaccia grafica
 
 //CAMPO
-  c = document.createElement("canvas");
-  document.body.appendChild(c);
-  c.width = width;
-  c.height = height;
-  c.setAttribute("style","background-color:green")
-  c.style.position = 'absolute'
-  c.style.left = "150px"
-  c.style.top = "76px"
+c = document.createElement("canvas");
+document.body.appendChild(c);
+c.width = width;
+c.height = height;
+c.setAttribute("style","background-color:green")
+c.style.position = 'absolute'
+c.style.left = "150px"
+c.style.top = "76px"
   
-  c2 = document.getElementById("canvas");
-  document.body.appendChild(c2);
-  c2.width = width-1;
-  c2.height = height-1;
-  c2.style = "border:5px solid #662f0f";
-  c2.style.position = 'absolute'
-  c2.style.left = "145px"
-  c2.style.top = "72px"
+c2 = document.getElementById("canvas");
+document.body.appendChild(c2);
+c2.width = width-1;
+c2.height = height-1;
+c2.style = "border:5px solid #662f0f";
+c2.style.position = 'absolute'
+c2.style.left = "145px"
+c2.style.top = "72px"
 
 function go() {
   interval = setInterval(step, 1000/fps);
   flagButton = true
 }
 
-function stopAll(){clearInterval(interval); flagButton=false}
+function stopAll(){
+  clearInterval(interval); 
+  flagButton=false
+}
 
 function GoStop(){
-  if (flagButton==false && startupState == false){
+  if (flagButton==false && startupHappened == false){
     startup();
     changeGS();
   }
-  else if(flagButton == false && startupState == true){
+  else if(flagButton == false && startupHappened == true){
     go()
     changeGS()
   }
-  else if(flagButton == true && startupState == true){
+  else if(flagButton == true && startupHappened == true){
     stopAll()
     changeGS()
   }
@@ -143,7 +146,11 @@ sheperdL.src = "PNGs/Pastore Left.png"
 sheperdR = new Image
 sheperdR.src = "PNGs/Pastore Right.png"
 
-for (i=0;i<numpecore;i++){rectx[i] = width;recty[i]=0}
+for (i=0;i<numpecore;i++){
+  rectx[i] = width;
+  recty[i]=0;
+}
+
 function render() {
   ctx.clearRect(0, 0, width, height);
   for (j = 0; j < numpecore; j++) {
@@ -157,23 +164,23 @@ function render() {
     ctx.restore();
     ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla)
     ctx.closePath()
-    ctx.stroke();}
-
-    //drawing listener
-    ctx.beginPath();
-    ctx.drawImage(sheperdF,posX,posY);
-    ctx.closePath();
     ctx.stroke();
+  }
+  //drawing listener
+  ctx.beginPath();
+  ctx.drawImage(sheperdF,posX,posY);
+  ctx.closePath();
+  ctx.stroke();
 
-    //drawing CM
-    ctx.beginPath()
-    ctx.rect(xCM,yCM,5,5)
-    ctx.strokeStyle = 'white';
-    ctx.closePath();
-    ctx.stroke();
-
+  //drawing CM
+  ctx.beginPath()
+  ctx.rect(xCM,yCM,5,5)
+  ctx.strokeStyle = 'white';
+  ctx.closePath();
+  ctx.stroke();
 }
-render();
+//Serve un timeout altrimenti js non lo fa per qualche motivo
+setTimeout(function(){render();}, 50)
 
 //Gestione del movimento
 function physics() {
@@ -231,7 +238,7 @@ function startupLoop(){
       currentv[i] = slowSpeed;
     }
     clearInterval(loop);
-    startupState = true;
+    startupHappened = true;
     go();
   }
 }
@@ -784,4 +791,35 @@ function highlight(element){
     modes[i].style.backgroundColor = notselected;
   }
   if (element.style.backgroundColor == notselected){element.style.backgroundColor = 'black'}
+}
+
+function goHome(){
+  clearInterval(interval);
+  startupHappened = false;
+  for(i = 0; i<numpecore; i++){
+    currentarg[i] = -Math.atan(recty[i]/(width-rectx[i]));
+    currentv[i] = fastSpeed;
+  }
+
+  homeloop = setInterval(goHomeLoop, 1000/fps);
+}
+
+function goHomeLoop(){
+  var allHome = new Boolean(true);
+
+  physics();
+  render();
+
+  for(i=0;i<numpecore;i++){
+    if(rectx[i]>width-20 && recty[i] < 20){
+      currentv[i] = slowSpeed;
+    }
+    else
+      allHome = false;
+  }
+  if(allHome == true){
+    clearInterval(homeloop);
+    flagButton = false;
+    changeGS();
+  }
 }
