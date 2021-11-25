@@ -33,7 +33,7 @@ scale = [0,2,3,5,7,8,10,12]
 loudThreshold = 100;
 maxChaosTime = 1*fps;
 maxRecoverTime = 3*fps;
-framesPerNote = 20
+framesPerNote = 40
 playtime = framesPerNote + 1
 var startupHappened = new Boolean(false)
 var allHome = new Boolean(true);
@@ -46,7 +46,9 @@ var posSourceX = width/2;
 var posSourceY = height/2;
 var posSourceZ = 0;
 sheperdposition = 'down'
-
+shockCountdown = Array(numpecore).fill(0);
+shocktime = 2
+var shockSFX = new Audio('Electric Shock Sound Effect.wav');
 
 //Gestione interfaccia grafica
 
@@ -157,9 +159,9 @@ function render() {
     ctx.beginPath()
     ctx.save();
     ctx.translate(rectx[j] + 10 * 1 / 2, recty[j] + 10 * 1 / 2);
-    ctx.rotate(currentarg[j]+Math.PI/2);
+    ctx.rotate(currentarg[j]+Math.PI/2)
     ctx.translate(- rectx[j] - 10 * 1 / 2, - recty[j] - 10 * 1 / 2);
-    if (currentv[j] == fastSpeed){ctx.drawImage(angrypecora, rectx[j], recty[j],10,10)}
+    if (currentv[j] == fastSpeed || shockCountdown[j] > 0){ctx.drawImage(angrypecora, rectx[j], recty[j],10,10)}
     else {ctx.drawImage(pecora, rectx[j], recty[j],10,10)}
     ctx.restore();
     ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla)
@@ -188,15 +190,40 @@ setTimeout(function(){render();}, 50)
 //Gestione del movimento
 function physics() {
   for (i = 0; i < numpecore; i++) {
-    vx[i] = currentv[i] * Math.cos(currentarg[i]);
-    vy[i] = currentv[i] * Math.sin(currentarg[i]);
-    //bouncy-sheep
-    if (rectx[i] + widthRect > width || rectx[i] <= 0) {
-      vx[i] *= -1;
+    if(shockCountdown[i]>0){
+      shockCountdown[i]--;
+      }
+    else{
+      vx[i] = currentv[i] * Math.cos(currentarg[i]);
+      vy[i] = currentv[i] * Math.sin(currentarg[i]);
     }
-    if (recty[i] + heightRect > height || recty[i] <= 0) {
-      vy[i] *= -1;
+    //shockingSheeps
+    if (rectx[i] + widthRect > width) {
+      shockCountdown[i] = fps*shocktime
+      shock(i)
+      vx[i] =-fastSpeed
+      vy[i] = 0
+      currentarg[i] = Math.PI
     }
+    if(rectx[i] <= 0){
+      shockCountdown[i] = fps*shocktime
+      shock(i)
+      vx[i] = fastSpeed
+      vy[i] = 0
+      currentarg[i] = 0}
+
+    if (recty[i] + heightRect > height) {
+      shockCountdown[i] = fps*shocktime
+      shock(i)
+      vx[i] = 0
+      vy[i] = -fastSpeed
+      currentarg[i] = -Math.PI/2}
+    if (recty[i] <= 0){
+      shockCountdown[i] = fps*shocktime
+      shock(i)
+      vx[i] = 0
+      vy[i] = fastSpeed
+      currentarg[i] = Math.PI/2}
     rectx[i] += vx[i];
     recty[i] += vy[i];
   }
@@ -296,7 +323,7 @@ function stdBehaviour() {
   for (i = 0; i < numpecore; i++) {
     alldistancesnorm(i);
     alldistances.sort();
-    
+    if (shockCountdown[i]==0){
     //inizia a correre
     if ((currentv[i] == slowSpeed || currentv[i] == mediumSpeed) && probstartrun(i) >= Math.random()){
       run(i);
@@ -326,7 +353,7 @@ function stdBehaviour() {
     } else {
       currentarg[i] = sumarg() + (Math.random() - 0.5) * 2 * Math.PI * eta;
     }
-  }
+  }}
   if (playtime==framesPerNote){
     setTimeout(function(){play(ms)},0)
     setTimeout(function(){play(mw)},3/(10*fps)*1000*framesPerNote)
@@ -807,4 +834,11 @@ function goHomeLoop(){
     flagButton = false;
     changeGS();
   }
+}
+
+function shock(i){
+  currentv[i] = fastSpeed
+  vx[i] = currentv[i]*Math.cos(currentarg[i])
+  vy[i] = currentv[i]*Math.sin(currentarg[i])
+  shockSFX.play();
 }
