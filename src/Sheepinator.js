@@ -49,6 +49,7 @@ sheperdposition = 'down'
 shockCountdown = Array(numpecore).fill(0);
 shocktime = 2
 var shockSFX = new Audio('Electric Shock Sound Effect.wav');
+var introMusic = new Audio('Epic Sheep Music.wav')
 
 //Gestione interfaccia grafica
 
@@ -84,6 +85,7 @@ function stopAll(){
 function GoStop(){
   if (flagButton==false && startupHappened == false){
     startup();
+    introMusic.play()
     changeGS();
   }
   else if(flagButton == false && startupHappened == true){
