@@ -2,8 +2,8 @@ fps = 50;
 scaleLength = 5;
 height = 500;
 width = 880;
-heightRect = 5;
-widthRect = 5;
+heightRect = 4;
+widthRect = 4;
 numpecore = 50;
 rectx = Array(numpecore).fill(0);
 recty = Array(numpecore).fill(0);
@@ -20,9 +20,9 @@ alpha = 15;
 delta = 4;
 dr = scaleLength*31.6;
 ds = scaleLength*6.3;
-tau01_2 = numpecore/400;
+tau01_2 = numpecore;
 tau0_1 = 35;
-tau2_0 = numpecore*5
+tau2_0 = numpecore
 tau1_0 = 8;
 eta = 0.13;
 re = scaleLength;
@@ -350,7 +350,7 @@ function stdBehaviour() {
       }
       if (currentv[i] == fastSpeed)
         currentarg[i] = attract_repulse(i); 
-      else{
+      if (currentv[i] == mediumSpeed){
         currentarg[i] = sumarg() + (Math.random() - 0.5) * 2 * Math.PI * eta;
       }
     }
