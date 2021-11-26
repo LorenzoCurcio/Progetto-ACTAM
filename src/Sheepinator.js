@@ -1,9 +1,9 @@
 fps = 50;
-scale = 5;
+scaleLength = 5;
 height = 500;
 width = 880;
-heightRect = 2;
-widthRect = 2;
+heightRect = 5;
+widthRect = 5;
 numpecore = 50;
 rectx = Array(numpecore).fill(0);
 recty = Array(numpecore).fill(0);
@@ -12,26 +12,26 @@ vy = Array(numpecore).fill(0);
 currentv = Array(numpecore).fill(0);
 currentarg = Array(numpecore).fill(0);
 alldistances = Array(numpecore).fill(0);
-fraction_neighbour = 1/20;
+fraction_neighbour = 1/15;
 fastSpeed = 1;
 slowSpeed = 0;
 mediumSpeed = 0.2;
 alpha = 15;
 delta = 4;
-dr = scale*31.6;
-ds = scale*6.3;
-tau01_2 = numpecore/300;
+dr = scaleLength*31.6;
+ds = scaleLength*6.3;
+tau01_2 = numpecore/400;
 tau0_1 = 35;
 tau2_0 = numpecore*5
 tau1_0 = 8;
 eta = 0.13;
-re = scale;
+re = scaleLength;
 beta = 0.8;
 flagButton = false
 rootfreq = 440
 scale = [0,2,3,5,7,8,10,12]
-loudThreshold = 100;
-maxChaosTime = 1*fps;
+loudThreshold = 120;
+maxChaosTime = 5*fps;
 maxRecoverTime = 3*fps;
 framesPerNote = 40
 playtime = framesPerNote + 1
@@ -161,7 +161,7 @@ function render() {
     ctx.translate(rectx[j] + 10 * 1 / 2, recty[j] + 10 * 1 / 2);
     ctx.rotate(currentarg[j]+Math.PI/2)
     ctx.translate(- rectx[j] - 10 * 1 / 2, - recty[j] - 10 * 1 / 2);
-    if (currentv[j] == fastSpeed || shockCountdown[j] > 0){ctx.drawImage(angrypecora, rectx[j], recty[j],10,10)}
+    if (currentv[j] >= fastSpeed/2 || shockCountdown[j] > 0){ctx.drawImage(angrypecora, rectx[j], recty[j],10,10)}
     else {ctx.drawImage(pecora, rectx[j], recty[j],10,10)}
     ctx.restore();
     ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla)
@@ -286,11 +286,13 @@ function step() {
   }
   //se sono impaurite e non devono smettere
   else if(chaosState == true){
+    chaosVariation();
     chaosTime--;
     if(chaosTime == 0){
       chaosState = false;
       recoverState = true;
       recoverTime = maxRecoverTime;
+      currentv.fill(fastSpeed)
     }
   }
   //se stanno recuperando dallo spaventoh
@@ -324,58 +326,72 @@ function stdBehaviour() {
     alldistancesnorm(i);
     alldistances.sort();
     if (shockCountdown[i]==0){
-    //inizia a correre
-    if ((currentv[i] == slowSpeed || currentv[i] == mediumSpeed) && probstartrun(i) >= Math.random()){
-      run(i);
-    }
-
-    //da lenta a media
-    else {
-      if (currentv[i] == slowSpeed && probstartwalk() >= Math.random()){
-        walk(i);
+      //inizia a correre
+      if ((currentv[i] == slowSpeed || currentv[i] == mediumSpeed) && probstartrun(i) >= Math.random()){
+        run(i);
       }
-      //da media a lenta
+      //da lenta a media
       else {
-        if (currentv[i] == mediumSpeed && probstop() >= Math.random()){
-          stop(i);
+        if (currentv[i] == slowSpeed && probstartwalk() >= Math.random()){
+          walk(i);
         }
-        //da veloce a lenta
+        //da media a lenta
         else {
-          if (currentv[i] == fastSpeed && probinchioda(i) >= Math.random()){
+          if (currentv[i] == mediumSpeed && probstop() >= Math.random()){
             stop(i);
+          }
+          //da veloce a lenta
+          else {
+            if (currentv[i] == fastSpeed && probinchioda(i) >= Math.random()){
+              stop(i);
+            }
           }
         }
       }
+      if (currentv[i] == fastSpeed)
+        currentarg[i] = attract_repulse(i); 
+      else{
+        currentarg[i] = sumarg() + (Math.random() - 0.5) * 2 * Math.PI * eta;
+      }
     }
-    if (
-      currentv[i] == fastSpeed){
-      currentarg[i] = attract_repulse(i);
-    } else {
-      currentarg[i] = sumarg() + (Math.random() - 0.5) * 2 * Math.PI * eta;
-    }
-  }}
+  }
   if (playtime==framesPerNote){
     setTimeout(function(){play(ms)},0)
     setTimeout(function(){play(mw)},3/(10*fps)*1000*framesPerNote)
     setTimeout(function(){play(mr)},6/(10*fps)*1000*framesPerNote)
-}}
+  }
+}
 
 function chaos(){
-  for(i = 0; i<numpecore; i++){
-    x_sheep_sheperd = rectx[i] - posX;
-    y_sheep_sheperd = recty[i] - posY;
+  x_chaos = xCM - posX;
+  y_chaos = yCM - posY;
 
-    if (x_sheep_sheperd > 0)
-      currentarg[i] = Math.atan(y_sheep_sheperd / x_sheep_sheperd);
-    else if (x_sheep_sheperd < 0)
-      currentarg[i] = (Math.atan(y_sheep_sheperd / x_sheep_sheperd) + Math.PI);
-    else if (x_sheep_sheperd == 0) {
-      if (y_sheep_sheperd > 0)
-        currentarg[i] = Math.PI/2
-      else
-        currentarg[i] = -Math.PI/2
+  var chaosArg;
+
+  if (x_chaos > 0){
+   chaosArg = Math.atan(y_chaos / x_chaos)
+   currentarg.fill(chaosArg);
   }
-  currentv[i] = fastSpeed;}
+  else if (x_chaos < 0){
+    chaosArg = Math.atan(y_chaos / x_chaos) + Math.PI;
+    currentarg.fill(chaosArg);
+  }
+  else if (x_chaos == 0) {
+    if (y_chaos > 0)
+    currentarg.fill(Math.PI/2);
+    else
+    currentarg.fill(-Math.PI/2);
+  }
+  for(i = 0; i<numpecore; i++){
+    currentv[i] = fastSpeed - Math.random()/3
+  }
+}
+
+function chaosVariation(){
+  for(i = 0; i<numpecore; i++){
+    if(Math.random() > 0.8)
+      currentarg[i] = currentarg[i] + (Math.random() - 0.5) * Math.PI/24
+  }
 }
 
 //Funzioni di calcolo probabilistico
@@ -663,18 +679,13 @@ function B(){rootfreq=493.88}
 
 //SOVRAPPOSIZIONE
 function distancing(){
-  count = 0;
   for(i = 0; i<numpecore-1; i++){
     for(j = i+1; j<numpecore;j++){
-      if(rectx[j] >= rectx[i] - widthRect && rectx[j] <= rectx[i] + widthRect &&
-         recty[j] >= recty[i] - heightRect && recty[j] <= recty[i] + heightRect){
-          move(i,j); 
-          count++;
+      if(Math.abs(rectx[i]-rectx[j]) <= widthRect/2 || Math.abs(recty[i] - recty[j]) <= heightRect/2){
+          move(i,j);
       }
     }
   }
-  if(count > 5)
-    expand();
 }
 
 //Muove le pecore sovrapposte
@@ -693,41 +704,11 @@ function move(staticP, currentP){
       recty[currentP] = recty[currentP] + (heightRect - deltaY);
     else if(deltaY < 0)
       recty[currentP] = recty[currentP] + deltaY;
-      
+        
     if( deltaX == 0 || deltaY == 0){
       rectx[currentP] = rectx[currentP] - vx[currentP];
       recty[currentP] = recty[currentP] - vy[currentP];
     } 
-  }
-}
-//Se ci sono troppe pecore sovrapposte le faccio espandere un po' rispetto al loro centro di massa entro un certo raggio da questo
-// Il raggio potrebbe essere da editare in caso
-function expand(){
-  outarg = Array(numpecore).fill(0);
-    for(i = 0, xCM = 0, yCM = 0; i<numpecore; i++){
-        xCM = xCM + rectx[i];
-        yCM = yCM + recty[i];
-    }
-  xCM = xCM/numpecore;
-  yCM = yCM/numpecore;
-
-  for(i = 0; i<numpecore; i++){
-      outx = rectx[i] - xCM;
-      outy = recty[i] - yCM;
-      if (outx > 0)
-        outarg[i] = Math.atan(outy / outx);
-      else if (outx < 0)
-        outarg[i] = (Math.atan(outy / outx) + Math.PI);
-      else if (outx == 0) {
-        if (outy > 0)
-          outarg[i] = Math.PI / 2;
-        else
-          outarg[i] = -Math.PI / 2;
-      }
-    }
-  for(i = 0; i<numpecore; i++){
-    rectx[i] = rectx[i] + 0.5*Math.cos(outarg[i]);
-    recty[i] = recty[i] + 0.5*Math.sin(outarg[i]);
   }
 }
 
