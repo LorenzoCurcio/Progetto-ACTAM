@@ -18,8 +18,8 @@ slowSpeed = 0;
 mediumSpeed = 0.2;
 alpha = 15;
 delta = 4;
-dr = scaleLength*31.6;
-ds = scaleLength*6.3;
+dr = scaleLength*20.6;
+ds = scaleLength*4.3;
 tau01_2 = numpecore;
 tau0_1 = 35;
 tau2_0 = numpecore
@@ -28,8 +28,8 @@ eta = 0.13;
 re = scaleLength;
 beta = 0.8;
 flagButton = false
-rootfreq = 440
-scale = [0,2,3,5,7,8,10,12]
+rootfreq = 369.99
+scale = [0,2,4,6,7,9,11,12]
 loudThreshold = 120;
 maxChaosTime = 5*fps;
 maxRecoverTime = 3*fps;
@@ -163,7 +163,7 @@ function render() {
     ctx.translate(rectx[j] + 10 * 1 / 2, recty[j] + 10 * 1 / 2);
     ctx.rotate(currentarg[j]+Math.PI/2)
     ctx.translate(- rectx[j] - 10 * 1 / 2, - recty[j] - 10 * 1 / 2);
-    if (currentv[j] >= fastSpeed/2 || shockCountdown[j] > 0){ctx.drawImage(angrypecora, rectx[j], recty[j],10,10)}
+    if (startupHappened == true && (currentv[j] >= fastSpeed/2 || shockCountdown[j] > 0)){ctx.drawImage(angrypecora, rectx[j], recty[j],10,10)}
     else {ctx.drawImage(pecora, rectx[j], recty[j],10,10)}
     ctx.restore();
     ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla)
@@ -180,11 +180,11 @@ function render() {
   ctx.stroke();
 
   //drawing CM
-  ctx.beginPath()
-  ctx.rect(xCM,yCM,5,5)
-  ctx.strokeStyle = 'white';
-  ctx.closePath();
-  ctx.stroke();
+  //ctx.beginPath()
+  //ctx.rect(xCM,yCM,5,5)
+  //ctx.strokeStyle = 'white';
+  //ctx.closePath();
+  //ctx.stroke();
 }
 //Serve un timeout altrimenti js non lo fa per qualche motivo
 setTimeout(function(){render();}, 50)
@@ -766,7 +766,7 @@ document.onkeydown = function(event){
 // Bottoni Modi
 selectedmode = 'orange'
 modes = document.getElementsByClassName("modebutton")
-modes[5].style.backgroundColor = selectedmode;
+modes[3].style.backgroundColor = selectedmode;
 notselectedmode = modes[1].style.backgroundColor
 function highlightmodes(element){
   for (i=0;i<modes.length;i++){
@@ -780,7 +780,7 @@ function highlightmodes(element){
 
 selectednote = 'orange'
 notes = document.getElementsByClassName("keybutton")
-notes[9].style.backgroundColor = selectednote;
+notes[6].style.backgroundColor = selectednote;
 notselectednote = notes[1].style.backgroundColor
 function highlightnotes(element){
   for(i=0;i<notes.length;i++){
@@ -790,15 +790,16 @@ function highlightnotes(element){
 }
 
 function goHome(){
+  if (startupHappened == true){
   clearInterval(interval);
   startupHappened = false;
   for(i = 0; i<numpecore; i++){
     currentarg[i] = -Math.atan(recty[i]/(width-rectx[i]));
     currentv[i] = fastSpeed;
   }
-
+  
   homeloop = setInterval(goHomeLoop, 1000/fps);
-}
+}}
 
 function goHomeLoop(){
 
@@ -806,16 +807,18 @@ function goHomeLoop(){
   render();
 
   for(i=0;i<numpecore;i++){
+    allHome = true
     if(rectx[i]>width-20 && recty[i] < 20){
       currentv[i] = slowSpeed;
     }
-    else
+    if(rectx[i]<=width-20 || recty[i] > 20)
       allHome = false;
   }
   if(allHome == true){
     clearInterval(homeloop);
     flagButton = false;
-    changeGS();
+    gsbutton.innerHTML = "Start"
+    clearInterval(loop);
   }
 }
 

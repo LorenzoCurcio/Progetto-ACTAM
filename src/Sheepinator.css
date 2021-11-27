@@ -1,16 +1,19 @@
 .coolButton{
-    display:inline-flex;
     width:55px;
     height:50px;
     background-color: rgb(126,120,255);
     border: solid 2px; 
     border-radius: 5px;
-    text-align:center;
-    vertical-align:middle;
     line-height: 50px;
     cursor:pointer;
+    position:relative;
+    margin-left: 5px;
+    text-align:center;
   }
   
+  .twobuttons{
+      display:inline-flex;
+  }
   .pulse:hover,
   .pulse:focus {
       animation: pulse 1s;
@@ -54,7 +57,7 @@
       transform: rotate(45deg);
       margin-left: 20px;
       cursor:pointer;
-      background-color: snow;
+      background-color: rgb(245,222,179);
   }
 .not_rotated{
     position: relative;
@@ -65,13 +68,13 @@
 }
 
 .modebutton{
-    background-color: snow;
+    background-color: rgb(245,222,179);
     width:80px;
     height:40px;
     border-radius: 30%;
     position:relative;
     border: 5px solid black;
-    margin-top: 15px;
+    margin-top: 20px;
     cursor:pointer;
     left:20px;
     top:10px;
@@ -86,5 +89,20 @@
 }
 
 .background{
-    background-color: slategrey;
+    top:10%;
+    background-color: rgb(123, 125, 128);
 }
+
+.instructions {
+    position: absolute;
+    text-align: center;
+    top:450px;
+    left:1035px;
+    font-family: "Avenir Next", sans-serif;
+    font-weight: 900;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-style: italic;
+    letter-spacing: 0.05em;
+    display: inline-block;
+  }

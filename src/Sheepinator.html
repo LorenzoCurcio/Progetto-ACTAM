@@ -3,9 +3,9 @@
 
 <body class = "background">
 <div class = "bar vertical">
-    <div id="gostop" onclick="GoStop()" class="coolButton pulse button"> <div>Start </div></div>
-    <div id="home" onclick="goHome()" class="coolButton pulse button"> <div> Cage </div></div>
-
+    <div class = "twobuttons"><div id="gostop" onclick="GoStop()" class="coolButton pulse button"> <div class = "moveright"> Start </div></div>
+         <div id="home" onclick="goHome()" class="coolButton pulse button"> <div class = "moveright"> Home </div></div>
+    </div>
     <div class="modebutton" onclick = "Ionian();highlightmodes(this)"><div class = "text">Ionian</div></div>
     <div class="modebutton" onclick = "Dorian();highlightmodes(this)" ><div class = "text">Dorian</div></div>
     <div class="modebutton" onclick = "Phrygian();highlightmodes(this)"><div class = "text">Phrygian</div></div>
@@ -34,6 +34,11 @@
 
     
 </div>
+
+<div class = "instructions">You can move the sheperd using WASD,<br>
+    Make sure you find the best position for listening to their angelic chant<br>
+Also please be silent, we don't want to scare them right?<br>
+Have fun!</div>
 <head>
     <canvas id="canvas"  width="500" height="500" onclick="listenerXY(event)"> </canvas>
 </head>
