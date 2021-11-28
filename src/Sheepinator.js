@@ -568,7 +568,7 @@ yCM = yCM/numpecore;
 var tiempoDelay = 0.2;
 
 var osc_amp = con.createGain();
-osc_amp.gain.value = 0.1;
+osc_amp.gain.value = 1;
 
 var del = con.createDelay();
 var fb = con.createGain();
@@ -805,9 +805,8 @@ function goHomeLoop(){
 
   physics();
   render();
-
+  allHome = true
   for(i=0;i<numpecore;i++){
-    allHome = true
     if(rectx[i]>width-20 && recty[i] < 20){
       currentv[i] = slowSpeed;
     }
