@@ -18,7 +18,7 @@ slowSpeed = 0;
 mediumSpeed = 0.2;
 alpha = 15;
 delta = 4;
-dr = scaleLength*20.6;
+dr = scaleLength*10.6;
 ds = scaleLength*4.3;
 tau01_2 = numpecore;
 tau0_1 = 35;
@@ -30,12 +30,13 @@ beta = 0.8;
 flagButton = false
 rootfreq = 369.99
 scale = [0,2,4,6,7,9,11,12]
-loudThreshold = 120;
-maxChaosTime = 5*fps;
+loudThreshold = 90;
+maxChaosTime = 3*fps;
 maxRecoverTime = 3*fps;
 framesPerNote = 40
+osctype = 'triangle'
 playtime = framesPerNote + 1
-var startupHappened = new Boolean(false)
+var startupHappened = new Boolean(false);
 var allHome = new Boolean(true);
 
 var posX = width/2;
@@ -50,6 +51,7 @@ shockCountdown = Array(numpecore).fill(0);
 shocktime = 2
 var shockSFX = new Audio('Electric Shock Sound Effect.wav');
 var introMusic = new Audio('Epic Sheep Music.wav')
+var ScaredSheeps = new Audio('Scared Sheeps.wav')
 
 //Gestione interfaccia grafica
 
@@ -130,7 +132,7 @@ listener.forwardY.value = 1;
 listener.forwardZ.value = 0;
 listener.upX.value = 0;
 listener.upY.value = 0;
-listener.upZ.value = -1;
+listener.upZ.value = 1;
 
 pecora = new Image;
 pecora.src = "PNGs/Pecora10x10.png";
@@ -277,13 +279,14 @@ function startupLoop(){
 
 function step() {
   volume = loudness();
-  
+  volume = volume/Math.pow((Math.pow(xCM-posX,2)+Math.pow(yCM-posY,2)),1/2)*width/3;
   if(volume < loudThreshold && chaosState == false && recoverState == false)
   stdBehaviour();
   //quando da tranquille diventano agitate
   else if (volume >= loudThreshold && chaosState == false && recoverState == false){
     chaosState = true;
-    chaosTime = maxChaosTime;
+    chaosTime = Math.floor(maxChaosTime/Math.pow((Math.pow(xCM-posX,2)+Math.pow(yCM-posY,2)),1/2)*width/20);
+    if(chaosTime>maxChaosTime*2){chaosTime = maxChaosTime*2}
     chaos();
   }
   //se sono impaurite e non devono smettere
@@ -297,7 +300,7 @@ function step() {
       currentv.fill(fastSpeed)
     }
   }
-  //se stanno recuperando dallo spaventoh
+  //se stanno recuperando dallo spavento
   else if(recoverState == true){
     stdBehaviour();
     recoverTime--;
@@ -365,6 +368,7 @@ function stdBehaviour() {
 }
 
 function chaos(){
+  ScaredSheeps.play()
   x_chaos = xCM - posX;
   y_chaos = yCM - posY;
 
@@ -574,16 +578,6 @@ var del = con.createDelay();
 var fb = con.createGain();
 fb.gain.value = 0.75;
 
-//Change listner position
-function listenerXY(event){
-  if(flagButton == true){
-    posX = event.clientX -150;
-    posY = event.clientY - 76;
-    listener.positionX.value = posX;
-    listener.positionY.value = posY;
-  }
-}
-
 //binaural panner
 
 pannerModel = 'HRTF';
@@ -632,7 +626,7 @@ function play(n) {
   nScale = scale[n]+12*octavedown;
   const now =con.currentTime;
   var osc = con.createOscillator();
-  osc.type = "triangle";
+  osc.type = osctype;
 
   oscFreq = rootfreq * Math.pow(2, nScale / 12);
   while(oscFreq > 3000){
@@ -825,5 +819,10 @@ function shock(i){
   currentv[i] = fastSpeed
   vx[i] = currentv[i]*Math.cos(currentarg[i])
   vy[i] = currentv[i]*Math.sin(currentarg[i])
-  shockSFX.play();
+  if (shockSFX.paused) {
+    shockSFX.play();
+}else{
+  shockSFX.currentTime = 0
+}
+  
 }
