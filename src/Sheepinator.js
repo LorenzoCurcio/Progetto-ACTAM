@@ -132,7 +132,7 @@ listener.forwardY.value = 1;
 listener.forwardZ.value = 0;
 listener.upX.value = 0;
 listener.upY.value = 0;
-listener.upZ.value = 1;
+listener.upZ.value = -1;
 
 pecora = new Image;
 pecora.src = "PNGs/Pecora10x10.png";
@@ -574,6 +574,14 @@ var tiempoDelay = 0.2;
 var osc_amp = con.createGain();
 osc_amp.gain.value = 1;
 
+
+//Change listner position
+function listenerXY(event){
+    listener.positionX.value = posX;
+    listener.positionY.value = posY;
+  }
+
+
 var del = con.createDelay();
 var fb = con.createGain();
 fb.gain.value = 0.75;
@@ -616,6 +624,7 @@ pannerB = new PannerNode(con, {
   coneOuterAngle: outerCone,
   coneOuterGain: outerGain
 })
+
 
 function play(n) {
   octavedown = 0
