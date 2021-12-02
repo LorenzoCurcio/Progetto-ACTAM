@@ -35,6 +35,7 @@ maxChaosTime = 3*fps;
 maxRecoverTime = 3*fps;
 framesPerNote = 40
 playtime = framesPerNote + 1
+facing = 'back'
 var startupHappened = new Boolean(false)
 var allHome = new Boolean(true);
 
@@ -126,7 +127,7 @@ listener.positionY.value = posY;
 listener.positionZ.value = posZ;
 
 listener.forwardX.value = 0;
-listener.forwardY.value = 1;
+listener.forwardY.value = -1;
 listener.forwardZ.value = 0;
 listener.upX.value = 0;
 listener.upY.value = 0;
@@ -172,10 +173,10 @@ function render() {
   }
   //drawing listener
   ctx.beginPath();
-  if(listener.forwardY.value == 1 && listener.forwardX.value == 0) {ctx.drawImage(sheperdF,posX - 15,posY - 70)};
-  if(listener.forwardY.value == -1 && listener.forwardX.value == 0) {ctx.drawImage(sheperdB,posX - 15,posY - 70)};
-  if(listener.forwardY.value == 0 && listener.forwardX.value == 1) {ctx.drawImage(sheperdR,posX - 15,posY - 70)};
-  if(listener.forwardY.value == 0 && listener.forwardX.value == -1) {ctx.drawImage(sheperdL,posX - 15,posY - 70)};
+  if(facing == 'front') {ctx.drawImage(sheperdF,posX - 15,posY - 70)};
+  if(facing == 'back') {ctx.drawImage(sheperdB,posX - 15,posY - 70)};
+  if(facing == 'right') {ctx.drawImage(sheperdR,posX - 15,posY - 70)};
+  if(facing == 'left') {ctx.drawImage(sheperdL,posX - 15,posY - 70)};
   ctx.closePath();
   ctx.stroke();
 
@@ -740,28 +741,26 @@ document.onkeydown = function(event){
     if(event.key == 'w'){
       if(posY>75)
         {posY -= 5;}
-      listener.forwardY.value = -1;
-      listener.forwardX.value = 0;
+      facing = 'back'
     }
     if(event.key == 's'){
       if(posY<height-5)
         {posY += 5;}
-      listener.forwardY.value = 1;
-      listener.forwardX.value = 0; 
+      facing = 'front' 
     }
     if(event.key == 'a'){
       if(posX > 15)
         {posX -= 5;}
-      listener.forwardX.value = -1;
-      listener.forwardY.value = 0;
+      facing = 'left'
     }
     if(event.key == 'd'){
       if(posX < width - 15)
         {posX += 5;}
-      listener.forwardX.value = 1;
-      listener.forwardY.value = 0;
+      facing = 'right'
     }
   }
+  listener.positionX.value = posX
+  listener.positionY.value = posY
 }
 
 // Bottoni Modi
