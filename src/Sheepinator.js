@@ -51,6 +51,7 @@ shockCountdown = Array(numpecore).fill(0);
 shocktime = 2
 var shockSFX = new Audio('Electric Shock Sound Effect.wav');
 var introMusic = new Audio('Epic Sheep Music.wav')
+var outroMusic = new Audio('Epic Outro.wav')
 
 //Gestione interfaccia grafica
 
@@ -284,7 +285,7 @@ function step() {
   //quando da tranquille diventano agitate
   else if (volume >= loudThreshold && chaosState == false && recoverState == false){
     chaosState = true;
-    chaosTime = maxChaosTime/(Math.pow((Math.pow(xCM-posX,2)+Math.pow(yCM-posY,2))),1/2)*width/20;
+    chaosTime = Math.floor(maxChaosTime/Math.pow(((Math.pow(xCM-posX,2)+Math.pow(yCM-posY,2))),1/2)*width/20);
     if(chaosTime > maxChaosTime*2){chaosTime = maxChaosTime*2}
     chaos();
   }
@@ -632,6 +633,7 @@ function play(n) {
     n = n - 8*octavedown
   }
   nScale = scale[n]+12*octavedown;
+  if (nScale == 0){nScale = nScale +12* Math.floor(Math.random()*3);}
   const now =con.currentTime;
   var osc = con.createOscillator();
   osc.type = "triangle";
@@ -790,6 +792,7 @@ function highlightnotes(element){
 }
 
 function goHome(){
+  outroMusic.play()
   if (startupHappened == true){
   clearInterval(interval);
   startupHappened = false;
