@@ -2,6 +2,8 @@ fps = 50;
 scaleLength = 5;
 height = 500;
 width = 880;
+foodzoneWidth = 100
+foodzoneHeight = 100
 heightRect = 4;
 widthRect = 4;
 numpecore = 50;
@@ -20,7 +22,7 @@ alpha = 15;
 delta = 4;
 dr = scaleLength*10.6;
 ds = scaleLength*4.3;
-tau01_2 = numpecore;
+tau01_2 = numpecore*1.5;
 tau0_1 = 35;
 tau2_0 = numpecore
 tau1_0 = 8;
@@ -32,7 +34,7 @@ rootfreq = 369.99
 scale = [0,2,4,6,7,9,11,12]
 loudThreshold = 90;
 maxChaosTime = 3*fps;
-maxRecoverTime = 3*fps;
+maxRecoverTime = 1*fps;
 framesPerNote = 40
 playtime = framesPerNote + 1
 facing = 'back'
@@ -52,7 +54,9 @@ shocktime = 2
 var shockSFX = new Audio('Electric Shock Sound Effect.wav');
 var introMusic = new Audio('Epic Sheep Music.wav')
 var outroMusic = new Audio('Epic Outro.wav')
-
+var Scared = new Audio('Scared Sheeps.wav')
+var eat = new Audio('Eat.wav')
+gamemode = false
 //Gestione interfaccia grafica
 
 //CAMPO
@@ -277,7 +281,11 @@ function startupLoop(){
   }
 }
 
+
 function step() {
+
+
+  //scared
   volume = loudness();
   volume = volume/(Math.pow((Math.pow(xCM-posX,2)+Math.pow(yCM-posY,2)),1/2))*width/3
   if(volume < loudThreshold && chaosState == false && recoverState == false)
@@ -318,6 +326,10 @@ function step() {
   if(chaosState == 0)
     distancing();
   render();
+
+  //food
+  if (gamemode){
+  if (checkSheepFood()) {clearfood();foodzone();eat.play()};}
 }
 
 function stdBehaviour() {
@@ -368,6 +380,7 @@ function stdBehaviour() {
 }
 
 function chaos(){
+  Scared.play()
   x_chaos = xCM - posX;
   y_chaos = yCM - posY;
 
@@ -569,23 +582,11 @@ yCM = yCM/numpecore;
 //Cose suoni
 
 var tiempoDelay = 0.2;
-
 var osc_amp = con.createGain();
 osc_amp.gain.value = 1;
-
 var del = con.createDelay();
 var fb = con.createGain();
 fb.gain.value = 0.75;
-
-//Change listner position
-function listenerXY(event){
-  if(flagButton == true){
-    posX = event.clientX -150;
-    posY = event.clientY - 76;
-    listener.positionX.value = posX;
-    listener.positionY.value = posY;
-  }
-}
 
 //binaural panner
 
@@ -625,6 +626,16 @@ pannerB = new PannerNode(con, {
   coneOuterAngle: outerCone,
   coneOuterGain: outerGain
 })
+
+//Change listener position
+function listenerXY(event){
+  if(flagButton == true){
+    posX = event.clientX -150;
+    posY = event.clientY - 76;
+    listener.positionX.value = posX;
+    listener.positionY.value = posY;
+  }
+}
 
 function play(n) {
   octavedown = 0
@@ -792,8 +803,8 @@ function highlightnotes(element){
 }
 
 function goHome(){
-  outroMusic.play()
   if (startupHappened == true){
+  outroMusic.play()
   clearInterval(interval);
   startupHappened = false;
   for(i = 0; i<numpecore; i++){
@@ -832,3 +843,43 @@ function shock(i){
   shockSFX.play();}
   else{shockSFX.currentTime = 0}
 }
+
+
+
+// CIBO
+
+function gamemodeswitch(){if(gamemode){gamemode=false;cf.clearRect(0,0,width,height)}
+else{gamemode=true;
+  //food_first
+  safetyDistance = 300
+  foodzone();
+  safetyDistance = 0}}
+
+canvasFood = document.createElement("canvas");
+document.body.appendChild(canvasFood);
+canvasFood.width = width;
+canvasFood.height = height;
+canvasFood.style.position = 'absolute'
+canvasFood.style.left = "150px"
+canvasFood.style.top = "76px"
+cf = canvasFood.getContext("2d");
+
+function foodzone() {
+  xfood = Math.random()*(width-foodzoneWidth- safetyDistance)
+  yfood = Math.random()*(height-foodzoneHeight)
+  cf.beginPath()  
+  cf.rect(xfood,yfood,foodzoneWidth,foodzoneHeight);
+  cf.fillStyle = 'lightgreen';
+  cf.closePath()
+  cf.fill();
+}
+
+
+function clearfood(){
+  cf.clearRect(0,0,width,height)
+}
+
+function checkSheepFood(){
+  for (i=0;i<numpecore;i++)
+  {if (rectx[i] < xfood + foodzoneWidth && rectx[i] > xfood && recty[i] < yfood + foodzoneHeight && recty[i] > yfood){return true}}
+return false}

@@ -35,10 +35,18 @@
     
 </div>
 
-<div class = "instructions">You can move the sheperd using WASD,
+<div class = "gamebutton pulse button" onclick="gamemodeswitch()"> <div class = "text">Challenge Mode</div> </div>
+
+<div class = "instructions">
+    You can move the sheperd using WASD,
     Make sure you find the best position for listening to the angelic chant of the sheeps.<br>
-Also please be silent, we don't want to scare them right?<br>
-Have fun!</div>
+    Also please be silent, we don't want to scare them right?<br>
+    Have fun!</div>
+    <div class="challenge">
+    In "Challenge Mode" the sheeps must eat enough healthy grass in the field before the wolf comes.<br>
+    Each time they eat, the mode in which they sing is switched to a happier one, you can move the sheeps by scaring them.<br>
+    When they're full, click the Home button and they'll be back in a safe place.<br> 
+    </div>
 <head>
     <canvas id="canvas"  width="500" height="500" onclick="listenerXY(event)"> </canvas>
 </head>
