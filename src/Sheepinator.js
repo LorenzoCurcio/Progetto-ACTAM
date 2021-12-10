@@ -554,9 +554,10 @@ function sumarg() {
   sumcos = 0;
   sumsin = 0;
   for (k = 0; k < numpecore; k++) {
+    if  (alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]){
     sumcos = sumcos + Math.cos(currentarg[k]);
     sumsin = sumsin + Math.sin(currentarg[k]);
-  }
+  }}
   if (sumcos > 0)
     return Math.atan(sumsin / sumcos);
   else if (sumcos < 0)
@@ -639,6 +640,7 @@ function listenerXY(event){
 
 function play(n) {
   octavedown = 0
+  if(n==0){fb.gain.value=0.25}
   if (n>=8){
     octavedown = Math.floor(n/8);
     n = n - 8*octavedown
@@ -667,6 +669,8 @@ function play(n) {
   //osc_amp.connect(con.destination)
    osc.start();
    osc.stop(now+0.1) ;
+
+   fb.gain.value=0.75
 }
 
 //Modes
