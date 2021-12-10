@@ -774,6 +774,7 @@ document.onkeydown = function(event){
   }
   listener.positionX.value = posX
   listener.positionY.value = posY
+  
 }
 
 // Bottoni Modi
@@ -853,17 +854,84 @@ else{gamemode=true;
   //food_first
   safetyDistance = 300
   foodzone();
-  safetyDistance = 0}}
+  safetyDistance = 0
 
-canvasFood = document.createElement("canvas");
-document.body.appendChild(canvasFood);
-canvasFood.width = width;
-canvasFood.height = height;
-canvasFood.style.position = 'absolute'
-canvasFood.style.left = "150px"
-canvasFood.style.top = "76px"
-cf = canvasFood.getContext("2d");
+  var secondsScreen = 30;
+  var minutesScreen = 2;
 
+  var wolfSound = new Audio ('howl.mp3');
+  const wolfTrack = con.createMediaElementSource(wolfSound);
+
+  radioWolf = 500;
+
+  const pannerWolf = new PannerNode(con, {
+	  panningModel: pannerModel,
+	  distanceModel: distanceModel,
+	  positionX: posX,
+	  positionY: posY,
+	  positionZ: positionZ,
+	  orientationX: orientationX,
+	  orientationY: orientationY,
+	  orientationZ: orientationZ,
+	  refDistance: refDistance,
+	  maxDistance: maxDistance,
+	  rolloffFactor: rollOff,
+	  coneInnerAngle: innerCone,
+	  coneOuterAngle: outerCone,
+	  coneOuterGain: outerGain
+  })
+
+  wolfTrack.connect(pannerWolf).connect(con.destination)
+  wolf_amp = con.createGain()
+
+  function updateCounter(){
+ 
+    angleWolf = Math.random()*10;
+    secondsScreen = secondsScreen - 1;
+
+    var rotationX = posX + radioWolf * Math.cos(angleWolf); 
+    var rotationY = posY + radioWolf * Math.sin(angleWolf);
+    angleWolf = (angleWolf + Math.PI / 360) % (Math.PI * 2);
+
+    if (secondsScreen <0){
+      minutesScreen = minutesScreen - 1;
+      secondsScreen = 59;
+    }
+
+    if (secondsScreen==25 || secondsScreen == 0 ){
+
+      pannerWolf.positionX.value = rotationX;
+	    pannerWolf.positionY.value = rotationY;
+
+      wolfSound.play()
+      console.log(angleWolf)
+
+
+    }
+
+    document.getElementById("countdown").innerHTML = String(minutesScreen).padStart(2,'0') + ":" + String(secondsScreen).padStart(2, '0')
+
+  if (secondsScreen == 0 && minutesScreen == 0){
+    console.log("your sheeps are dead!")
+    clearInterval(countdown)
+  }
+  //console.log(angleWolf)
+  }
+
+  countdown = setInterval(updateCounter,1000);
+
+}}
+
+  canvasFood = document.createElement("canvas");
+  document.body.appendChild(canvasFood);
+  canvasFood.width = width;
+  canvasFood.height = height;
+  canvasFood.style.position = 'absolute'
+  canvasFood.style.left = "150px"
+  canvasFood.style.top = "76px"
+  cf = canvasFood.getContext("2d");
+
+  
 function foodzone() {
   xfood = Math.random()*(width-foodzoneWidth- safetyDistance)
   yfood = Math.random()*(height-foodzoneHeight)
