@@ -137,3 +137,6 @@
     letter-spacing: 0.05em;
     display: inline-block;
   }
+  .red{
+      background-color: red;
+  }

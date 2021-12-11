@@ -56,7 +56,10 @@ var introMusic = new Audio('Epic Sheep Music.wav')
 var outroMusic = new Audio('Epic Outro.wav')
 var Scared = new Audio('Scared Sheeps.wav')
 var eat = new Audio('Eat.wav')
+var loseMusic = new Audio('You Lost.wav')
 gamemode = false
+score=0
+hungry = false
 //Gestione interfaccia grafica
 
 //CAMPO
@@ -329,9 +332,22 @@ function step() {
 
   //food
   if (gamemode){
-  if (checkSheepFood()) {clearfood();foodzone();eat.play()};}
-}
+  if (checkSheepFood()) {
+    clearfood();
+    foodzone();
+    eat.play();
+    score+=1;
+    scale = scales[6-score];
+    highlightmodes(modes[6-score])
 
+    //win
+    if (score==6){
+      win()}};
+      if (secondsScreen == 0 && minutesScreen == 0){
+        lose();
+        clearInterval(countdown);}
+    }
+  }
 function stdBehaviour() {
   ms = 0;
   mr = 0;
@@ -674,13 +690,15 @@ function play(n) {
 }
 
 //Modes
-function Ionian(){scale = [0,2,4,5,7,9,11,12]}
-function Dorian(){scale = [0,2,3,5,7,9,11,12]}
-function Phrygian(){scale = [0,1,3,5,7,8,10,12]}
-function Lydian(){scale = [0,2,4,6,7,9,11,12]}
-function Myxolydian(){scale = [0,2,4,5,7,9,10,12]}
-function Aeolian(){scale = [0,2,3,5,7,8,10,12]}
-function Locrian(){scale = [0,1,3,5,6,8,10,12]}
+scales = [[0,2,4,6,7,9,11,12],[0,2,4,5,7,9,11,12],[0,2,4,5,7,9,10,12],[0,2,3,5,7,9,11,12],[0,2,3,5,7,8,10,12],[0,1,3,5,7,8,10,12],[0,1,3,5,6,8,10,12]]
+
+function Lydian(){scale = scales[0]}
+function Ionian(){scale = scales[1]}
+function Myxolydian(){scale = scales[2]}
+function Dorian(){scale = scales[3]}
+function Aeolian(){scale = scale = scales[4]}
+function Phrygian(){scale = scale = scales[5]}
+function Locrian(){scale = scale = scales[6]}
 
 //Notes
 function C(){rootfreq=261.63}
@@ -784,7 +802,7 @@ document.onkeydown = function(event){
 // Bottoni Modi
 selectedmode = 'orange'
 modes = document.getElementsByClassName("modebutton")
-modes[3].style.backgroundColor = selectedmode;
+modes[0].style.backgroundColor = selectedmode;
 notselectedmode = modes[1].style.backgroundColor
 function highlightmodes(element){
   for (i=0;i<modes.length;i++){
@@ -808,16 +826,19 @@ function highlightnotes(element){
 }
 
 function goHome(){
-  if (startupHappened == true){
+  if (startupHappened == true && hungry==false){
   outroMusic.play()
   clearInterval(interval);
+  homeloop = setInterval(goHomeLoop, 1000/fps);
   startupHappened = false;
   for(i = 0; i<numpecore; i++){
     currentarg[i] = -Math.atan(recty[i]/(width-rectx[i]));
     currentv[i] = fastSpeed;
   }
-  
-  homeloop = setInterval(goHomeLoop, 1000/fps);
+  //SafeSheeps
+  if(gamemode){clearInterval(winkButton);homeButton.classList.remove("red")}
+  clearInterval(countdown);
+  document.getElementById("countdown").innerHTML=""
 }}
 
 function goHomeLoop(){
@@ -853,15 +874,24 @@ function shock(i){
 
 // CIBO
 
-function gamemodeswitch(){if(gamemode){gamemode=false;cf.clearRect(0,0,width,height)}
-else{gamemode=true;
+function gamemodeswitch(){if(gamemode){gamemode=false;
+  cf.clearRect(0,0,width,height);
+  document.getElementById("gameButton").innerHTML = "Challenge Mode";
+  hungry = false
+  clearInterval(countdown)
+  document.getElementById("countdown").innerHTML = ""
+}
+else{gamemode=true; document.getElementById("gameButton").innerHTML = "Normal Mode";
   //food_first
   safetyDistance = 300
   foodzone();
   safetyDistance = 0
+  scale = scales[6];
+  highlightmodes(modes[6]);
+  hungry = true
 
-  var secondsScreen = 30;
-  var minutesScreen = 2;
+  secondsScreen = 30;
+  minutesScreen = 2;
 
   var wolfSound = new Audio ('howl.mp3');
   const wolfTrack = con.createMediaElementSource(wolfSound);
@@ -908,23 +938,17 @@ else{gamemode=true;
 	    pannerWolf.positionY.value = rotationY;
 
       wolfSound.play()
-      console.log(angleWolf)
 
 
     }
 
     document.getElementById("countdown").innerHTML = String(minutesScreen).padStart(2,'0') + ":" + String(secondsScreen).padStart(2, '0')
-
-  if (secondsScreen == 0 && minutesScreen == 0){
-    console.log("your sheeps are dead!")
-    clearInterval(countdown)
   }
   //console.log(angleWolf)
   }
 
-  countdown = setInterval(updateCounter,1000);
-
-}}
+  countdown = setInterval(updateCounter,1000);}
+  
 
   canvasFood = document.createElement("canvas");
   document.body.appendChild(canvasFood);
@@ -942,7 +966,7 @@ function foodzone() {
   cf.beginPath()  
   cf.rect(xfood,yfood,foodzoneWidth,foodzoneHeight);
   cf.fillStyle = 'lightgreen';
-  cf.closePath()
+  cf.closePath();
   cf.fill();
 }
 
@@ -955,3 +979,33 @@ function checkSheepFood(){
   for (i=0;i<numpecore;i++)
   {if (rectx[i] < xfood + foodzoneWidth && rectx[i] > xfood && recty[i] < yfood + foodzoneHeight && recty[i] > yfood){return true}}
 return false}
+
+homeButton = document.getElementById("home")
+function shinyButton(){
+  homeButton.classList.toggle("red");
+}
+
+function win() {
+winkButton = setInterval(function(){shinyButton()},250);
+hungry = false; 
+clearfood();
+xfood = null; yfood= null
+gamemode = false
+}
+
+function lose() {
+  ctx.clearRect(0, 0, width, height)
+  stopAll();
+  loseMusic.play();
+  allHome=true
+  startupHappened = false;
+  hungry=false
+  changeGS();
+  clearfood();
+  xfood = null; yfood= null
+  document.getElementById("countdown").innerHTML = ""
+  gsbutton.innerHTML = "Start"
+  for (i=0;i<numpecore;i++){rectx[i] = width - widthRect ;
+    recty[i] = heightRect;}
+    gamemode = false
+}
