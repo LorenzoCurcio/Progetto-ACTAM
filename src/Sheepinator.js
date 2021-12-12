@@ -68,7 +68,6 @@ c = document.createElement("canvas");
 document.body.appendChild(c);
 c.width = width;
 c.height = height;
-//c.setAttribute("style","background-color:green")
 c.style.position = 'absolute'
 c.style.left = "150px"
 c.style.top = "76px"
@@ -555,13 +554,13 @@ function attract_repulse(i) {
       sumsin = sumsin + beta * alldistances[k] * Math.sin(allunitdirectional(i, k));
     }
   }
-  //Caso standard: 1 e 4 quadrante, l'arcotangente ancora va come Dio comanda
+  //Caso standard: 1 e 4 quadrante, l'arcotangente funziona
   if (sumcos > 0)
     return Math.atan(sumsin / sumcos);
-  //Caso meno particolare: 2 e 3 quadrante, l'arcotangente inizia a fare schifo
+  //Caso meno particolare: 2 e 3 quadrante, l'arcotangente inizia a non funzionare
   else if (sumcos < 0)
     return (Math.atan(sumsin / sumcos) + Math.PI);
-  //Caso particolare se X = 0 perchè la trigonometria è bella
+  //Caso particolare se X = 0
   else if (sumcos == 0) {
     if (sumsin > 0)
       return Math.PI / 2;
@@ -868,7 +867,7 @@ function goHome(){
     currentv[i] = fastSpeed;
   }
   //SafeSheeps
-  if(gamemode){clearInterval(winkButton);homeButton.classList.remove("red")}
+  if(gamemode){clearInterval(winkButton);homeButton.classList.remove("red");gamemode = false}
   clearInterval(countdown);
   document.getElementById("countdown").innerHTML=""
 }}
@@ -1020,13 +1019,14 @@ winkButton = setInterval(function(){shinyButton()},250);
 hungry = false; 
 clearfood();
 xfood = null; yfood= null
-gamemode = false
 }
 
 function lose() {
   ctx.clearRect(0, 0, width, height)
   stopAll();
   loseMusic.play();
+  clearInterval(winkButton)
+  homeButton.classList.remove("red")
   allHome=true
   startupHappened = false;
   hungry=false
