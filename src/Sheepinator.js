@@ -64,14 +64,15 @@ hungry = false
 
 //CAMPO
 c = document.createElement("canvas");
+
 document.body.appendChild(c);
 c.width = width;
 c.height = height;
-c.setAttribute("style","background-color:green")
+//c.setAttribute("style","background-color:green")
 c.style.position = 'absolute'
 c.style.left = "150px"
 c.style.top = "76px"
-  
+/*
 c2 = document.getElementById("canvas");
 document.body.appendChild(c2);
 c2.width = width-1;
@@ -80,6 +81,7 @@ c2.style = "border:5px solid #662f0f";
 c2.style.position = 'absolute'
 c2.style.left = "145px"
 c2.style.top = "72px"
+*/
 
 function go() {
   interval = setInterval(step, 1000/fps);
@@ -116,13 +118,34 @@ function changeGS() {
 ctx = c.getContext("2d");
 
 //STALLA
-widthstalla = 120
-heightstalla = 60
+widthstalla = 80
+heightstalla = 100
 stalla = new Image;
-stalla.src = "Stalla.png";
+stalla.src = "Casetta.png";
 stalla.onload = function(){
   ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla);
 }
+
+//PATCH D'ERBA
+widtherba = 100
+heighterba = 100
+erba = new Image;
+erba.src = "Grass Patch.png";
+erba.onload = function(){
+  ctx.drawImage(erba, width-widtherba, 0,widtherba,heighterba);
+}
+
+//Campo d'erba
+campo = new Image;
+campo.src = "Field.png";
+campo.onload = function(){
+  ctx.drawImage(campo,0,0,width,height);
+}
+/*
+ctx.beginPath()  
+ctx.drawImage(campo,0,0,width,height)
+ctx.closePath();
+ctx.stroke();*/
 
 
 //setting listener
@@ -166,6 +189,12 @@ for (i=0;i<numpecore;i++){
 
 function render() {
   ctx.clearRect(0, 0, width, height);
+  ctx.beginPath();
+  ctx.drawImage(campo, 0, 0,width,height)
+  ctx.closePath()
+  ctx.stroke();
+  ctx.restore();
+
   for (j = 0; j < numpecore; j++) {
     ctx.beginPath()
     ctx.save();
@@ -175,10 +204,13 @@ function render() {
     if (startupHappened == true && (currentv[j] >= fastSpeed/2 || shockCountdown[j] > 0)){ctx.drawImage(angrypecora, rectx[j], recty[j],10,10)}
     else {ctx.drawImage(pecora, rectx[j], recty[j],10,10)}
     ctx.restore();
-    ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla)
-    ctx.closePath()
-    ctx.stroke();
   }
+  ctx.beginPath();
+  ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla)
+  ctx.closePath()
+  ctx.stroke();
+  ctx.restore();
+  
   //drawing listener
   ctx.beginPath();
   if(facing == 'front') {ctx.drawImage(sheperdF,posX - 15,posY - 70)};
@@ -964,10 +996,8 @@ function foodzone() {
   xfood = Math.random()*(width-foodzoneWidth- safetyDistance)
   yfood = Math.random()*(height-foodzoneHeight)
   cf.beginPath()  
-  cf.rect(xfood,yfood,foodzoneWidth,foodzoneHeight);
-  cf.fillStyle = 'lightgreen';
+  cf.drawImage(erba,xfood,yfood)
   cf.closePath();
-  cf.fill();
 }
 
 
