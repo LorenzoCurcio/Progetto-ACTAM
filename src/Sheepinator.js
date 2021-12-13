@@ -22,7 +22,7 @@ alpha = 15;
 delta = 4;
 dr = scaleLength*10.6;
 ds = scaleLength*4.3;
-tau01_2 = numpecore*1.5;
+tau01_2 = 75;
 tau0_1 = 35;
 tau2_0 = numpecore
 tau1_0 = 8;
@@ -35,8 +35,10 @@ scale = [0,2,4,6,7,9,11,12]
 loudThreshold = 90;
 maxChaosTime = 3*fps;
 maxRecoverTime = 1*fps;
-framesPerNote = 40
-playtime = framesPerNote + 1
+NotesPerSecond = 5
+framesPerNote = Math.floor(fps/NotesPerSecond)
+framesPerTriplet = framesPerNote*3
+playtime = framesPerTriplet + 1
 facing = 'back'
 var startupHappened = new Boolean(false)
 var allHome = new Boolean(true);
@@ -61,6 +63,7 @@ gamemode = false
 score=0
 hungry = false
 winkButtonBoolean = false;
+wave = "sine"
 
 //Gestione interfaccia grafica
 
@@ -123,9 +126,10 @@ widthstalla = 80
 heightstalla = 100
 stalla = new Image;
 stalla.src = "Casetta.png";
-stalla.onload = function(){
+function casetta(){
   ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla);
 }
+casetta()
 
 //PATCH D'ERBA
 widtherba = 100
@@ -184,8 +188,8 @@ sheperdR = new Image
 sheperdR.src = "PNGs/Pastore Right.png"
 
 for (i=0;i<numpecore;i++){
-  rectx[i] = 70;
-  recty[i]=50;
+  rectx[i] = width-70;
+  recty[i] = 50;
 }
 
 function render() {
@@ -212,6 +216,7 @@ function render() {
     else {ctx.drawImage(pecora, rectx[j], recty[j],10,10)}
     ctx.restore();
   }
+
   ctx.beginPath();
   ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla)
   ctx.closePath()
@@ -226,16 +231,9 @@ function render() {
   if(facing == 'left') {ctx.drawImage(sheperdL,posX - 15,posY - 70)};
   ctx.closePath();
   ctx.stroke();
-
-  //drawing CM
-  //ctx.beginPath()
-  //ctx.rect(xCM,yCM,5,5)
-  //ctx.strokeStyle = 'white';
-  //ctx.closePath();
-  //ctx.stroke();
 }
-//Serve un timeout altrimenti js non lo fa per qualche motivo
-setTimeout(function(){render();}, 50)
+
+render();
 
 //Gestione del movimento
 function physics() {
@@ -392,7 +390,7 @@ function stdBehaviour() {
   mr = 0;
   mw = 0;
   playtime--
-  if (playtime==0){playtime=framesPerNote}
+  if (playtime==0){playtime=framesPerTriplet}
   //velocità attuale
   for (i = 0; i < numpecore; i++) {
     alldistancesnorm(i);
@@ -427,10 +425,10 @@ function stdBehaviour() {
       }
     }
   }
-  if (playtime==framesPerNote){
+  if (playtime==framesPerTriplet){
     setTimeout(function(){play(ms)},0)
-    setTimeout(function(){play(mw)},3/(10*fps)*1000*framesPerNote)
-    setTimeout(function(){play(mr)},6/(10*fps)*1000*framesPerNote)
+    setTimeout(function(){play(mw)},3/(10*fps)*1000*framesPerTriplet)
+    setTimeout(function(){play(mr)},6/(10*fps)*1000*framesPerTriplet)
   }
 }
 
@@ -683,28 +681,22 @@ pannerB = new PannerNode(con, {
   coneOuterGain: outerGain
 })
 
-//Change listener position
-function listenerXY(event){
-  if(flagButton == true){
-    posX = event.clientX -150;
-    posY = event.clientY - 76;
-    listener.positionX.value = posX;
-    listener.positionY.value = posY;
-  }
-}
+
 
 function play(n) {
   octavedown = 0
+  if(modes[7].style.backgroundColor == selectedmode || modes[8].style.backgroundColor == selectedmode){limit = 2}
+  else{limit = 7}
   if(n==0){fb.gain.value=0.25}
-  if (n>=8){
-    octavedown = Math.floor(n/8);
-    n = n - 8*octavedown
+  if (n>=limit){
+    octavedown = Math.floor(n/limit);
+    n = n - limit*octavedown
   }
   nScale = scale[n]+12*octavedown;
   if (nScale == 0){nScale = nScale +12* Math.floor(Math.random()*3);}
   const now =con.currentTime;
   var osc = con.createOscillator();
-  osc.type = "triangle";
+  osc.type = wave;
 
   oscFreq = rootfreq * Math.pow(2, nScale / 12);
   while(oscFreq > 3000){
@@ -729,15 +721,17 @@ function play(n) {
 }
 
 //Modes
-scales = [[0,2,4,6,7,9,11,12],[0,2,4,5,7,9,11,12],[0,2,4,5,7,9,10,12],[0,2,3,5,7,9,11,12],[0,2,3,5,7,8,10,12],[0,1,3,5,7,8,10,12],[0,1,3,5,6,8,10,12]]
+scales = [[0,2,4,6,7,9,11,12],[0,2,4,5,7,9,11,12],[0,2,4,5,7,9,10,12],[0,2,3,5,7,9,11,12],[0,2,3,5,7,8,10,12],[0,1,3,5,7,8,10,12],[0,1,3,5,6,8,10,12],[0,4,7],[0,3,7]]
 
 function Lydian(){scale = scales[0]}
 function Ionian(){scale = scales[1]}
 function Myxolydian(){scale = scales[2]}
 function Dorian(){scale = scales[3]}
-function Aeolian(){scale = scale = scales[4]}
-function Phrygian(){scale = scale = scales[5]}
-function Locrian(){scale = scale = scales[6]}
+function Aeolian(){scale = scales[4]}
+function Phrygian(){scale = scales[5]}
+function Locrian(){scale = scales[6]}
+function MajArp(){scale = scales[7]}
+function MinArp(){scale = scales[8]}
 
 //Notes
 function C(){rootfreq=261.63}
@@ -939,7 +933,9 @@ function gamemodeswitch(){
   if(gamemode){
     gamemode=false;
     ctx.clearRect(xfood,yfood,foodzoneWidth,foodzoneHeight);
-
+    if(winkButtonBoolean){
+      clearInterval(winkButton)
+      winkButtonBoolean = false}
     document.getElementById("gameButton").innerHTML = "Challenge Mode";
     hungry = false
     clearInterval(countdown)
@@ -1041,16 +1037,18 @@ function shinyButton(){
 
 function win() {
   winkButton = setInterval(function(){shinyButton()},250);
+  winkButtonBoolean = true
   hungry = false; 
-  xfood = null; yfood= null
+  xfood = 30000; yfood= 30000
 }
 
 function lose() {
   stopAll();
   loseMusic.play();
   clearInterval(countdown)
-  if(winkButtonBoolean)
+  if(winkButtonBoolean){
     clearInterval(winkButton)
+    winkButtonBoolean = false}
   homeButton.classList.remove("red")
   allHome=true
   startupHappened = false;
@@ -1060,9 +1058,31 @@ function lose() {
   document.getElementById("countdown").innerHTML = ""
   gsbutton.innerHTML = "Start"
   for (i=0;i<numpecore;i++){
-    rectx[i] = 70 ;
+    rectx[i] = width-70 ;
     recty[i] = 50;
   }
-  gamemode = false
+  gamemodeswitch()
   render()
+  
 }
+
+function changewave(element){
+  var text = element.options[element.selectedIndex].value;
+  wave = text
+}
+
+function changenotesPerSecond(element) {
+  NotesPerSecond = element.value;
+  framesPerNote = Math.floor(fps/NotesPerSecond)
+  framesPerTriplet = framesPerNote*3
+  playtime = framesPerTriplet + 1
+}
+
+function changeEta(element) {
+  eta = element.value;
+}
+
+function changetau012(element) {
+  tau01_2 = element.value;
+}
+

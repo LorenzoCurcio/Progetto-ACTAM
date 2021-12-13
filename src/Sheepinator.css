@@ -74,7 +74,7 @@
     border-radius: 30%;
     position:relative;
     border: 5px solid black;
-    margin-top: 20px;
+    margin-top: 5px;
     cursor:pointer;
     left:20px;
     top:10px;
@@ -107,7 +107,7 @@
     display: inline-block;
   }
 
-  .gamebutton{
+.gamebutton{
     width:200px;
     height:100px;
     background-color: rgb(253, 0, 0);
@@ -124,7 +124,7 @@
     vertical-align: middle;
   }
 
-  .challenge{
+.challenge{
     position: absolute;
     text-align: center;
     top:465px;
@@ -137,6 +137,23 @@
     letter-spacing: 0.05em;
     display: inline-block;
   }
-  .red{
-      background-color: red;
+.red{
+    background-color: red;
   }
+.waves{
+    position:absolute;
+  }
+.notespersecond{
+    top:600px;
+    position:absolute;
+  }
+
+.not-following{top:650px;
+    position:absolute;}
+
+.not-running{
+    top:700px;
+    position:absolute;
+}
+
+
