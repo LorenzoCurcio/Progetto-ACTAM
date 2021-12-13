@@ -60,7 +60,7 @@ var loseMusic = new Audio('You Lost.wav')
 gamemode = false
 score=0
 hungry = false
-winkButton = false;
+winkButtonBoolean = false;
 
 //Gestione interfaccia grafica
 
@@ -184,8 +184,8 @@ sheperdR = new Image
 sheperdR.src = "PNGs/Pastore Right.png"
 
 for (i=0;i<numpecore;i++){
-  rectx[i] = width;
-  recty[i]=0;
+  rectx[i] = 70;
+  recty[i]=50;
 }
 
 function render() {
@@ -248,27 +248,27 @@ function physics() {
       vy[i] = currentv[i] * Math.sin(currentarg[i]);
     }
     //shockingSheeps
-    if (rectx[i] + widthRect > width) {
+    if (rectx[i] + widthRect > width && shockboolean) {
       shockCountdown[i] = fps*shocktime
       shock(i)
       vx[i] =-fastSpeed
       vy[i] = 0
       currentarg[i] = Math.PI
     }
-    if(rectx[i] <= 0){
+    if(rectx[i] <= 0 && shockboolean){
       shockCountdown[i] = fps*shocktime
       shock(i)
       vx[i] = fastSpeed
       vy[i] = 0
       currentarg[i] = 0}
 
-    if (recty[i] + heightRect > height) {
+    if (recty[i] + heightRect > height && shockboolean) {
       shockCountdown[i] = fps*shocktime
       shock(i)
       vx[i] = 0
       vy[i] = -fastSpeed
       currentarg[i] = -Math.PI/2}
-    if (recty[i] <= 0){
+    if (recty[i] <= 0 && shockboolean){
       shockCountdown[i] = fps*shocktime
       shock(i)
       vx[i] = 0
@@ -298,6 +298,7 @@ var xCM;
 var yCM;
 
 function startup() {
+  shockboolean = true
   flagButton = true
   for(i = 0; i<numpecore; i++){
     currentv[i] = 0.7 + 0.3*Math.random();
@@ -638,7 +639,7 @@ function massCentre(){
 
 var tiempoDelay = 0.2;
 var osc_amp = con.createGain();
-osc_amp.gain.value = 1;
+osc_amp.gain.value = 0.8;
 var del = con.createDelay();
 var fb = con.createGain();
 fb.gain.value = 0.75;
@@ -876,6 +877,10 @@ function highlightnotes(element){
 }
 
 function goHome(){
+  shockCountdown.fill(0)
+  chaosTime = 0
+  chaosState = false
+  shockboolean = false
   if (startupHappened == true && hungry==false){
   outroMusic.play()
   clearInterval(interval);
@@ -902,10 +907,10 @@ function goHomeLoop(){
   render();
   allHome = true
   for(i=0;i<numpecore;i++){
-    if(rectx[i]>width-20 && recty[i] < 20){
+    if(rectx[i]>width-70 && recty[i] < 50){
       currentv[i] = slowSpeed;
     }
-    if(rectx[i]<=width-20 || recty[i] > 20)
+    if(rectx[i]<=width-70 || recty[i] > 50)
       allHome = false;
   }
   if(allHome == true){
@@ -917,6 +922,7 @@ function goHomeLoop(){
 }
 
 function shock(i){
+  
   currentv[i] = fastSpeed
   vx[i] = currentv[i]*Math.cos(currentarg[i])
   vy[i] = currentv[i]*Math.sin(currentarg[i])
@@ -930,14 +936,17 @@ function shock(i){
 // CIBO
 
 function gamemodeswitch(){
-  if(gamemode){gamemode=false;
-    cf.clearRect(0,0,width,height);
+  if(gamemode){
+    gamemode=false;
+    ctx.clearRect(xfood,yfood,foodzoneWidth,foodzoneHeight);
+
     document.getElementById("gameButton").innerHTML = "Challenge Mode";
     hungry = false
     clearInterval(countdown)
     document.getElementById("countdown").innerHTML = ""
   }
   else{
+    score=0
     gamemode=true; 
     document.getElementById("gameButton").innerHTML = "Normal Mode";
     //food_first
@@ -1040,7 +1049,7 @@ function lose() {
   stopAll();
   loseMusic.play();
   clearInterval(countdown)
-  if(winkButton)
+  if(winkButtonBoolean)
     clearInterval(winkButton)
   homeButton.classList.remove("red")
   allHome=true
@@ -1051,8 +1060,8 @@ function lose() {
   document.getElementById("countdown").innerHTML = ""
   gsbutton.innerHTML = "Start"
   for (i=0;i<numpecore;i++){
-    rectx[i] = width - widthRect ;
-    recty[i] = heightRect;
+    rectx[i] = 70 ;
+    recty[i] = 50;
   }
   gamemode = false
   render()
