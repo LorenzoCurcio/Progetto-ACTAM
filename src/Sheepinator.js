@@ -60,6 +60,8 @@ var loseMusic = new Audio('You Lost.wav')
 gamemode = false
 score=0
 hungry = false
+winkButton = false;
+
 //Gestione interfaccia grafica
 
 //CAMPO
@@ -194,6 +196,12 @@ function render() {
   ctx.stroke();
   ctx.restore();
 
+  if(gamemode){
+    ctx.beginPath();  
+    ctx.drawImage(erba,xfood,yfood);
+    ctx.closePath();
+  }
+
   for (j = 0; j < numpecore; j++) {
     ctx.beginPath()
     ctx.save();
@@ -317,8 +325,6 @@ function startupLoop(){
 
 
 function step() {
-
-
   //scared
   volume = loudness();
   volume = volume/(Math.pow((Math.pow(xCM-posX,2)+Math.pow(yCM-posY,2)),1/2))*width/3
@@ -363,22 +369,23 @@ function step() {
 
   //food
   if (gamemode){
-  if (checkSheepFood()) {
-    clearfood();
-    foodzone();
-    eat.play();
-    score+=1;
-    scale = scales[6-score];
-    highlightmodes(modes[6-score])
+    if (checkSheepFood()){
+      foodzone();
+      eat.play();
+      score+=1;
+      scale = scales[6-score];
+      highlightmodesgamemode(modes[6-score])
 
-    //win
-    if (score==6){
-      win()}};
-      if (secondsScreen == 0 && minutesScreen == 0){
-        lose();
-        clearInterval(countdown);}
+      //win
+      if (score==6)
+        win()
+    }
+    if (secondsScreen == 0 && minutesScreen <= 0){
+      lose();
+      clearInterval(countdown);
     }
   }
+}
 function stdBehaviour() {
   ms = 0;
   mr = 0;
@@ -622,9 +629,9 @@ function massCentre(){
   for(i = 0, xCM = 0, yCM = 0; i<numpecore; i++){
     xCM = xCM + rectx[i];
     yCM = yCM + recty[i];
-}
-xCM = xCM/numpecore;
-yCM = yCM/numpecore;
+  }
+  xCM = xCM/numpecore;
+  yCM = yCM/numpecore;
 }
 
 //Cose suoni
@@ -835,11 +842,23 @@ selectedmode = 'orange'
 modes = document.getElementsByClassName("modebutton")
 modes[0].style.backgroundColor = selectedmode;
 notselectedmode = modes[1].style.backgroundColor
+
 function highlightmodes(element){
+  if(!gamemode){
+    for (i=0;i<modes.length;i++){
+      modes[i].style.backgroundColor = notselectedmode;
+    }
+    if (element.style.backgroundColor == notselectedmode)
+      element.style.backgroundColor = selectedmode
+  }
+}
+
+function highlightmodesgamemode(element){
   for (i=0;i<modes.length;i++){
     modes[i].style.backgroundColor = notselectedmode;
   }
-  if (element.style.backgroundColor == notselectedmode){element.style.backgroundColor = selectedmode}
+  if (element.style.backgroundColor == notselectedmode)
+    element.style.backgroundColor = selectedmode
 }
 
 
@@ -867,10 +886,15 @@ function goHome(){
     currentv[i] = fastSpeed;
   }
   //SafeSheeps
-  if(gamemode){clearInterval(winkButton);homeButton.classList.remove("red");gamemode = false}
-  clearInterval(countdown);
-  document.getElementById("countdown").innerHTML=""
-}}
+  if(gamemode){
+    clearInterval(winkButton);
+    homeButton.classList.remove("red");
+    gamemode = false
+  }
+    clearInterval(countdown);
+    document.getElementById("countdown").innerHTML=""
+  }
+}
 
 function goHomeLoop(){
 
@@ -905,137 +929,131 @@ function shock(i){
 
 // CIBO
 
-function gamemodeswitch(){if(gamemode){gamemode=false;
-  cf.clearRect(0,0,width,height);
-  document.getElementById("gameButton").innerHTML = "Challenge Mode";
-  hungry = false
-  clearInterval(countdown)
-  document.getElementById("countdown").innerHTML = ""
-}
-else{gamemode=true; document.getElementById("gameButton").innerHTML = "Normal Mode";
-  //food_first
-  safetyDistance = 300
-  foodzone();
-  safetyDistance = 0
-  scale = scales[6];
-  highlightmodes(modes[6]);
-  hungry = true
+function gamemodeswitch(){
+  if(gamemode){gamemode=false;
+    cf.clearRect(0,0,width,height);
+    document.getElementById("gameButton").innerHTML = "Challenge Mode";
+    hungry = false
+    clearInterval(countdown)
+    document.getElementById("countdown").innerHTML = ""
+  }
+  else{
+    gamemode=true; 
+    document.getElementById("gameButton").innerHTML = "Normal Mode";
+    //food_first
+    safetyDistance = 300
+    foodzone();
+    safetyDistance = 0
+    scale = scales[6];
+    highlightmodesgamemode(modes[6]);
+    hungry = true
 
-  secondsScreen = 30;
-  minutesScreen = 2;
+    secondsScreen = 30;
+    minutesScreen = 2;
 
-  var wolfSound = new Audio ('howl.mp3');
-  const wolfTrack = con.createMediaElementSource(wolfSound);
+    var wolfSound = new Audio ('howl.mp3');
+    const wolfTrack = con.createMediaElementSource(wolfSound);
 
-  radioWolf = 500;
+    radioWolf = 500;
 
-  const pannerWolf = new PannerNode(con, {
-	  panningModel: pannerModel,
-	  distanceModel: distanceModel,
-	  positionX: posX,
-	  positionY: posY,
-	  positionZ: positionZ,
-	  orientationX: orientationX,
-	  orientationY: orientationY,
-	  orientationZ: orientationZ,
-	  refDistance: refDistance,
-	  maxDistance: maxDistance,
-	  rolloffFactor: rollOff,
-	  coneInnerAngle: innerCone,
-	  coneOuterAngle: outerCone,
-	  coneOuterGain: outerGain
-  })
+    const pannerWolf = new PannerNode(con, {
+      panningModel: pannerModel,
+      distanceModel: distanceModel,
+      positionX: posX,
+      positionY: posY,
+      positionZ: positionZ,
+      orientationX: orientationX,
+      orientationY: orientationY,
+      orientationZ: orientationZ,
+      refDistance: refDistance,
+      maxDistance: maxDistance,
+      rolloffFactor: rollOff,
+      coneInnerAngle: innerCone,
+      coneOuterAngle: outerCone,
+      coneOuterGain: outerGain
+      }
+    )
 
-  wolfTrack.connect(pannerWolf).connect(con.destination)
-  wolf_amp = con.createGain()
+    wolfTrack.connect(pannerWolf).connect(con.destination)
+    wolf_amp = con.createGain()
 
-  function updateCounter(){
- 
-    angleWolf = Math.random()*10;
-    secondsScreen = secondsScreen - 1;
+    function updateCounter(){
+  
+      angleWolf = Math.random()*10;
+      secondsScreen = secondsScreen - 1;
 
-    var rotationX = posX + radioWolf * Math.cos(angleWolf); 
-    var rotationY = posY + radioWolf * Math.sin(angleWolf);
-    angleWolf = (angleWolf + Math.PI / 360) % (Math.PI * 2);
+      var rotationX = posX + radioWolf * Math.cos(angleWolf); 
+      var rotationY = posY + radioWolf * Math.sin(angleWolf);
+      angleWolf = (angleWolf + Math.PI / 360) % (Math.PI * 2);
 
-    if (secondsScreen <0){
-      minutesScreen = minutesScreen - 1;
-      secondsScreen = 59;
-    }
+      if (secondsScreen <0){
+        minutesScreen = minutesScreen - 1;
+        secondsScreen = 59;
+      }
 
-    if (secondsScreen==25 || secondsScreen == 0 ){
+      if (secondsScreen==25 || secondsScreen == 0 ){
 
-      pannerWolf.positionX.value = rotationX;
-	    pannerWolf.positionY.value = rotationY;
+        pannerWolf.positionX.value = rotationX;
+        pannerWolf.positionY.value = rotationY;
 
-      wolfSound.play()
+        wolfSound.play()
 
 
-    }
+      }
 
     document.getElementById("countdown").innerHTML = String(minutesScreen).padStart(2,'0') + ":" + String(secondsScreen).padStart(2, '0')
-  }
-  //console.log(angleWolf)
+    }
+    //console.log(angleWolf)
   }
 
-  countdown = setInterval(updateCounter,1000);}
-  
-
-  canvasFood = document.createElement("canvas");
-  document.body.appendChild(canvasFood);
-  canvasFood.width = width;
-  canvasFood.height = height;
-  canvasFood.style.position = 'absolute'
-  canvasFood.style.left = "150px"
-  canvasFood.style.top = "76px"
-  cf = canvasFood.getContext("2d");
+  countdown = setInterval(updateCounter,1000);
+} 
 
   
 function foodzone() {
-  xfood = Math.random()*(width-foodzoneWidth- safetyDistance)
-  yfood = Math.random()*(height-foodzoneHeight)
-  cf.beginPath()  
-  cf.drawImage(erba,xfood,yfood)
-  cf.closePath();
+  xfood = Math.random()*(width-foodzoneWidth- safetyDistance);
+  yfood = Math.random()*(height-foodzoneHeight);
 }
 
-
-function clearfood(){
-  cf.clearRect(0,0,width,height)
-}
 
 function checkSheepFood(){
-  for (i=0;i<numpecore;i++)
-  {if (rectx[i] < xfood + foodzoneWidth && rectx[i] > xfood && recty[i] < yfood + foodzoneHeight && recty[i] > yfood){return true}}
-return false}
+  for (i=0;i<numpecore;i++){
+    if (rectx[i] < xfood + foodzoneWidth && rectx[i] > xfood && recty[i] < yfood + foodzoneHeight && recty[i] > yfood)
+      return true
+  }
+  return false
+}
 
 homeButton = document.getElementById("home")
+
 function shinyButton(){
   homeButton.classList.toggle("red");
 }
 
 function win() {
-winkButton = setInterval(function(){shinyButton()},250);
-hungry = false; 
-clearfood();
-xfood = null; yfood= null
+  winkButton = setInterval(function(){shinyButton()},250);
+  hungry = false; 
+  xfood = null; yfood= null
 }
 
 function lose() {
-  ctx.clearRect(0, 0, width, height)
   stopAll();
   loseMusic.play();
-  clearInterval(winkButton)
+  clearInterval(countdown)
+  if(winkButton)
+    clearInterval(winkButton)
   homeButton.classList.remove("red")
   allHome=true
   startupHappened = false;
   hungry=false
   changeGS();
-  clearfood();
   xfood = null; yfood= null
   document.getElementById("countdown").innerHTML = ""
   gsbutton.innerHTML = "Start"
-  for (i=0;i<numpecore;i++){rectx[i] = width - widthRect ;
-    recty[i] = heightRect;}
-    gamemode = false
+  for (i=0;i<numpecore;i++){
+    rectx[i] = width - widthRect ;
+    recty[i] = heightRect;
+  }
+  gamemode = false
+  render()
 }
