@@ -30,11 +30,14 @@
 </div>
 <div>
   <label for="notesPerSecond" class = "sliders">Notes Per Second</label>
-  <input id="notesPerSecond" class = "sliders" type="range" min="1" max="10" value="5" min="1" max="10" onChange="changenotesPerSecond(this)">
+  <input id="notesPerSecond" class = "sliders" type="range" min="1" max="10" value="3" step = "0.001" min="1" max="10" onChange="changenotesPerSecond(this)">
+  <label for="delay" class = "sliders">Delay</label>
+  <input id="delay" class = "sliders" type="range" min="0" max="0.2" value="0" step = "0.0001" min="0" max="0.2" onChange="changeDelay(this)">
   <label for="mimetic" class = "sliders">Allelomimesis</label>
   <input id="mimetic" class = "sliders" type="range" min="1" max="5" value="4" step = "0.001" min="1" max="5" onChange="changedelta(this)">
   <label for="rest" class = "sliders">Run Tendency</label>
   <input id="rest" class = "sliders" type="range" min="1" max="10" value="1" step = "0.001" min="1" max="100" onChange="changerest(this)">
+  
 
 </div>
 

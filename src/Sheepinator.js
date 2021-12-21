@@ -36,10 +36,10 @@ scale = [0,2,4,6,7,9,11,12]
 loudThreshold = 90;
 maxChaosTime = 3*fps;
 maxRecoverTime = 1*fps;
-NotesPerSecond = 5
+NotesPerSecond = 3
 framesPerNote = Math.floor(fps/NotesPerSecond)
-framesPerTriplet = framesPerNote*3
-playtime = framesPerTriplet + 1
+framesPermeasure = framesPerNote*3
+playtime = framesPermeasure + 1
 facing = 'back'
 startupHappened = false
 allHome = true;
@@ -58,6 +58,33 @@ outroMusic = new Audio('Epic Outro.wav')
 Scared = new Audio('Scared Sheeps.wav')
 eat = new Audio('Eat.wav')
 loseMusic = new Audio('You Lost.wav')
+
+//drums
+kick = new Audio('Kick.wav')
+crash = new Audio('Crash.wav')
+closed_hat = new Audio('Closed_Hat.wav')
+open_hat = new Audio('Open_Hat.wav')
+ride = new Audio('Ride.wav')
+snare = new Audio('Snare.wav')
+tom = new Audio('Tom.wav')
+
+kick2 = new Audio('Kick.wav')
+crash2 = new Audio('Crash.wav')
+closed_hat2 = new Audio('Closed_Hat.wav')
+open_hat2 = new Audio('Open_Hat.wav')
+ride2 = new Audio('Ride.wav')
+snare2 = new Audio('Snare.wav')
+tom2 = new Audio('Tom.wav')
+
+kick3 = new Audio('Kick.wav')
+crash3 = new Audio('Crash.wav')
+closed_hat3 = new Audio('Closed_Hat.wav')
+open_hat3 = new Audio('Open_Hat.wav')
+ride3 = new Audio('Ride.wav')
+snare3 = new Audio('Snare.wav')
+tom3 = new Audio('Tom.wav')
+
+
 gamemode = false
 score=0
 hungry = false
@@ -390,7 +417,7 @@ function stdBehaviour() {
   mr = 0;
   mw = 0;
   playtime--
-  if (playtime==0){playtime=framesPerTriplet}
+  if (playtime==0){playtime=framesPermeasure}
   //velocità attuale
   for (i = 0; i < numpecore; i++) {
     alldistancesnorm(i);
@@ -425,10 +452,13 @@ function stdBehaviour() {
       }
     }
   }
-  if (playtime==framesPerTriplet){
+  if (playtime==framesPermeasure){
+    //Notes
     setTimeout(function(){play(ms)},0)
-    setTimeout(function(){play(mw)},(10/3)/(10*fps)*1000*framesPerTriplet)
-    setTimeout(function(){play(mr)},(10*2/3)/(10*fps)*1000*framesPerTriplet)
+    setTimeout(function(){play(mr)},(2.5)/(10*fps)*1000*framesPermeasure)
+    setTimeout(function(){play(ms)},(5)/(10*fps)*1000*framesPermeasure)
+    setTimeout(function(){play(ms+mw+mr)},(7.5)/(10*fps)*1000*framesPermeasure)
+    if(drums){playDrums()}
   }
 }
 
@@ -636,9 +666,9 @@ function massCentre(){
 
 //Cose suoni
 
-var tiempoDelay = 0.2;
+var tiempoDelay = 0;
 var osc_amp = con.createGain();
-osc_amp.gain.value = 0.8;
+osc_amp.gain.value = 1;
 var del = con.createDelay();
 var fb = con.createGain();
 fb.gain.value = 0.75;
@@ -1077,8 +1107,8 @@ function changewave(element){
 function changenotesPerSecond(element) {
   NotesPerSecond = parseFloat(element.value)
   framesPerNote = Math.floor(fps/NotesPerSecond)
-  framesPerTriplet = framesPerNote*3
-  playtime = framesPerTriplet + 1
+  framesPermeasure = framesPerNote*4
+  playtime = framesPermeasure + 1
 }
 
 function changedelta(element) {
@@ -1088,6 +1118,11 @@ function changedelta(element) {
 function changerest(element) {
   rest = parseFloat(element.value);
 }
+
+function changeDelay(element) {
+  tiempoDelay = parseFloat(element.value);
+}
+
 
 
 //drum button
@@ -1106,5 +1141,28 @@ function drumsChange(){
   }
 }
 
+function playDrums(){
+  if (mr>=5) {crash.play()}
+  if (mr>=1) {ride.play()}
+  else {kick.play()}
+
+  if (ms<10) {setTimeout(function(){closed_hat.play()},(2.5)/(10*fps)*1000*framesPermeasure)}
+  else if (ms<20) {setTimeout(function(){closed_hat2.play()},(5)/(10*fps)*1000*framesPermeasure)}
+  if (ms==0) {setTimeout(function(){closed_hat3.play()},(7.5)/(10*fps)*1000*framesPermeasure)}
+
+  if (ms>=5) {setTimeout(function(){tom.play()},(2.5)/(10*fps)*1000*framesPermeasure)}
+  else if (ms>=20) {setTimeout(function(){tom2.play()},(5)/(10*fps)*1000*framesPermeasure)}
+  if (ms>=30) {setTimeout(function(){tom3.play()},(7.5)/(10*fps)*1000*framesPermeasure)}
+  
+  if (mw>=5) {setTimeout(function(){open_hat.play()},(2.5)/(10*fps)*1000*framesPermeasure)}
+  else if (mw>=20) {setTimeout(function(){open_hat2.play()},(5)/(10*fps)*1000*framesPermeasure)}
+  if (mw>=30) {setTimeout(function(){open_hat3.play()},(7.5)/(10*fps)*1000*framesPermeasure)}
+
+  if (mw<10) {setTimeout(function(){snare.play()},(2.5)/(10*fps)*1000*framesPermeasure)}
+  else if (mw<20) {setTimeout(function(){snare2.play()},(5)/(10*fps)*1000*framesPermeasure)}
+  if (mw==0) {setTimeout(function(){snare3.play()},(7.5)/(10*fps)*1000*framesPermeasure)}
+  
+
+}
 
 
