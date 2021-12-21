@@ -15,23 +15,26 @@
     <div class="modebutton" onclick = "Locrian();highlightmodes(this)" ><div class = "text">Locrian</div></div>
     <div class="modebutton" onclick = "MajArp();highlightmodes(this)" ><div class = "text">Major Arpeggios</div></div>
     <div class="modebutton" onclick = "MinArp();highlightmodes(this)" ><div class = "text">Minor Arpeggios</div></div>
-
+    <div class = "custom-select">
     <select id="waves" class = "waves" onChange="changewave(this)">
         <option value='sine'>Sine</option>
         <option value='triangle'>Triangle</option>
         <option value='sawtooth'>Saw</option>
         <option value='square'>Square</option>
       </select>
-    
-    <label for="notesPerSecond" class = "notespersecond">Notes Per Second</label>
-    <input id="notesPerSecond" class = "notespersecond" type="range" min="1" max="10" value="5" min="1" max="10" onChange="changenotesPerSecond(this)">
-    <input id="not-following" class = "not-following" type="range" min="0.01" max="0.24" value="0.13" step = "0.0001" min="0.01" max="0.24" onChange="changeEta(this)">
+    </div>
     </div>
   </div>
 </div>
 
-
-
+<div>
+  <label for="notesPerSecond" class = "sliders">Notes Per Second</label>
+  <input id="notesPerSecond" class = "sliders" type="range" min="1" max="10" value="5" min="1" max="10" onChange="changenotesPerSecond(this)">
+  <label for="mimetic" class = "sliders">Allelomimesis</label>
+  <input id="mimetic" class = "sliders" type="range" min="1" max="5" value="4" step = "0.001" min="1" max="5" onChange="changedelta(this)">
+  <label for="rest" class = "sliders">Run Tendency</label>
+  <input id="rest" class = "sliders" type="range" min="1" max="10" value="1" step = "0.001" min="1" max="100" onChange="changerest(this)">7
+</div>
 <div class = "bar horizontal">
     <div class="keybutton" onclick = "C();highlightnotes(this)"><div class="not_rotated " onclick = "C()">C</div></div>
     <div class="keybutton" onclick = "Cs();highlightnotes(this)"><div class="not_rotated " onclick = "Cs()">C#</div></div>
@@ -52,16 +55,6 @@
 
 <div class = "gamebutton pulse button" onclick="gamemodeswitch()"> <div id = "gameButton" class = "text">Challenge Mode</div> </div>
 
-<div class = "instructions">
-    You can move the sheperd using WASD,
-    Make sure you find the best position for listening to the angelic chant of the sheeps.<br>
-    Also please be silent, we don't want to scare them right?<br>
-    Have fun!</div>
-    <div class="challenge">
-    In "Challenge Mode" the sheeps must eat enough healthy grass in the field before the wolf comes.<br>
-    Each time they eat, the mode in which they sing is switched to a happier one, you can move the sheeps by scaring them.<br>
-    When they're full, click the Home button and they'll be back in a safe place.<br> 
-    </div>
     <p id="countdown"></p>
 <head>
     <canvas id="canvas"  width="500" height="500" onclick="listenerXY(event)"> </canvas>

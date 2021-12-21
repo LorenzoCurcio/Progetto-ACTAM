@@ -17,9 +17,10 @@ alldistances = Array(numpecore).fill(0);
 fraction_neighbour = 1/15;
 fastSpeed = 1;
 slowSpeed = 0;
-mediumSpeed = 0.2;
+mediumSpeed = 0.3;
 alpha = 15;
 delta = 4;
+rest = 1
 dr = scaleLength*10.6;
 ds = scaleLength*4.3;
 tau01_2 = 75;
@@ -40,25 +41,23 @@ framesPerNote = Math.floor(fps/NotesPerSecond)
 framesPerTriplet = framesPerNote*3
 playtime = framesPerTriplet + 1
 facing = 'back'
-var startupHappened = new Boolean(false)
-var allHome = new Boolean(true);
-
-var posX = width/2;
-var posY = height/1.5;
-var posZ = 0;
-
-var posSourceX = width/2;
-var posSourceY = height/2;
-var posSourceZ = 0;
+startupHappened = false
+allHome = true;
+posX = width/2;
+posY = height/1.5;
+posZ = 0;
+posSourceX = width/2;
+posSourceY = height/2;
+posSourceZ = 0;
 sheperdposition = 'down'
 shockCountdown = Array(numpecore).fill(0);
 shocktime = 2
-var shockSFX = new Audio('Electric Shock Sound Effect.wav');
-var introMusic = new Audio('Epic Sheep Music.wav')
-var outroMusic = new Audio('Epic Outro.wav')
-var Scared = new Audio('Scared Sheeps.wav')
-var eat = new Audio('Eat.wav')
-var loseMusic = new Audio('You Lost.wav')
+shockSFX = new Audio('Electric Shock Sound Effect.wav');
+introMusic = new Audio('Epic Sheep Music.wav')
+outroMusic = new Audio('Epic Outro.wav')
+Scared = new Audio('Scared Sheeps.wav')
+eat = new Audio('Eat.wav')
+loseMusic = new Audio('You Lost.wav')
 gamemode = false
 score=0
 hungry = false
@@ -427,8 +426,8 @@ function stdBehaviour() {
   }
   if (playtime==framesPerTriplet){
     setTimeout(function(){play(ms)},0)
-    setTimeout(function(){play(mw)},3/(10*fps)*1000*framesPerTriplet)
-    setTimeout(function(){play(mr)},6/(10*fps)*1000*framesPerTriplet)
+    setTimeout(function(){play(mw)},(10/3)/(10*fps)*1000*framesPerTriplet)
+    setTimeout(function(){play(mr)},(10*2/3)/(10*fps)*1000*framesPerTriplet)
   }
 }
 
@@ -495,6 +494,7 @@ function probstartwalk() {
 }
 
 function probstartrun(i) {
+  dr_slider = dr/rest;
   //Distanza media delle altre pecore
   l = 0;
   count=0
@@ -512,7 +512,7 @@ function probstartrun(i) {
     }
   }
 
-  p = Math.pow(tau01_2, -1) * Math.pow((l / dr) * (alpha * n_pecore_run + 1), delta);
+  p = Math.pow(tau01_2, -1) * Math.pow((l / dr_slider) * (alpha * n_pecore_run + 1), delta);
   return p;
 }
 
@@ -930,6 +930,7 @@ function shock(i){
 // CIBO
 
 function gamemodeswitch(){
+  if(startupHappened == true){
   if(gamemode){
     gamemode=false;
     ctx.clearRect(xfood,yfood,foodzoneWidth,foodzoneHeight);
@@ -1011,7 +1012,8 @@ function gamemodeswitch(){
     //console.log(angleWolf)
   }
 
-  countdown = setInterval(updateCounter,1000);
+  countdown = setInterval(updateCounter,1000);}
+  render()
 } 
 
   
@@ -1072,17 +1074,20 @@ function changewave(element){
 }
 
 function changenotesPerSecond(element) {
-  NotesPerSecond = element.value;
+  NotesPerSecond = parseFloat(element.value)
   framesPerNote = Math.floor(fps/NotesPerSecond)
   framesPerTriplet = framesPerNote*3
   playtime = framesPerTriplet + 1
 }
 
-function changeEta(element) {
-  eta = element.value;
+function changedelta(element) {
+  delta = parseFloat(element.value);
 }
 
-function changetau012(element) {
-  tau01_2 = element.value;
+function changerest(element) {
+  rest = parseFloat(element.value);
 }
+
+
+
 
