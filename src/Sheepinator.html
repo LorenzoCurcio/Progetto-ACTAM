@@ -16,7 +16,8 @@
     <div class="modebutton" onclick = "MajArp();highlightmodes(this)" ><div class = "text">Major Arpeggios</div></div>
     <div class="modebutton" onclick = "MinArp();highlightmodes(this)" ><div class = "text">Minor Arpeggios</div></div>
     <div class = "custom-select">
-    <select id="waves" class = "waves" onChange="changewave(this)">
+    <div id="waves" class = "waves">
+        <select onChange="changewave(this)">
         <option value='sine'>Sine</option>
         <option value='triangle'>Triangle</option>
         <option value='sawtooth'>Saw</option>
@@ -24,9 +25,9 @@
       </select>
     </div>
     </div>
+    </div>
   </div>
 </div>
-
 <div>
   <label for="notesPerSecond" class = "sliders">Notes Per Second</label>
   <input id="notesPerSecond" class = "sliders" type="range" min="1" max="10" value="5" min="1" max="10" onChange="changenotesPerSecond(this)">
@@ -36,6 +37,7 @@
   <input id="rest" class = "sliders" type="range" min="1" max="10" value="1" step = "0.001" min="1" max="100" onChange="changerest(this)">
 
 </div>
+
 <div class = "bar horizontal">
     <div class="keybutton" onclick = "C();highlightnotes(this)"><div class="not_rotated " onclick = "C()">C</div></div>
     <div class="keybutton" onclick = "Cs();highlightnotes(this)"><div class="not_rotated " onclick = "Cs()">C#</div></div>
@@ -53,6 +55,7 @@
 
     
 </div>
+<div class = "drums pulse button" onclick ="drumsChange()"><div id = "drums" class = "text">Drums Off</div></div>
 
 <div class = "gamebutton pulse button" onclick="gamemodeswitch()"> <div id = "gameButton" class = "text">Challenge Mode</div> </div>
 

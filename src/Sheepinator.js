@@ -63,6 +63,7 @@ score=0
 hungry = false
 winkButtonBoolean = false;
 wave = "sine"
+drums = false
 
 //Gestione interfaccia grafica
 
@@ -1088,6 +1089,22 @@ function changerest(element) {
   rest = parseFloat(element.value);
 }
 
+
+//drum button
+function drumsChange(){
+
+  drumbutton = document.getElementById("drums")
+
+  if(drumbutton.innerHTML == "Drums Off"){
+    drumbutton.innerHTML = 'Drums On';
+    drums = true
+}
+
+  else if(drumbutton.innerHTML == 'Drums On'){
+    drumbutton.innerHTML = 'Drums Off'; 
+    drums = false
+  }
+}
 
 
 
