@@ -424,3 +424,23 @@ html{
   transform : translate(-50%,-50%);
 
 }
+
+.switch-toggle {
+  float: left;
+  background: rgb(245,222,179);
+  border: solid 2px;
+}
+.switch-toggle input {
+ position: absolute;
+ opacity: 0;
+}
+.switch-toggle input + label {
+ padding: 7px;
+ float:left;
+ color: rgb(0, 0, 0);
+ cursor: pointer;
+ border: solid 2px;
+}
+.switch-toggle input:checked + label {
+ background: orange;
+}

@@ -1123,8 +1123,29 @@ function changerest(element) {
   rest = parseFloat(element.value);
 }
 
-function changeDelay(element) {
-  tiempoDelay = parseFloat(element.value);
+function changeDelay(tiempo) {
+  delayslider = document.getElementById("delayslider")
+
+  if(tiempo == 'fourth'){
+    delayslider.innerHTML = 'Delay 1/4';
+    tiempoDelay = (1/fps)*framesPermeasure/4;
+  }
+  else if(tiempo == 'eigth'){
+    delayslider.innerHTML = 'Delay 1/8';
+    tiempoDelay = (1/fps)*framesPermeasure/8;
+  }
+  else if(tiempo == 'dotted'){
+    delayslider.innerHTML = 'Delay D 1/4';
+    tiempoDelay = (1/fps)*framesPermeasure*3/8;
+  }
+  else if(tiempo == 'off'){
+    delayslider.innerHTML = 'Delay off';
+    tiempoDelay = 0;
+  }
+  else if(tiempo == 'two_fourth'){
+    delayslider.innerHTML = 'Delay 2/4';
+    tiempoDelay = (1/fps)*framesPermeasure/2;
+  }
 }
 
 
