@@ -68,22 +68,6 @@ ride = new Audio('Ride.wav')
 snare = new Audio('Snare.wav')
 tom = new Audio('Tom.wav')
 
-kick2 = new Audio('Kick.wav')
-crash2 = new Audio('Crash.wav')
-closed_hat2 = new Audio('Closed_Hat.wav')
-open_hat2 = new Audio('Open_Hat.wav')
-ride2 = new Audio('Ride.wav')
-snare2 = new Audio('Snare.wav')
-tom2 = new Audio('Tom.wav')
-
-kick3 = new Audio('Kick.wav')
-crash3 = new Audio('Crash.wav')
-closed_hat3 = new Audio('Closed_Hat.wav')
-open_hat3 = new Audio('Open_Hat.wav')
-ride3 = new Audio('Ride.wav')
-snare3 = new Audio('Snare.wav')
-tom3 = new Audio('Tom.wav')
-
 pannerModel = 'HRTF';
 
 const innerCone = 60;
@@ -206,17 +190,9 @@ const crashSound = con.createMediaElementSource(crash);
 const rideSound = con.createMediaElementSource(ride);
 const kickSound = con.createMediaElementSource(kick);
 const c_hat = con.createMediaElementSource(closed_hat);
-const c_hat2 = con.createMediaElementSource(closed_hat2);
-const c_hat3 = con.createMediaElementSource(closed_hat3);
 const tomSound = con.createMediaElementSource(tom);
-const tomSound2 = con.createMediaElementSource(tom2);
-const tomSound3 = con.createMediaElementSource(tom3);
 const o_hat = con.createMediaElementSource(open_hat);
-const o_hat2 = con.createMediaElementSource(open_hat2);
-const o_hat3 = con.createMediaElementSource(open_hat3);
 const snr = con.createMediaElementSource(snare);
-const snr2 = con.createMediaElementSource(snare2);
-const snr3 = con.createMediaElementSource(snare3);
 
 var listener = con.listener;
 
@@ -463,7 +439,7 @@ function stdBehaviour() {
     alldistances.sort();
     if (shockCountdown[i]==0){
       //inizia a correre
-      if ((currentv[i] == slowSpeed || currentv[i] == mediumSpeed) && probstartrun(i) >= Math.random()){
+      if ((currentv[i] == slowSpeed || currentv[i] == mediumSpeed) && probstartrun() >= Math.random()){
         run(i);
       }
       //da lenta a media
@@ -478,7 +454,7 @@ function stdBehaviour() {
           }
           //da veloce a lenta
           else {
-            if (currentv[i] == fastSpeed && probinchioda(i) >= Math.random()){
+            if (currentv[i] == fastSpeed && probinchioda() >= Math.random()){
               stop(i);
             }
           }
@@ -494,9 +470,9 @@ function stdBehaviour() {
   if (playtime==framesPermeasure){
     //Notes
     setTimeout(function(){play(ms)},0)
-    setTimeout(function(){play(mr)},(2.5)/(10*fps)*1000*framesPermeasure)
+    if(mr+ms+mw >= 30){setTimeout(function(){play(mr)},(2.5)/(10*fps)*1000*framesPermeasure)}
     setTimeout(function(){play(ms)},(5)/(10*fps)*1000*framesPermeasure)
-    setTimeout(function(){play(ms+mw+mr)},(7.5)/(10*fps)*1000*framesPermeasure)
+    if(ms >= 10){setTimeout(function(){play(ms+mw+mr)},(7.5)/(10*fps)*1000*framesPermeasure)}
     if(drums){
       
       radioDrums = 500;
@@ -523,17 +499,9 @@ function stdBehaviour() {
       rideSound.connect(pannerDrums).connect(con.destination)
       kickSound.connect(pannerDrums).connect(con.destination)
       c_hat.connect(pannerDrums).connect(con.destination)
-      c_hat2.connect(pannerDrums).connect(con.destination)
-      c_hat3.connect(pannerDrums).connect(con.destination)
       tomSound.connect(pannerDrums).connect(con.destination)
-      tomSound2.connect(pannerDrums).connect(con.destination)
-      tomSound3.connect(pannerDrums).connect(con.destination)
       o_hat.connect(pannerDrums).connect(con.destination)
-      o_hat2.connect(pannerDrums).connect(con.destination)
-      o_hat3.connect(pannerDrums).connect(con.destination)
       snr.connect(pannerDrums).connect(con.destination)
-      snr2.connect(pannerDrums).connect(con.destination)
-      snr3.connect(pannerDrums).connect(con.destination)
       
       playDrums()}
   }
@@ -601,7 +569,7 @@ function probstartwalk() {
   return p;
 }
 
-function probstartrun(i) {
+function probstartrun() {
   dr_slider = dr/rest;
   //Distanza media delle altre pecore
   l = 0;
@@ -624,10 +592,17 @@ function probstartrun(i) {
   return p;
 }
 
-function probinchioda(i) {
+function probinchioda() {
   //Distanza media delle altre pecore
   l = 0;
   count=0
+  n_pecore_stay = 0;
+
+  for (k = 0; k < numpecore; k++) {
+    if (currentv[k] == slowSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]) {
+      n_pecore_stay = n_pecore_stay + 1;
+    }}
+    
   for (k = 0; k < fraction_neighbour*numpecore; k++) {
     l = l + alldistances[k]*re + re;
     count++
@@ -1008,10 +983,7 @@ function shock(i){
   currentv[i] = fastSpeed
   vx[i] = currentv[i]*Math.cos(currentarg[i])
   vy[i] = currentv[i]*Math.sin(currentarg[i])
-  if(shockSFX.paused){
-  shockSFX.play();}
-  else{shockSFX.currentTime = 0}
-}
+  rewind(shockSFX)}
 
 
 
@@ -1180,23 +1152,18 @@ function changeDelay(tiempo) {
   delayslider = document.getElementById("delayslider")
 
   if(tiempo == 'fourth'){
-    delayslider.innerHTML = 'Delay 1/4';
     tiempoDelay = (1/fps)*framesPermeasure/4;
   }
   else if(tiempo == 'eigth'){
-    delayslider.innerHTML = 'Delay 1/8';
     tiempoDelay = (1/fps)*framesPermeasure/8;
   }
   else if(tiempo == 'dotted'){
-    delayslider.innerHTML = 'Delay D 1/4';
     tiempoDelay = (1/fps)*framesPermeasure*3/8;
   }
   else if(tiempo == 'off'){
-    delayslider.innerHTML = 'Delay off';
     tiempoDelay = 0;
   }
   else if(tiempo == 'two_fourth'){
-    delayslider.innerHTML = 'Delay 2/4';
     tiempoDelay = (1/fps)*framesPermeasure/2;
   }
 }
@@ -1232,27 +1199,38 @@ function playDrums(){
 
   console.log(angleDrums)
 
-  if (mr>=5) {crash.play()}
-  if (mr>=1) {ride.play()}
+  if (mr>=10) {crash.play()}
+  else if (mr>=5) {ride.play()}
   else {kick.play()}
 
-  if (ms<10) {setTimeout(function(){closed_hat.play()},(2.5)/(10*fps)*1000*framesPermeasure)}
-  else if (ms<20) {setTimeout(function(){closed_hat2.play()},(5)/(10*fps)*1000*framesPermeasure)}
-  if (ms==0) {setTimeout(function(){closed_hat3.play()},(7.5)/(10*fps)*1000*framesPermeasure)}
+  if (ms<25 && mw+ms+mr >=30){
+  if (ms<3) {setTimeout(function(){rewind(closed_hat)},(2.5)/(10*fps)*1000*framesPermeasure)}
+  else if (ms<15) {setTimeout(function(){rewind(closed_hat)},(5)/(10*fps)*1000*framesPermeasure)}
+  if (ms==0) {setTimeout(function(){rewind(closed_hat)},(7.5)/(10*fps)*1000*framesPermeasure)}}
 
-  if (ms>=5) {setTimeout(function(){tom.play()},(2.5)/(10*fps)*1000*framesPermeasure)}
-  else if (ms>=20) {setTimeout(function(){tom2.play()},(5)/(10*fps)*1000*framesPermeasure)}
-  if (ms>=30) {setTimeout(function(){tom3.play()},(7.5)/(10*fps)*1000*framesPermeasure)}
+  if (ms<25){
+  if (ms>=20) {setTimeout(function(){rewind(snare)},(2.5)/(10*fps)*1000*framesPermeasure)}
+  else if (ms>=10) {setTimeout(function(){rewind(snare)},(5)/(10*fps)*1000*framesPermeasure)}
+  if (ms>=5) {setTimeout(function(){rewind(snare)},(7.5)/(10*fps)*1000*framesPermeasure)}}
   
-  if (mw>=5) {setTimeout(function(){open_hat.play()},(2.5)/(10*fps)*1000*framesPermeasure)}
-  else if (mw>=20) {setTimeout(function(){open_hat2.play()},(5)/(10*fps)*1000*framesPermeasure)}
-  if (mw>=30) {setTimeout(function(){open_hat3.play()},(7.5)/(10*fps)*1000*framesPermeasure)}
+  if (ms<25){
+  if (mw>=20) {setTimeout(function(){rewind(open_hat)},(2.5)/(10*fps)*1000*framesPermeasure)}
+  else if (mw>=10) {setTimeout(function(){rewind(open_hat)},(5)/(10*fps)*1000*framesPermeasure)}
+  if (mw>=5) {setTimeout(function(){rewind(open_hat)},(7.5)/(10*fps)*1000*framesPermeasure)}}
 
-  if (mw<10) {setTimeout(function(){snare.play()},(2.5)/(10*fps)*1000*framesPermeasure)}
-  else if (mw<20) {setTimeout(function(){snare2.play()},(5)/(10*fps)*1000*framesPermeasure)}
-  if (mw==0) {setTimeout(function(){snare3.play()},(7.5)/(10*fps)*1000*framesPermeasure)}
-  
+  if (mw<15 && mw+ms+mr >=30){
+  if (mw<3) {setTimeout(function(){rewind(tom)},(2.5)/(10*fps)*1000*framesPermeasure)}
+  else if (mw<15) {setTimeout(function(){rewind(tom)},(5)/(10*fps)*1000*framesPermeasure)}
+  if (mw==0) {setTimeout(function(){rewind(tom)},(7.5)/(10*fps)*1000*framesPermeasure)}}
 
 }
 
+function rewind(audio){
+  if(audio.paused){
+  audio.play();
+    }
+  else{
+    audio.currentTime = 0
+    }
+  }
 
