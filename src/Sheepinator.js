@@ -153,7 +153,7 @@ campo = new Image;
 campo.src = "Field.png";
 campo.onload = function(){
   ctx.drawImage(campo,0,0,width,height);
-  ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla);
+  ctx.drawImage(stalla, width-widthstalla-3, 3,widthstalla,heightstalla)
 }
 
 //STALLA
@@ -163,7 +163,7 @@ stalla = new Image;
 stalla.src = "Casetta.png";
 stalla.onload = function(){
   ctx.drawImage(campo,0,0,width,height);
-  ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla);
+  ctx.drawImage(stalla, width-widthstalla-3, 3,widthstalla,heightstalla)
 }
 
 //PATCH D'ERBA
@@ -243,12 +243,13 @@ function render() {
     else {ctx.drawImage(pecora, rectx[j], recty[j],10,10)}
     ctx.restore();
   }
-
+  // Stalla
   ctx.beginPath();
-  ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla)
+  ctx.drawImage(stalla, width-widthstalla-3, 3,widthstalla,heightstalla)
   ctx.closePath()
   ctx.stroke();
   ctx.restore();
+  
   
   //drawing listener
   ctx.beginPath();
@@ -267,6 +268,7 @@ function physics() {
   for (i = 0; i < numpecore; i++) {
     if(shockCountdown[i]>0){
       shockCountdown[i]--;
+      currentarg[i] = currentarg[i] + Math.PI/8
       }
     else{
       vx[i] = currentv[i] * Math.cos(currentarg[i]);
@@ -274,31 +276,33 @@ function physics() {
     }
     //shockingSheeps
     if (rectx[i] + widthRect > width && shockboolean) {
-      shockCountdown[i] = fps*shocktime
+      shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
       shock(i)
       vx[i] =-fastSpeed
       vy[i] = 0
       currentarg[i] = Math.PI
     }
     if(rectx[i] <= 0 && shockboolean){
-      shockCountdown[i] = fps*shocktime
+      shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
       shock(i)
       vx[i] = fastSpeed
       vy[i] = 0
-      currentarg[i] = 0}
-
+      currentarg[i] = 0
+    }
     if (recty[i] + heightRect > height && shockboolean) {
-      shockCountdown[i] = fps*shocktime
+      shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
       shock(i)
       vx[i] = 0
       vy[i] = -fastSpeed
-      currentarg[i] = -Math.PI/2}
+      currentarg[i] = -Math.PI/2
+    }
     if (recty[i] <= 0 && shockboolean){
-      shockCountdown[i] = fps*shocktime
+      shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
       shock(i)
       vx[i] = 0
       vy[i] = fastSpeed
-      currentarg[i] = Math.PI/2}
+      currentarg[i] = Math.PI/2
+    }
     rectx[i] += vx[i];
     recty[i] += vy[i];
   }
@@ -328,8 +332,8 @@ function startup() {
   for(i = 0; i<numpecore; i++){
     currentv[i] = 0.7 + 0.3*Math.random();
     currentarg[i] = -(35/360)*2*Math.PI + (Math.PI/4)*(Math.random()/2) + Math.PI;
-    rectx[i] = width - widthRect ;
-    recty[i] = heightRect;
+    rectx[i] = width - widthRect -70;
+    recty[i] = heightRect + 40;
   }
   loop = setInterval(startupLoop, 1000/fps);
 }
@@ -339,7 +343,7 @@ function startupLoop(){
   physics();
   render();
   
-  if(xCM < width*0.7){
+  if(xCM < width*0.6){
     for(i = 0; i<numpecore; i++){
       currentv[i] = slowSpeed;
     }
@@ -583,7 +587,7 @@ function attract_repulse(i) {
   sumsin = 0;
   for (k = 0; k < numpecore; k++) {
     if  (alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]){
-      if (currentv[k] == fastSpeed){
+      if (currentv[k] == fastSpeed && shockCountdown[k] == 0){
         sumcos = sumcos + Math.cos(currentarg[k]);
         sumsin = sumsin + Math.sin(currentarg[k]);
       }
@@ -638,7 +642,7 @@ function sumarg() {
   sumcos = 0;
   sumsin = 0;
   for (k = 0; k < numpecore; k++) {
-    if  (alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]){
+    if  (shockCountdown[k] == 0 && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]){
     sumcos = sumcos + Math.cos(currentarg[k]);
     sumsin = sumsin + Math.sin(currentarg[k]);
   }}
@@ -784,10 +788,10 @@ function B(){rootfreq=493.88}
 function distancing(){
   for(i = 0; i<numpecore-1; i++){
     for(j = i+1; j<numpecore;j++){
-      if(Math.abs(rectx[i]-rectx[j]) <= widthRect/2 || Math.abs(recty[i] - recty[j]) <= heightRect/2){
-          move(i,j);
+      if(shockCountdown[i] == 0 && shockCountdown[j] == 0 && Math.abs(rectx[i]-rectx[j]) <= widthRect/2 || Math.abs(recty[i] - recty[j]) <= heightRect/2){
+        move(i,j);
       }
-    }
+    }  
   }
 }
 
