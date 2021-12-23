@@ -84,6 +84,25 @@ ride3 = new Audio('Ride.wav')
 snare3 = new Audio('Snare.wav')
 tom3 = new Audio('Tom.wav')
 
+pannerModel = 'HRTF';
+
+const innerCone = 60;
+const outerCone = 90;
+const outerGain = 0.3;
+
+const distanceModel = 'linear';
+
+const maxDistance = 700;
+
+const refDistance = 1;
+
+const rollOff = 10;
+const positionZ = posSourceZ;
+
+const orientationX = 0;
+const orientationY = 0;
+const orientationZ = -1.0;
+angleDrums = 0
 
 gamemode = false
 score=0
@@ -182,6 +201,22 @@ ctx.stroke();*/
 
 //setting listener
 var con = new AudioContext();
+
+const crashSound = con.createMediaElementSource(crash);
+const rideSound = con.createMediaElementSource(ride);
+const kickSound = con.createMediaElementSource(kick);
+const c_hat = con.createMediaElementSource(closed_hat);
+const c_hat2 = con.createMediaElementSource(closed_hat2);
+const c_hat3 = con.createMediaElementSource(closed_hat3);
+const tomSound = con.createMediaElementSource(tom);
+const tomSound2 = con.createMediaElementSource(tom2);
+const tomSound3 = con.createMediaElementSource(tom3);
+const o_hat = con.createMediaElementSource(open_hat);
+const o_hat2 = con.createMediaElementSource(open_hat2);
+const o_hat3 = con.createMediaElementSource(open_hat3);
+const snr = con.createMediaElementSource(snare);
+const snr2 = con.createMediaElementSource(snare2);
+const snr3 = con.createMediaElementSource(snare3);
 
 var listener = con.listener;
 
@@ -462,7 +497,45 @@ function stdBehaviour() {
     setTimeout(function(){play(mr)},(2.5)/(10*fps)*1000*framesPermeasure)
     setTimeout(function(){play(ms)},(5)/(10*fps)*1000*framesPermeasure)
     setTimeout(function(){play(ms+mw+mr)},(7.5)/(10*fps)*1000*framesPermeasure)
-    if(drums){playDrums()}
+    if(drums){
+      
+      radioDrums = 500;
+      
+      pannerDrums = new PannerNode(con, {
+        panningModel: pannerModel,
+        distanceModel: distanceModel,
+        positionX: posX,
+        positionY: posY,
+        positionZ: positionZ,
+        orientationX: orientationX,
+        orientationY: orientationY,
+        orientationZ: orientationZ,
+        refDistance: refDistance,
+        maxDistance: maxDistance,
+        rolloffFactor: rollOff,
+        coneInnerAngle: innerCone,
+        coneOuterAngle: outerCone,
+        coneOuterGain: outerGain
+        }
+      )
+  
+      crashSound.connect(pannerDrums).connect(con.destination)
+      rideSound.connect(pannerDrums).connect(con.destination)
+      kickSound.connect(pannerDrums).connect(con.destination)
+      c_hat.connect(pannerDrums).connect(con.destination)
+      c_hat2.connect(pannerDrums).connect(con.destination)
+      c_hat3.connect(pannerDrums).connect(con.destination)
+      tomSound.connect(pannerDrums).connect(con.destination)
+      tomSound2.connect(pannerDrums).connect(con.destination)
+      tomSound3.connect(pannerDrums).connect(con.destination)
+      o_hat.connect(pannerDrums).connect(con.destination)
+      o_hat2.connect(pannerDrums).connect(con.destination)
+      o_hat3.connect(pannerDrums).connect(con.destination)
+      snr.connect(pannerDrums).connect(con.destination)
+      snr2.connect(pannerDrums).connect(con.destination)
+      snr3.connect(pannerDrums).connect(con.destination)
+      
+      playDrums()}
   }
 }
 
@@ -678,26 +751,6 @@ var fb = con.createGain();
 fb.gain.value = 0.75;
 
 //binaural panner
-
-pannerModel = 'HRTF';
-
-const innerCone = 60;
-const outerCone = 90;
-const outerGain = 0.3;
-
-const distanceModel = 'linear';
-
-const maxDistance = 700;
-
-const refDistance = 1;
-
-const rollOff = 10;
-const positionZ = posSourceZ;
-
-const orientationX = 0;
-const orientationY = 0;
-const orientationZ = -1.0;
-
 
 pannerB = new PannerNode(con, {
   panningModel: pannerModel,
@@ -1167,6 +1220,18 @@ function drumsChange(){
 }
 
 function playDrums(){
+
+  
+
+  var drumsX = posX + radioDrums * Math.cos(angleDrums); 
+  var drumsY = posY + radioDrums * Math.sin(angleDrums);
+
+  angleDrums = (angleDrums + Math.PI / 360) % (Math.PI * 2)+0.17;
+  pannerDrums.positionX.value = drumsX;
+  pannerDrums.positionY.value = drumsY;
+
+  console.log(angleDrums)
+
   if (mr>=5) {crash.play()}
   if (mr>=1) {ride.play()}
   else {kick.play()}
