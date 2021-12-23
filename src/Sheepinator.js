@@ -499,7 +499,7 @@ function chaosVariation(){
 function probstop() {
   //numero pecore ferme
   n_pecore_stay = 0;
-  for (k = 0; k < fraction_neighbour*numpecore; k++) {
+  for (k = 0; k < numpecore; k++) {
     if (currentv[k] == slowSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]) {
       n_pecore_stay = n_pecore_stay + 1;
     }
@@ -512,7 +512,7 @@ function probstop() {
 function probstartwalk() {
   //numero pecore che camminano
   n_pecore_walk = 0;
-  for (k = 0; k < fraction_neighbour*numpecore; k++) {
+  for (k = 0; k <numpecore; k++) {
     if (
       currentv[k] == mediumSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]){
         
@@ -537,7 +537,7 @@ function probstartrun(i) {
 
   //numero pecore che corrono
   n_pecore_run = 0;
-  for (k = 0; k < fraction_neighbour*numpecore; k++) {
+  for (k = 0; k < numpecore; k++) {
     if (currentv[k] == fastSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]) {
       n_pecore_run = n_pecore_run + 1;
     }
@@ -563,7 +563,7 @@ function probinchioda(i) {
 
 //Funzioni di cambio di stato
 function stop(i) {
-  ms = ms + 1;
+  ms++
   currentv[i] = slowSpeed;
 }
 
