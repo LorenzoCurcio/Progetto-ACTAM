@@ -22,8 +22,8 @@ alpha = 15;
 delta = 4;
 rest = 1
 dr = scaleLength*10.6;
-ds = scaleLength*4.3;
-tau01_2 = 75;
+ds = scaleLength*31.4;
+tau01_2 = numpecore;
 tau0_1 = 35;
 tau2_0 = numpecore
 tau1_0 = 8;
@@ -43,8 +43,8 @@ playtime = framesPermeasure + 1
 facing = 'back'
 startupHappened = false
 allHome = true;
-posX = width/2;
-posY = height/1.5;
+posX = 700;
+posY = 100;
 posZ = 0;
 posSourceX = width/2;
 posSourceY = height/2;
@@ -148,31 +148,31 @@ function changeGS() {
 
 ctx = c.getContext("2d");
 
+//Campo d'erba
+campo = new Image;
+campo.src = "Field.png";
+campo.onload = function(){
+  ctx.drawImage(campo,0,0,width,height);
+  ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla);
+}
+
 //STALLA
 widthstalla = 80
 heightstalla = 100
 stalla = new Image;
 stalla.src = "Casetta.png";
-function casetta(){
+stalla.onload = function(){
+  ctx.drawImage(campo,0,0,width,height);
   ctx.drawImage(stalla, width-widthstalla, 0,widthstalla,heightstalla);
 }
-casetta()
 
 //PATCH D'ERBA
 widtherba = 100
 heighterba = 100
 erba = new Image;
 erba.src = "Grass Patch.png";
-erba.onload = function(){
-  ctx.drawImage(erba, width-widtherba, 0,widtherba,heighterba);
-}
 
-//Campo d'erba
-campo = new Image;
-campo.src = "Field.png";
-campo.onload = function(){
-  ctx.drawImage(campo,0,0,width,height);
-}
+
 /*
 ctx.beginPath()  
 ctx.drawImage(campo,0,0,width,height)
@@ -499,7 +499,7 @@ function chaosVariation(){
 function probstop() {
   //numero pecore ferme
   n_pecore_stay = 0;
-  for (k = 0; k < numpecore; k++) {
+  for (k = 0; k < fraction_neighbour*numpecore; k++) {
     if (currentv[k] == slowSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]) {
       n_pecore_stay = n_pecore_stay + 1;
     }
@@ -512,7 +512,7 @@ function probstop() {
 function probstartwalk() {
   //numero pecore che camminano
   n_pecore_walk = 0;
-  for (k = 0; k < numpecore; k++) {
+  for (k = 0; k < fraction_neighbour*numpecore; k++) {
     if (
       currentv[k] == mediumSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]){
         
@@ -537,7 +537,7 @@ function probstartrun(i) {
 
   //numero pecore che corrono
   n_pecore_run = 0;
-  for (k = 0; k < numpecore; k++) {
+  for (k = 0; k < fraction_neighbour*numpecore; k++) {
     if (currentv[k] == fastSpeed && alldistances[k] < alldistances[Math.floor(fraction_neighbour*numpecore)]) {
       n_pecore_run = n_pecore_run + 1;
     }
@@ -557,7 +557,7 @@ function probinchioda(i) {
   }
   l = l / (count - 1);
 
-  p = Math.pow(tau2_0, -1) * Math.pow((ds / l) * (1 + alpha * ms), delta);
+  p = Math.pow(tau2_0, -1) * Math.pow((ds / l) * (1 + alpha * n_pecore_stay), delta);
   return p;
 }
 
