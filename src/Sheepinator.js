@@ -720,7 +720,7 @@ function massCentre(){
 
 var tiempoDelay = 0;
 var osc_amp = con.createGain();
-osc_amp.gain.value = 1;
+osc_amp.gain.value = 0.6;
 var del = con.createDelay();
 var fb = con.createGain();
 fb.gain.value = 0.75;
