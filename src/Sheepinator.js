@@ -1230,7 +1230,7 @@ function playDrums(){
   else 
     kick.play()
 
-  if (ms<25 && mw+ms+mr >=30){
+  if (ms<25 && mw+ms+mr >=25){
     if (ms<3)   
       setTimeout(function(){rewind(closed_hat)},(2.5)/(10*fps)*1000*framesPermeasure)
     else if (ms<15) 
@@ -1257,7 +1257,7 @@ function playDrums(){
       setTimeout(function(){rewind(open_hat)},(7.5)/(10*fps)*1000*framesPermeasure)
   }
 
-  if (mw<15 && mw+ms+mr >=30){
+  if (mw<15 && mw+ms+mr >=25){
     if (mw<3) 
       setTimeout(function(){rewind(tom)},(2.5)/(10*fps)*1000*framesPermeasure)
     else if (mw<15) 
