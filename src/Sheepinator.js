@@ -770,11 +770,8 @@ function play(n) {
   osc.connect(osc_amp);
 
   del.delayTime.value = tiempoDelay;
-  osc_amp.connect(del);
-  del.connect(fb);
-  fb.connect(del);
 
-  del.connect(pannerB).connect(con.destination)
+  osc_amp.connect(pannerB).connect(con.destination)
 
   //osc_amp.connect(con.destination)
    osc.start();
@@ -1148,20 +1145,55 @@ function changerest(element) {
 }
 
 function changeDelay(tiempo) {
-  if(tiempo == 'fourth')
+  if(tiempo == 'fourth'){
     tiempoDelay = (1/fps)*framesPermeasure/4;
 
-  else if(tiempo == 'eigth')
+    osc_amp.disconnect();
+    osc_amp.connect(del);
+    del.connect(fb);
+    fb.connect(del);
+    del.connect(pannerB).connect(con.destination)
+  }
+  
+
+  else if(tiempo == 'eigth'){
     tiempoDelay = (1/fps)*framesPermeasure/8;
+
+    osc_amp.disconnect();
+    osc_amp.connect(del);
+    del.connect(fb);
+    fb.connect(del);
+    del.connect(pannerB).connect(con.destination)
+  }
   
-  else if(tiempo == 'dotted')
+  else if(tiempo == 'dotted'){
     tiempoDelay = (1/fps)*framesPermeasure*3/8;
+
+    osc_amp.disconnect();
+    osc_amp.connect(del);
+    del.connect(fb);
+    fb.connect(del);
+    del.connect(pannerB).connect(con.destination)
+  }
   
-  else if(tiempo == 'off')
+  else if(tiempo == 'off'){
     tiempoDelay = 0;
+
+    osc_amp.disconnect();
+    del.disconnect();
+    fb.disconnect();
+    osc_amp.connect(pannerB).connect(con.destination)
+  }
   
-  else if(tiempo == 'two_fourth')
+  else if(tiempo == 'two_fourth'){
     tiempoDelay = (1/fps)*framesPermeasure/2;
+
+    osc_amp.disconnect();
+    osc_amp.connect(del);
+    del.connect(fb);
+    fb.connect(del);
+    del.connect(pannerB).connect(con.destination)
+  }
 }
 
 
