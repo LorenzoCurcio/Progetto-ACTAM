@@ -24,7 +24,7 @@ rest = 1
 dr = scaleLength*10.6;
 ds = scaleLength*10.6;
 tau01_2 = numpecore;
-tau0_1 = 35;
+tau0_1 = 50;
 tau2_0 = numpecore
 tau1_0 = 8;
 eta = 0.13;
@@ -157,6 +157,7 @@ campo.src = "Field.png";
 campo.onload = function(){
   ctx.drawImage(campo,0,0,width,height);
   ctx.drawImage(stalla, width-widthstalla-3, 3,widthstalla,heightstalla)
+  ctx.drawImage(sheperdF,posX - 15,posY - 70);
 }
 
 //STALLA
@@ -167,7 +168,8 @@ stalla.src = "Casetta.png";
 stalla.onload = function(){
   ctx.drawImage(campo,0,0,width,height);
   ctx.drawImage(stalla, width-widthstalla-3, 3,widthstalla,heightstalla)
-}
+  ctx.drawImage(sheperdF,posX - 15,posY - 70);}
+
 
 //PATCH D'ERBA
 widtherba = 100
@@ -272,7 +274,12 @@ function render() {
   ctx.stroke();
 }
 
-render();
+sheperdF.onload = function(){ 
+  ctx.beginPath();
+  ctx.drawImage(sheperdF,posX - 15,posY - 70);
+  ctx.closePath();
+  ctx.stroke();}
+
 
 //Gestione del movimento
 function physics() {
@@ -286,28 +293,28 @@ function physics() {
       vy[i] = currentv[i] * Math.sin(currentarg[i]);
     }
     //shockingSheeps
-    if (rectx[i] + widthRect > width && shockboolean) {
+    if (rectx[i] + widthRect > width-3 && shockboolean) {
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
       shock(i)
       vx[i] =-fastSpeed
       vy[i] = 0
       currentarg[i] = Math.PI
     }
-    if(rectx[i] <= 0 && shockboolean){
+    if(rectx[i] <= 3 && shockboolean){
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
       shock(i)
       vx[i] = fastSpeed
       vy[i] = 0
       currentarg[i] = 0
     }
-    if (recty[i] + heightRect > height && shockboolean) {
+    if (recty[i] + heightRect > height-3 && shockboolean) {
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
       shock(i)
       vx[i] = 0
       vy[i] = -fastSpeed
       currentarg[i] = -Math.PI/2
     }
-    if (recty[i] <= 0 && shockboolean){
+    if (recty[i] <= 3 && shockboolean){
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
       shock(i)
       vx[i] = 0
@@ -1136,8 +1143,8 @@ function changenotesPerSecond(element) {
   playtime = framesPermeasure + 1
 }
 
-function changedelta(element) {
-  delta = parseFloat(element.value);
+function changealpha(element) {
+  alpha = parseFloat(element.value);
 }
 
 function changerest(element) {
@@ -1204,12 +1211,12 @@ function drumsChange(){
 
   if(drumbutton.innerHTML == "Drums Off"){
     drumbutton.innerHTML = 'Drums On';
-    drums = true
+    drums = false
 }
 
   else if(drumbutton.innerHTML == 'Drums On'){
     drumbutton.innerHTML = 'Drums Off'; 
-    drums = false
+    drums = true
   }
 }
 
@@ -1227,10 +1234,10 @@ function playDrums(){
     crash.play()
   else if (mr>=5) 
     ride.play()
-  else 
+  else if (n_pecore_stay<5)
     kick.play()
 
-  if (ms<25 && mw+ms+mr >=25){
+  if (n_pecore_stay<25){
     if (ms<3)   
       setTimeout(function(){rewind(closed_hat)},(2.5)/(10*fps)*1000*framesPermeasure)
     else if (ms<15) 
@@ -1240,11 +1247,11 @@ function playDrums(){
   }
 
   if (ms<25){
-    if (ms>=20) 
+    if (ms>=15) 
       setTimeout(function(){rewind(snare)},(2.5)/(10*fps)*1000*framesPermeasure)
     else if (ms>=10) 
       setTimeout(function(){rewind(snare)},(5)/(10*fps)*1000*framesPermeasure)
-    if (ms>=5) 
+    if (ms>=2) 
       setTimeout(function(){rewind(snare)},(7.5)/(10*fps)*1000*framesPermeasure)
   }
   
@@ -1257,10 +1264,10 @@ function playDrums(){
       setTimeout(function(){rewind(open_hat)},(7.5)/(10*fps)*1000*framesPermeasure)
   }
 
-  if (mw<15 && mw+ms+mr >=25){
+  if (n_pecore_stay>=30){
     if (mw<3) 
       setTimeout(function(){rewind(tom)},(2.5)/(10*fps)*1000*framesPermeasure)
-    else if (mw<15) 
+    else if (mw<5) 
       setTimeout(function(){rewind(tom)},(5)/(10*fps)*1000*framesPermeasure)
     if (mw==0) 
       setTimeout(function(){rewind(tom)},(7.5)/(10*fps)*1000*framesPermeasure)

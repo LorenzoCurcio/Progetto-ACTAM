@@ -48,10 +48,10 @@
   </div>
             
   <div>
-    <label for="notesPerSecond" class = "sliders">Notes Per Second</label>
+    <label for="notesPerSecond" class = "sliders">BPM</label>
     <input id="notesPerSecond" class = "sliders" type="range" min="1" max="10" value="3" step = "0.001" min="1" max="10" onChange="changenotesPerSecond(this)">
     <label for="mimetic" class = "sliders">Allelomimesis</label>
-    <input id="mimetic" class = "sliders" type="range" min="1" max="5" value="4" step = "0.001" min="1" max="5" onChange="changedelta(this)">
+    <input id="mimetic" class = "sliders" type="range" min="1" max="50" value="15" step = "0.001" min="1" max="50" onChange="changealpha(this)">
     <label for="rest" class = "sliders">Run Tendency</label>
     <input id="rest" class = "sliders" type="range" min="1" max="10" value="1" step = "0.001" min="1" max="100" onChange="changerest(this)">
 
@@ -93,7 +93,7 @@
   </div>
               
   <div class = "drums pulse button" onclick ="drumsChange()">
-    <div id = "drums" class = "text">Drums Off</div>
+    <div id = "drums" class = "text">Drums On</div>
   </div>
   
   <div class = "gamebutton pulse button" onclick="gamemodeswitch()"> 
