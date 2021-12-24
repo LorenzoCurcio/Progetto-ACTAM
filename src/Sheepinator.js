@@ -1125,7 +1125,6 @@ function lose() {
   }
   gamemodeswitch()
   render()
-  
 }
 
 function changewave(element){
@@ -1149,30 +1148,26 @@ function changerest(element) {
 }
 
 function changeDelay(tiempo) {
-  delayslider = document.getElementById("delayslider")
-
-  if(tiempo == 'fourth'){
+  if(tiempo == 'fourth')
     tiempoDelay = (1/fps)*framesPermeasure/4;
-  }
-  else if(tiempo == 'eigth'){
+
+  else if(tiempo == 'eigth')
     tiempoDelay = (1/fps)*framesPermeasure/8;
-  }
-  else if(tiempo == 'dotted'){
+  
+  else if(tiempo == 'dotted')
     tiempoDelay = (1/fps)*framesPermeasure*3/8;
-  }
-  else if(tiempo == 'off'){
+  
+  else if(tiempo == 'off')
     tiempoDelay = 0;
-  }
-  else if(tiempo == 'two_fourth'){
+  
+  else if(tiempo == 'two_fourth')
     tiempoDelay = (1/fps)*framesPermeasure/2;
-  }
 }
 
 
 
 //drum button
 function drumsChange(){
-
   drumbutton = document.getElementById("drums")
 
   if(drumbutton.innerHTML == "Drums Off"){
@@ -1187,9 +1182,6 @@ function drumsChange(){
 }
 
 function playDrums(){
-
-  
-
   var drumsX = posX + radioDrums * Math.cos(angleDrums); 
   var drumsY = posY + radioDrums * Math.sin(angleDrums);
 
@@ -1199,29 +1191,48 @@ function playDrums(){
 
   console.log(angleDrums)
 
-  if (mr>=10) {crash.play()}
-  else if (mr>=5) {ride.play()}
-  else {kick.play()}
+  if (mr>=10) 
+    crash.play()
+  else if (mr>=5) 
+    ride.play()
+  else 
+    kick.play()
 
   if (ms<25 && mw+ms+mr >=30){
-  if (ms<3) {setTimeout(function(){rewind(closed_hat)},(2.5)/(10*fps)*1000*framesPermeasure)}
-  else if (ms<15) {setTimeout(function(){rewind(closed_hat)},(5)/(10*fps)*1000*framesPermeasure)}
-  if (ms==0) {setTimeout(function(){rewind(closed_hat)},(7.5)/(10*fps)*1000*framesPermeasure)}}
+    if (ms<3)   
+      setTimeout(function(){rewind(closed_hat)},(2.5)/(10*fps)*1000*framesPermeasure)
+    else if (ms<15) 
+      setTimeout(function(){rewind(closed_hat)},(5)/(10*fps)*1000*framesPermeasure)
+    if (ms==0) 
+      setTimeout(function(){rewind(closed_hat)},(7.5)/(10*fps)*1000*framesPermeasure)
+  }
 
   if (ms<25){
-  if (ms>=20) {setTimeout(function(){rewind(snare)},(2.5)/(10*fps)*1000*framesPermeasure)}
-  else if (ms>=10) {setTimeout(function(){rewind(snare)},(5)/(10*fps)*1000*framesPermeasure)}
-  if (ms>=5) {setTimeout(function(){rewind(snare)},(7.5)/(10*fps)*1000*framesPermeasure)}}
+    if (ms>=20) 
+      setTimeout(function(){rewind(snare)},(2.5)/(10*fps)*1000*framesPermeasure)
+    else if (ms>=10) 
+      setTimeout(function(){rewind(snare)},(5)/(10*fps)*1000*framesPermeasure)
+    if (ms>=5) 
+      setTimeout(function(){rewind(snare)},(7.5)/(10*fps)*1000*framesPermeasure)
+  }
   
   if (ms<25){
-  if (mw>=20) {setTimeout(function(){rewind(open_hat)},(2.5)/(10*fps)*1000*framesPermeasure)}
-  else if (mw>=10) {setTimeout(function(){rewind(open_hat)},(5)/(10*fps)*1000*framesPermeasure)}
-  if (mw>=5) {setTimeout(function(){rewind(open_hat)},(7.5)/(10*fps)*1000*framesPermeasure)}}
+    if (mw>=20) 
+      setTimeout(function(){rewind(open_hat)},(2.5)/(10*fps)*1000*framesPermeasure)
+    else if (mw>=10) 
+      setTimeout(function(){rewind(open_hat)},(5)/(10*fps)*1000*framesPermeasure)
+    if (mw>=5) 
+      setTimeout(function(){rewind(open_hat)},(7.5)/(10*fps)*1000*framesPermeasure)
+  }
 
   if (mw<15 && mw+ms+mr >=30){
-  if (mw<3) {setTimeout(function(){rewind(tom)},(2.5)/(10*fps)*1000*framesPermeasure)}
-  else if (mw<15) {setTimeout(function(){rewind(tom)},(5)/(10*fps)*1000*framesPermeasure)}
-  if (mw==0) {setTimeout(function(){rewind(tom)},(7.5)/(10*fps)*1000*framesPermeasure)}}
+    if (mw<3) 
+      setTimeout(function(){rewind(tom)},(2.5)/(10*fps)*1000*framesPermeasure)
+    else if (mw<15) 
+      setTimeout(function(){rewind(tom)},(5)/(10*fps)*1000*framesPermeasure)
+    if (mw==0) 
+      setTimeout(function(){rewind(tom)},(7.5)/(10*fps)*1000*framesPermeasure)
+  }
 
 }
 
