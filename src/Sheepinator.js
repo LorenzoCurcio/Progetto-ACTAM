@@ -227,6 +227,36 @@ sheperdL.src = "PNGs/Pastore Left.png"
 sheperdR = new Image
 sheperdR.src = "PNGs/Pastore Right.png"
 
+radioDrums = 100;
+var drums_amp = con.createGain();
+drums_amp.gain.value = 1;
+      
+pannerDrums = new PannerNode(con, {
+  panningModel: pannerModel,
+  distanceModel: distanceModel,
+  positionX: posX,
+  positionY: posY,
+  positionZ: positionZ,
+  orientationX: orientationX,
+  orientationY: orientationY,
+  orientationZ: orientationZ,
+  refDistance: refDistance,
+  maxDistance: maxDistance,
+  rolloffFactor: rollOff,
+  coneInnerAngle: innerCone,
+  coneOuterAngle: outerCone,
+  coneOuterGain: outerGain
+  }
+)
+  
+crashSound.connect(drums_amp).connect(pannerDrums).connect(con.destination)
+rideSound.connect(drums_amp).connect(pannerDrums).connect(con.destination)
+kickSound.connect(drums_amp).connect(pannerDrums).connect(con.destination)
+c_hat.connect(drums_amp).connect(pannerDrums).connect(con.destination)
+tomSound.connect(drums_amp).connect(pannerDrums).connect(con.destination)
+o_hat.connect(drums_amp).connect(pannerDrums).connect(con.destination)
+snr.connect(drums_amp).connect(pannerDrums).connect(con.destination)
+
 for (i=0;i<numpecore;i++){
   rectx[i] = width-70;
   recty[i] = 50;
@@ -481,35 +511,6 @@ function stdBehaviour() {
     setTimeout(function(){play(ms)},(5)/(10*fps)*1000*framesPermeasure)
     if(ms >= 10){setTimeout(function(){play(ms+mw+mr)},(7.5)/(10*fps)*1000*framesPermeasure)}
     if(drums){
-      
-      radioDrums = 500;
-      
-      pannerDrums = new PannerNode(con, {
-        panningModel: pannerModel,
-        distanceModel: distanceModel,
-        positionX: posX,
-        positionY: posY,
-        positionZ: positionZ,
-        orientationX: orientationX,
-        orientationY: orientationY,
-        orientationZ: orientationZ,
-        refDistance: refDistance,
-        maxDistance: maxDistance,
-        rolloffFactor: rollOff,
-        coneInnerAngle: innerCone,
-        coneOuterAngle: outerCone,
-        coneOuterGain: outerGain
-        }
-      )
-  
-      crashSound.connect(pannerDrums).connect(con.destination)
-      rideSound.connect(pannerDrums).connect(con.destination)
-      kickSound.connect(pannerDrums).connect(con.destination)
-      c_hat.connect(pannerDrums).connect(con.destination)
-      tomSound.connect(pannerDrums).connect(con.destination)
-      o_hat.connect(pannerDrums).connect(con.destination)
-      snr.connect(pannerDrums).connect(con.destination)
-      
       playDrums()}
   }
 }
@@ -1024,9 +1025,9 @@ function gamemodeswitch(){
     var wolfSound = new Audio ('howl.mp3');
     const wolfTrack = con.createMediaElementSource(wolfSound);
 
-    radioWolf = 500;
+    radioWolf = 100;
 
-    const pannerWolf = new PannerNode(con, {
+    pannerWolf = new PannerNode(con, {
       panningModel: pannerModel,
       distanceModel: distanceModel,
       positionX: posX,
@@ -1045,7 +1046,6 @@ function gamemodeswitch(){
     )
 
     wolfTrack.connect(pannerWolf).connect(con.destination)
-    wolf_amp = con.createGain()
 
     function updateCounter(){
   
