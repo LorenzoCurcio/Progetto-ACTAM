@@ -192,7 +192,10 @@ var con = new AudioContext();
 
 var lfo = con.createOscillator();
 lfo_amp = con.createGain();
-lfo.start()
+lfo_amp.gain.value = 200
+lfo.start();
+// var osc = con.createOscillator();
+// osc.start();
 
 const crashSound = con.createMediaElementSource(crash);
 const rideSound = con.createMediaElementSource(ride);
@@ -334,31 +337,36 @@ function physics() {
     //shockingSheeps
     if (rectx[i] + widthRect > width-3 && shockboolean) {
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
-      shock(i)
+      //shock(i)
       vx[i] =-fastSpeed
       vy[i] = 0
       currentarg[i] = Math.PI
+      lfo.frequency.value = 10;
+      
     }
     if(rectx[i] <= 3 && shockboolean){
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
-      shock(i)
+      //shock(i)
       vx[i] = fastSpeed
       vy[i] = 0
       currentarg[i] = 0
+      lfo.frequency.value = 20;
     }
     if (recty[i] + heightRect > height-3 && shockboolean) {
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
-      shock(i)
+      //shock(i)
       vx[i] = 0
       vy[i] = -fastSpeed
       currentarg[i] = -Math.PI/2
+      lfo.frequency.value = 5;
     }
     if (recty[i] <= 3 && shockboolean){
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
-      shock(i)
+      //shock(i)
       vx[i] = 0
       vy[i] = fastSpeed
       currentarg[i] = Math.PI/2
+      lfo.frequency.value = 15;
     }
     rectx[i] += vx[i];
     recty[i] += vy[i];
@@ -765,6 +773,7 @@ pannerB = new PannerNode(con, {
 
 function play(n) {
   octavedown = 0
+  var osc = con.createOscillator();
   if(modes[7].style.backgroundColor == selectedmode || modes[8].style.backgroundColor == selectedmode){limit = 2}
   else{limit = 7}
   if(n==0){fb.gain.value=0.25}
@@ -775,7 +784,7 @@ function play(n) {
   nScale = scale[n]+12*octavedown;
   if (nScale == 0){nScale = nScale +12* Math.floor(Math.random()*3);}
   const now =con.currentTime;
-  var osc = con.createOscillator();
+  // var osc = con.createOscillator();
   osc.type = wave;
 
   oscFreq = rootfreq * Math.pow(2, nScale / 12);
@@ -783,24 +792,22 @@ function play(n) {
     oscFreq = oscFreq/2;
   }
 
-  
-  
-  lfo.frequency.value = 0;
-  lfo_amp.gain.value = 200
+  lfo.frequency.value = 0
+  lfo.connect(lfo_amp)
+  lfo_amp.connect(osc.detune)
 
   osc.frequency.value = oscFreq;
   osc.connect(osc_amp);
-  lfo.connect(lfo_amp)
-  lfo_amp.connect(osc.detune)
   del.delayTime.value = tiempoDelay;
 
-  lfo_amp.connect(osc_amp).connect(pannerB).connect(con.destination)
+  osc_amp.connect(pannerB).connect(con.destination)
 
   //osc_amp.connect(con.destination)
    osc.start();
-   osc.stop(now+0.5) ;
+   osc.stop(now+1) ;
 
    fb.gain.value=0.75
+  
 }
 
 //Modes
@@ -1004,7 +1011,6 @@ function shock(i){
   vx[i] = currentv[i]*Math.cos(currentarg[i])
   vy[i] = currentv[i]*Math.sin(currentarg[i])
   //rewind(shockSFX)
-  lfo.frequency.value = 1;
 }
   
 
