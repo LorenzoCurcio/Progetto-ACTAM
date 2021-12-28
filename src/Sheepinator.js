@@ -95,6 +95,8 @@ winkButtonBoolean = false;
 wave = "sine"
 drums = false
 
+
+
 //Gestione interfaccia grafica
 
 //CAMPO
@@ -188,6 +190,10 @@ ctx.stroke();*/
 //setting listener
 var con = new AudioContext();
 
+var lfo = con.createOscillator();
+lfo_amp = con.createGain();
+lfo.start()
+
 const crashSound = con.createMediaElementSource(crash);
 const rideSound = con.createMediaElementSource(ride);
 const kickSound = con.createMediaElementSource(kick);
@@ -256,6 +262,9 @@ c_hat.connect(drums_amp).connect(pannerDrums).connect(con.destination)
 tomSound.connect(drums_amp).connect(pannerDrums).connect(con.destination)
 o_hat.connect(drums_amp).connect(pannerDrums).connect(con.destination)
 snr.connect(drums_amp).connect(pannerDrums).connect(con.destination)
+
+
+
 
 for (i=0;i<numpecore;i++){
   rectx[i] = width-70;
@@ -774,16 +783,22 @@ function play(n) {
     oscFreq = oscFreq/2;
   }
 
+  
+  
+  lfo.frequency.value = 0;
+  lfo_amp.gain.value = 200
+
   osc.frequency.value = oscFreq;
   osc.connect(osc_amp);
-
+  lfo.connect(lfo_amp)
+  lfo_amp.connect(osc.detune)
   del.delayTime.value = tiempoDelay;
 
-  osc_amp.connect(pannerB).connect(con.destination)
+  lfo_amp.connect(osc_amp).connect(pannerB).connect(con.destination)
 
   //osc_amp.connect(con.destination)
    osc.start();
-   osc.stop(now+0.1) ;
+   osc.stop(now+0.5) ;
 
    fb.gain.value=0.75
 }
@@ -988,8 +1003,10 @@ function shock(i){
   currentv[i] = fastSpeed
   vx[i] = currentv[i]*Math.cos(currentarg[i])
   vy[i] = currentv[i]*Math.sin(currentarg[i])
-  rewind(shockSFX)}
-
+  //rewind(shockSFX)
+  lfo.frequency.value = 1;
+}
+  
 
 
 // CIBO
