@@ -1120,7 +1120,7 @@ function lose() {
   startupHappened = false;
   hungry=false
   changeGS();
-  xfood = null; yfood= null
+  xfood = 9999999999; yfood= 9999999999
   document.getElementById("countdown").innerHTML = ""
   gsbutton.innerHTML = "Start"
   for (i=0;i<numpecore;i++){
