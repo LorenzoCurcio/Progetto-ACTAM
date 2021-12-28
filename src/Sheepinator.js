@@ -524,9 +524,9 @@ function stdBehaviour() {
   if (playtime==framesPermeasure){
     //Notes
     setTimeout(function(){play(ms)},0)
-    if(mr+ms+mw >= 30){setTimeout(function(){play(mr)},(2.5)/(10*fps)*1000*framesPermeasure)}
+    setTimeout(function(){play(mr)},(2.5)/(10*fps)*1000*framesPermeasure)
     setTimeout(function(){play(ms)},(5)/(10*fps)*1000*framesPermeasure)
-    if(ms >= 10){setTimeout(function(){play(ms+mw+mr)},(7.5)/(10*fps)*1000*framesPermeasure)}
+    setTimeout(function(){play(ms+mw+mr)},(7.5)/(10*fps)*1000*framesPermeasure)
     if(drums){
       playDrums()}
   }
@@ -804,7 +804,7 @@ function play(n) {
 
   //osc_amp.connect(con.destination)
    osc.start();
-   osc.stop(now+1) ;
+   osc.stop(now+(2)/(10*fps)*framesPermeasure) ;
 
    fb.gain.value=0.75
   
