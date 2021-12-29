@@ -337,36 +337,36 @@ function physics() {
     //shockingSheeps
     if (rectx[i] + widthRect > width-3 && shockboolean) {
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
+      lfo.frequency.value = 10;
       //shock(i)
       vx[i] =-fastSpeed
       vy[i] = 0
       currentarg[i] = Math.PI
-      lfo.frequency.value = 10;
       
     }
     if(rectx[i] <= 3 && shockboolean){
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
+      lfo.frequency.value = 20;
       //shock(i)
       vx[i] = fastSpeed
       vy[i] = 0
       currentarg[i] = 0
-      lfo.frequency.value = 20;
     }
     if (recty[i] + heightRect > height-3 && shockboolean) {
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
+      lfo.frequency.value = 5;
       //shock(i)
       vx[i] = 0
       vy[i] = -fastSpeed
       currentarg[i] = -Math.PI/2
-      lfo.frequency.value = 5;
     }
     if (recty[i] <= 3 && shockboolean){
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
+      lfo.frequency.value = 15;
       //shock(i)
       vx[i] = 0
       vy[i] = fastSpeed
       currentarg[i] = Math.PI/2
-      lfo.frequency.value = 15;
     }
     rectx[i] += vx[i];
     recty[i] += vy[i];
@@ -745,10 +745,11 @@ function massCentre(){
 
 var tiempoDelay = 0;
 var osc_amp = con.createGain();
-osc_amp.gain.value = 0.6;
+osc_amp.gain.value = 0;
 var del = con.createDelay();
 var fb = con.createGain();
 fb.gain.value = 0.75;
+var attack = 0.1
 
 //binaural panner
 
@@ -768,7 +769,6 @@ pannerB = new PannerNode(con, {
   coneOuterAngle: outerCone,
   coneOuterGain: outerGain
 })
-
 
 
 function play(n) {
@@ -795,7 +795,8 @@ function play(n) {
   lfo.frequency.value = 0
   lfo.connect(lfo_amp)
   lfo_amp.connect(osc.detune)
-
+  osc_amp.gain.linearRampToValueAtTime(0.6, now + attack);
+  
   osc.frequency.value = oscFreq;
   osc.connect(osc_amp);
   del.delayTime.value = tiempoDelay;
