@@ -338,7 +338,7 @@ function physics() {
     if (rectx[i] + widthRect > width-3 && shockboolean) {
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
       lfo.frequency.value = 10;
-      //shock(i)
+      shock(i)
       vx[i] =-fastSpeed
       vy[i] = 0
       currentarg[i] = Math.PI
@@ -347,7 +347,7 @@ function physics() {
     if(rectx[i] <= 3 && shockboolean){
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
       lfo.frequency.value = 20;
-      //shock(i)
+      shock(i)
       vx[i] = fastSpeed
       vy[i] = 0
       currentarg[i] = 0
@@ -355,7 +355,7 @@ function physics() {
     if (recty[i] + heightRect > height-3 && shockboolean) {
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
       lfo.frequency.value = 5;
-      //shock(i)
+      shock(i)
       vx[i] = 0
       vy[i] = -fastSpeed
       currentarg[i] = -Math.PI/2
@@ -363,7 +363,7 @@ function physics() {
     if (recty[i] <= 3 && shockboolean){
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
       lfo.frequency.value = 15;
-      //shock(i)
+      shock(i)
       vx[i] = 0
       vy[i] = fastSpeed
       currentarg[i] = Math.PI/2
@@ -1011,7 +1011,7 @@ function shock(i){
   currentv[i] = fastSpeed
   vx[i] = currentv[i]*Math.cos(currentarg[i])
   vy[i] = currentv[i]*Math.sin(currentarg[i])
-  //rewind(shockSFX)
+  rewind(shockSFX)
 }
   
 
