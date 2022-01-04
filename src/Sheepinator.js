@@ -335,7 +335,7 @@ function physics() {
       vy[i] = currentv[i] * Math.sin(currentarg[i]);
     }
     //shockingSheeps
-    if (rectx[i] + widthRect > width-3 && shockboolean) {
+    if (rectx[i] + widthRect >= width-8 && shockboolean) {
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
       lfo.frequency.value = 10;
       shock(i)
@@ -352,7 +352,7 @@ function physics() {
       vy[i] = 0
       currentarg[i] = 0
     }
-    if (recty[i] + heightRect > height-3 && shockboolean) {
+    if (recty[i] + heightRect >= height-8 && shockboolean) {
       shockCountdown[i] = Math.floor(fps*shocktime + Math.random()*fps/2)
       lfo.frequency.value = 5;
       shock(i)
