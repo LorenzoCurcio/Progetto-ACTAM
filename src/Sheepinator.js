@@ -445,6 +445,7 @@ function step() {
   }
   //se stanno recuperando dallo spaventoh
   else if(recoverState == true){
+    osc_amp_chaos.gain.value = 0
     stdBehaviour();
     recoverTime--;
     if(recoverTime == 0)
@@ -485,6 +486,7 @@ function stdBehaviour() {
   ms = 0;
   mr = 0;
   mw = 0;
+  osc_amp_chaos.disconnect();
   playtime--
   if (playtime==0){playtime=framesPermeasure}
   //velocità attuale
@@ -532,11 +534,20 @@ function stdBehaviour() {
   }
 }
 
+var osc_chaos = con.createOscillator();
+var osc_amp_chaos = con.createGain();
+var freq = 200;
+osc_chaos.frequency.value = freq
+osc_amp_chaos.gain.value = 0
+osc_chaos.start();
+//osc_chaos.connect(osc_amp_chaos).connect(con.destination)
+
+
 function chaos(){
   Scared.play()
   x_chaos = xCM - posX;
   y_chaos = yCM - posY;
-
+  osc_chaos.connect(osc_amp_chaos).connect(con.destination)
   var chaosArg;
 
   if (x_chaos > 0){
@@ -556,6 +567,21 @@ function chaos(){
   for(i = 0; i<numpecore; i++){
     currentv[i] = fastSpeed - Math.random()/3
   }
+  
+  setInterval(function(){
+  freq = freq * 1.5;
+
+  if(freq>2000){
+    freq = 200 + (Math.random() * 100);
+    }
+  
+
+  lfo_amp.connect(osc_chaos.detune)
+  osc_chaos.frequency.value = freq;
+  osc_amp_chaos.gain.value = 0.2
+  osc_chaos.frequency.setValueAtTime(freq, con.currentTime);
+  },maxChaosTime)
+
 }
 
 function chaosVariation(){
