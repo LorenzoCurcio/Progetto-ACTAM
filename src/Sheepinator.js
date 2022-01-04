@@ -445,7 +445,7 @@ function step() {
   }
   //se stanno recuperando dallo spaventoh
   else if(recoverState == true){
-    osc_amp_chaos.gain.value = 0
+    osc_amp_chaos.disconnect();
     stdBehaviour();
     recoverTime--;
     if(recoverTime == 0)
@@ -574,7 +574,6 @@ function chaos(){
   if(freq>2000){
     freq = 200 + (Math.random() * 100);
     }
-  
 
   lfo_amp.connect(osc_chaos.detune)
   osc_chaos.frequency.value = freq;
