@@ -1131,8 +1131,8 @@ function gamemodeswitch(){
 
   
 function foodzone() {
-  xfood = Math.random()*(width-foodzoneWidth- safetyDistance);
-  yfood = Math.random()*(height-foodzoneHeight);
+  xfood = Math.random()*(width-foodzoneWidth- safetyDistance-80-5)+5;
+  yfood = Math.random()*(height-foodzoneHeight-5)+5;
 }
 
 
@@ -1201,6 +1201,10 @@ function changerest(element) {
 }
 
 function changeDelay(tiempo) {
+
+  if(tiempo == 'current')
+    tiempo = currenttiempo
+  
   if(tiempo == 'fourth'){
     tiempoDelay = (1/fps)*framesPermeasure/4;
 
@@ -1250,6 +1254,8 @@ function changeDelay(tiempo) {
     fb.connect(del);
     del.connect(pannerB).connect(con.destination)
   }
+
+  currenttiempo = tiempo;
 }
 
 
