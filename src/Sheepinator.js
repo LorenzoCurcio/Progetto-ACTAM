@@ -1114,27 +1114,27 @@ function gamemodeswitch(){
     function updateCounter(){
   
       angleWolf = Math.random()*10;
-      secondsScreen = secondsScreen - 1;
-
+      
       var rotationX = posX + radioWolf * Math.cos(angleWolf); 
       var rotationY = posY + radioWolf * Math.sin(angleWolf);
       angleWolf = (angleWolf + Math.PI / 360) % (Math.PI * 2);
-
-      if (secondsScreen <0){
-        minutesScreen = minutesScreen - 1;
-        secondsScreen = 59;
+      
+      if(flagButton == true){
+        secondsScreen = secondsScreen - 1;
+        if (secondsScreen <0){
+          minutesScreen = minutesScreen - 1;
+          secondsScreen = 59;
+        }
+        
+        if (secondsScreen==25 || secondsScreen == 0 ){
+          
+          pannerWolf.positionX.value = rotationX;
+          pannerWolf.positionY.value = rotationY;
+          
+          wolfSound.play()
+        }
       }
-
-      if (secondsScreen==25 || secondsScreen == 0 ){
-
-        pannerWolf.positionX.value = rotationX;
-        pannerWolf.positionY.value = rotationY;
-
-        wolfSound.play()
-
-
-      }
-
+        
     document.getElementById("countdown").innerHTML = String(minutesScreen).padStart(2,'0') + ":" + String(secondsScreen).padStart(2, '0')
     }
     //console.log(angleWolf)

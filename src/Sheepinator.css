@@ -449,9 +449,9 @@ html{
 
 #instructions{
   position: absolute;
-  width : 250;
-  top: 66;
-  left:890;
+  width : 230;
+  top: 76;
+  left:1035;
   font-family: cursive;
   text-align:center;
   background: rgb(245,222,179);
