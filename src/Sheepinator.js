@@ -58,6 +58,7 @@ outroMusic = new Audio('Epic Outro.wav')
 Scared = new Audio('Scared Sheeps.wav')
 eat = new Audio('Eat.wav')
 loseMusic = new Audio('You Lost.wav')
+sheepsdead = false
 
 //drums
 kick = new Audio('Kick.wav')
@@ -130,6 +131,8 @@ function stopAll(){
 }
 
 function GoStop(){
+  sheepsdead = false;
+
   if (flagButton==false && startupHappened == false){
     startup();
     introMusic.play()
@@ -179,7 +182,8 @@ heighterba = 100
 erba = new Image;
 erba.src = "Grass Patch.png";
 
-
+dead = new Image;
+dead.src = "Dead.png";
 /*
 ctx.beginPath()  
 ctx.drawImage(campo,0,0,width,height)
@@ -314,6 +318,14 @@ function render() {
   if(facing == 'left') {ctx.drawImage(sheperdL,posX - 15,posY - 70)};
   ctx.closePath();
   ctx.stroke();
+
+  if(sheepsdead){
+    ctx.beginPath();
+    ctx.drawImage(dead, 0, 0,width,height)
+    ctx.closePath()
+    ctx.stroke();
+    ctx.restore();
+  }
 }
 
 sheperdF.onload = function(){ 
@@ -527,7 +539,7 @@ function stdBehaviour() {
     //Notes
     setTimeout(function(){play(ms)},0)
     setTimeout(function(){play(mr)},(2.5)/(10*fps)*1000*framesPermeasure)
-    setTimeout(function(){play(ms)},(5)/(10*fps)*1000*framesPermeasure)
+    setTimeout(function(){play(mw)},(5)/(10*fps)*1000*framesPermeasure)
     setTimeout(function(){play(ms+mw+mr)},(7.5)/(10*fps)*1000*framesPermeasure)
     if(drums){
       playDrums()}
@@ -1009,6 +1021,7 @@ function goHome(){
     clearInterval(countdown);
     document.getElementById("countdown").innerHTML=""
   }
+  document.getElementById("instructions").style.visibility = "hidden"
 }
 
 function goHomeLoop(){
@@ -1055,11 +1068,13 @@ function gamemodeswitch(){
     hungry = false
     clearInterval(countdown)
     document.getElementById("countdown").innerHTML = ""
+    document.getElementById("instructions").style.visibility = "hidden"
   }
   else{
     score=0
     gamemode=true; 
     document.getElementById("gameButton").innerHTML = "Normal Mode";
+    document.getElementById("instructions").style.visibility = "visible"
     //food_first
     safetyDistance = 300
     foodzone();
@@ -1158,6 +1173,7 @@ function win() {
 }
 
 function lose() {
+  sheepsdead = true
   stopAll();
   loseMusic.play();
   clearInterval(countdown)
@@ -1166,7 +1182,6 @@ function lose() {
     winkButtonBoolean = false}
   homeButton.classList.remove("red")
   allHome=true
-  startupHappened = false;
   hungry=false
   changeGS();
   xfood = 9999999999; yfood= 9999999999
@@ -1177,6 +1192,7 @@ function lose() {
     recty[i] = 50;
   }
   gamemodeswitch()
+  startupHappened = false;
   render()
 }
 
