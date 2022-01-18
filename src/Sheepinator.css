@@ -37,18 +37,21 @@
     color: #fff;
 }
 
-  .bar{position:relative;
-  }
+.bar{
+  position:relative;
+}
 
-  .vertical{
-      display:block;    
-    }
-  
+.vertical{
+  top: 60px;
+  display:block;  
+  height: auto;
+  width: auto;  
+}
 .horizontal{
-    position:absolute;
-    display:inline-flex;
-    left:145px;
-    top:10px;
+  position:absolute;
+  display:inline-flex;
+  left: 10px;
+  top:10px;
 }
 .keybutton{
       width:40px;
@@ -108,7 +111,7 @@
     border-radius: 5px;
     cursor: pointer;
     text-align: center;
-    top: 590px;
+    top: 581px;
     left: 280px;
     vertical-align: middle;}
 
@@ -117,7 +120,7 @@
   }
 
 .sliders {
-  top: -480px;
+  top: -167px;
   left: 1030px;
   position: relative;
   font-family: cursive;
@@ -272,7 +275,7 @@ input[type=range] {
   border-radius: 5px;
   cursor: pointer;
   text-align: center;
-  top: 590px;
+  top: 581px;
   left: 774px;
   vertical-align: middle;
 }
@@ -457,4 +460,8 @@ html{
   background: rgb(245,222,179);
   border: solid 2px;
   visibility: hidden;
+}
+
+.custom-select{
+  display:inline-flex
 }

@@ -1,8 +1,6 @@
 <link rel="stylesheet" href="Sheepinator.css">
 
 <body>
-  
-  <div class="area" >
     <ul class="circles">
       <li><img src="Sheep_png_background.png" class="background_sheep"></li>
       <li><img src="Sheep_png_background.png" class="background_sheep"></li>
@@ -15,16 +13,8 @@
       <li><img src="Sheep_png_background.png" class="background_sheep"></li>
       <li><img src="Sheep_png_background.png" class="background_sheep"></li>
     </ul>
+    
     <div class = "bar vertical">
-      <div class = "twobuttons">
-        <div id="gostop" onclick="GoStop()" class="coolButton pulse button"> 
-          <div class = "moveright"> Start </div>
-        </div>
-        <div id="home" onclick="goHome()" class="coolButton pulse button">
-          <div class = "moveright"> Home </div>
-        </div>
-      </div>
-      
       <div class="modebutton" onclick = "Lydian();highlightmodes(this)" ><div class = "text">Lydian</div></div>
       <div class="modebutton" onclick = "Ionian();highlightmodes(this)"><div class = "text">Ionian</div></div>
       <div class="modebutton" onclick = "Myxolydian();highlightmodes(this)" ><div class = "text">Mixolydian</div></div>
@@ -34,8 +24,13 @@
       <div class="modebutton" onclick = "Locrian();highlightmodes(this)" ><div class = "text">Locrian</div></div>
       <div class="modebutton" onclick = "MajArp();highlightmodes(this)" ><div class = "text">Major Arpeggios</div></div>
       <div class="modebutton" onclick = "MinArp();highlightmodes(this)" ><div class = "text">Minor Arpeggios</div></div>
+    </div>
       
-      <div class = "custom-select">
+    <div class = "custom-select">
+        <div class = "gamebutton pulse button" onclick="gamemodeswitch()"> 
+          <div id = "gameButton" class = "text">Challenge Mode</div> 
+        </div>
+    </div>
         <div id="waves" class = "waves">
           <select onChange="changewave(this)">
             <option value='sine'>Sine</option>
@@ -44,13 +39,16 @@
             <option value='square'>Square</option>
           </select>
         </div>
-      </div>
-    </div>
-  </div>
+        <div class = "drums pulse button" onclick ="drumsChange()">
+          <div id = "drums" class = "text">Drums On</div>
+        </div>
+      
   
-  <div >
-    <div id="instructions">Try to make your sheeps happier. Bring them towards the patches of grass to make them eat. You'll have to scare them a bit but they'll thank you when they'll finally be safe from the wolf</div>
-    <div>
+  
+  
+  
+      <div id="instructions">Try to make your sheeps happier. Bring them towards the patches of grass to make them eat. You'll have to scare them a bit but they'll thank you when they'll finally be safe from the wolf</div>
+
       <label for="notesPerSecond" class = "sliders">BPM</label>
       <input id="notesPerSecond" class = "sliders" type="range" min="1" max="10" value="3" step = "0.001" min="1" max="10" onChange="changenotesPerSecond(this); changeDelay('current')">
       <label for="mimetic" class = "sliders">Allelomimesis</label>
@@ -75,13 +73,21 @@
         <input id="d1/4" name="state-d" type="radio" />
         <label for="d1/4" onclick="changeDelay('dotted')">D 1/4</label>
       </div>
-    </div>
+  
     
-  </div>  
+  
   
   
   
   <div class = "bar horizontal">
+    <div class = "twobuttons">
+      <div id="gostop" onclick="GoStop()" class="coolButton pulse button"> 
+        <div class = "moveright"> Start </div>
+      </div>
+      <div id="home" onclick="goHome()" class="coolButton pulse button">
+        <div class = "moveright"> Home </div>
+      </div>
+    </div>
     <div class="keybutton" onclick = "C();highlightnotes(this)"><div class="not_rotated " onclick = "C()">C</div></div>
     <div class="keybutton" onclick = "Cs();highlightnotes(this)"><div class="not_rotated " onclick = "Cs()">C#</div></div>
     <div class="keybutton" onclick = "D();highlightnotes(this)"><div class="not_rotated " onclick = "D()">D</div></div>
@@ -97,13 +103,6 @@
     <img src="minecraft-sheep.gif" class = "sheep" width="50" height = "50" />
   </div>
   
-  <div class = "drums pulse button" onclick ="drumsChange()">
-    <div id = "drums" class = "text">Drums On</div>
-  </div>
-  
-  <div class = "gamebutton pulse button" onclick="gamemodeswitch()"> 
-    <div id = "gameButton" class = "text">Challenge Mode</div> 
-  </div>
   
   <p id="countdown" class = "timer"></p>
 </body>
