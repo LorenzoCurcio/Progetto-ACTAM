@@ -58,6 +58,7 @@ outroMusic = new Audio('Epic Outro.wav')
 Scared = new Audio('Scared Sheeps.wav')
 eat = new Audio('Eat.wav')
 loseMusic = new Audio('You Lost.wav')
+beee = new Audio('bee.wav')
 sheepsdead = false
 
 //drums
@@ -1355,3 +1356,4 @@ function rewind(audio){
     }
   }
 
+  function bee(){rewind(beee)}
