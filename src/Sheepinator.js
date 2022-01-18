@@ -60,6 +60,7 @@ eat = new Audio('Eat.wav')
 loseMusic = new Audio('You Lost.wav')
 beee = new Audio('bee.wav')
 sheepsdead = false
+gohomeaudio = new Audio('Sheep Bell.wav')
 
 //drums
 kick = new Audio('Kick.wav')
@@ -1005,20 +1006,23 @@ function goHome(){
   chaosState = false
   shockboolean = false
   if (startupHappened == true && hungry==false){
-  outroMusic.play()
-  clearInterval(interval);
-  homeloop = setInterval(goHomeLoop, 1000/fps);
-  startupHappened = false;
-  for(i = 0; i<numpecore; i++){
-    currentarg[i] = -Math.atan(recty[i]/(width-rectx[i]));
-    currentv[i] = fastSpeed;
-  }
-  //SafeSheeps
-  if(gamemode){
-    clearInterval(winkButton);
-    homeButton.classList.remove("red");
-    gamemode = false
-  }
+    clearInterval(interval);
+    homeloop = setInterval(goHomeLoop, 1000/fps);
+    startupHappened = false;
+    for(i = 0; i<numpecore; i++){
+      currentarg[i] = -Math.atan(recty[i]/(width-rectx[i]));
+      currentv[i] = fastSpeed;
+    }
+    //SafeSheeps
+    if(gamemode){
+      outroMusic.play()
+      clearInterval(winkButton);
+      homeButton.classList.remove("red");
+      gamemode = false
+    }
+    else{
+      gohomeaudio.play();
+    }
     clearInterval(countdown);
     document.getElementById("countdown").innerHTML=""
   }
@@ -1191,6 +1195,13 @@ function lose() {
   for (i=0;i<numpecore;i++){
     rectx[i] = width-70 ;
     recty[i] = 50;
+  }
+  currentarg.fill(0);
+  currentv.fill(0);
+  shockCountdown.fill(0);
+  if(chaosState == true){
+    chaosState = false;
+    osc_amp_chaos.disconnect();
   }
   gamemodeswitch()
   startupHappened = false;
