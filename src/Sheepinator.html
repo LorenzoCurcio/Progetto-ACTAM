@@ -48,32 +48,33 @@
     </div>
   </div>
   
-  <div id="barRight">
+  <div >
     <div id="instructions">Try to make your sheeps happier. Bring them towards the patches of grass to make them eat. You'll have to scare them a bit but they'll thank you when they'll finally be safe from the wolf</div>
-    
-    <label for="notesPerSecond" class = "sliders">BPM</label>
-    <input id="notesPerSecond" class = "sliders" type="range" min="1" max="10" value="3" step = "0.001" min="1" max="10" onChange="changenotesPerSecond(this); changeDelay('current')">
-    <label for="mimetic" class = "sliders">Allelomimesis</label>
-    <input id="mimetic" class = "sliders" type="range" min="1" max="50" value="15" step = "0.001" min="1" max="50" onChange="changealpha(this)">
-    <label for="rest" class = "sliders">Run Tendency</label>
-    <input id="rest" class = "sliders" type="range" min="1" max="10" value="1" step = "0.001" min="1" max="100" onChange="changerest(this)">
-    
-    <label for="delay" id="delayslider" class = "sliders">Delay</label>
-    <div id="delay" class="sliders switch-toggle switch-3 switch-candy">
-      <input id="off" name="state-d" type="radio" checked=""/>
-      <label for="off" onclick="changeDelay('off')">off</label>
+    <div>
+      <label for="notesPerSecond" class = "sliders">BPM</label>
+      <input id="notesPerSecond" class = "sliders" type="range" min="1" max="10" value="3" step = "0.001" min="1" max="10" onChange="changenotesPerSecond(this); changeDelay('current')">
+      <label for="mimetic" class = "sliders">Allelomimesis</label>
+      <input id="mimetic" class = "sliders" type="range" min="1" max="50" value="15" step = "0.001" min="1" max="50" onChange="changealpha(this)">
+      <label for="rest" class = "sliders">Run Tendency</label>
+      <input id="rest" class = "sliders" type="range" min="1" max="10" value="1" step = "0.001" min="1" max="100" onChange="changerest(this)">
       
-      <input id="2/4" name="state-d" type="radio"/>
-      <label for="2/4" onclick="changeDelay('two_fourth')">2/4</label>
-      
-      <input id="1/4" name="state-d" type="radio"/>
-      <label for="1/4" onclick="changeDelay('fourth')">1/4</label>
-      
-      <input id="1/8" name="state-d" type="radio"/>
-      <label for="1/8" onclick="changeDelay('eigth')">1/8</label>
-      
-      <input id="d1/4" name="state-d" type="radio" />
-      <label for="d1/4" onclick="changeDelay('dotted')">D 1/4</label>
+      <label for="delay" id="delayslider" class = "sliders">Delay</label>
+      <div id="delay" class="sliders switch-toggle switch-3 switch-candy">
+        <input id="off" name="state-d" type="radio" checked=""/>
+        <label for="off" onclick="changeDelay('off')">off</label>
+        
+        <input id="2/4" name="state-d" type="radio"/>
+        <label for="2/4" onclick="changeDelay('two_fourth')">2/4</label>
+        
+        <input id="1/4" name="state-d" type="radio"/>
+        <label for="1/4" onclick="changeDelay('fourth')">1/4</label>
+        
+        <input id="1/8" name="state-d" type="radio"/>
+        <label for="1/8" onclick="changeDelay('eigth')">1/8</label>
+        
+        <input id="d1/4" name="state-d" type="radio" />
+        <label for="d1/4" onclick="changeDelay('dotted')">D 1/4</label>
+      </div>
     </div>
     
   </div>  
