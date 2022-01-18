@@ -1001,6 +1001,7 @@ function highlightnotes(element){
 }
 
 function goHome(){
+  osc_amp_chaos.disconnect()
   shockCountdown.fill(0)
   chaosTime = 0
   chaosState = false
