@@ -1354,6 +1354,6 @@ function rewind(audio){
   else{
     audio.currentTime = 0
     }
-  }
+}
 
-  function bee(){rewind(beee)}
+function bee(){rewind(beee)}
