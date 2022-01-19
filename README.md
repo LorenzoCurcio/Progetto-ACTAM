@@ -10,9 +10,14 @@ One may choose to change the parameters that govern the behaviour using the slid
 
 The user can select the scale in which the sheeps play, as well as the mode, the waveshape, the bpm, whether or not to have drums playing along and a delay effect with multiple time signatures of their choice.
 
+![alt text](https://user-images.githubusercontent.com/93775089/150190908-49604bb8-99c6-45ce-b3f8-7b08ab60802c.png)
+![alt text](https://user-images.githubusercontent.com/93775089/150185115-ac91c13d-3eb3-4ab4-a990-d035198ec0b2.png)
+![image](https://user-images.githubusercontent.com/93775089/150191976-8d4e49ee-2516-4445-abfe-6afe2ea62264.png)
+![alt text](https://user-images.githubusercontent.com/93775089/150185124-e2ad6875-cd35-4c90-8af2-f2d17ebf0135.png)
+
 The application features binaural audio effects, it is therefore recommended to use headphones. 
 
-Sound is perceived as if the user were in the position of the sheperd (listener), in respect to the centroid of the herd (source). The user can control the sheperd and listen to the music moving around them. Drums are heard moving all around the listener.
+Sound is perceived as if the user were in the position of the sheperd (listener), in respect to the centroid of the herd (source). The user can control the sheperd using WASD and listen to the music moving around them. Drums are heard moving all around the listener.
 
 ![alt text](https://user-images.githubusercontent.com/93775089/150187931-3e6f71bb-5482-44ad-a384-7b746295687e.png) ![alt text](https://user-images.githubusercontent.com/93775089/150185127-a3649807-013a-42ca-afb4-66dfb1cd8558.png)
 
