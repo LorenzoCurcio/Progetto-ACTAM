@@ -30,6 +30,10 @@ The user can select the scale in which the sheeps play, as well as the mode, the
 
 ![alt text](https://user-images.githubusercontent.com/93775089/150185124-e2ad6875-cd35-4c90-8af2-f2d17ebf0135.png)
 
+Here's how music generation works.
+
+![alt text](https://user-images.githubusercontent.com/93775089/153241461-a3a4e848-9b3a-413c-b953-bd3cbbba44b3.jpeg)
+
 # User Interaction
 
 The application features binaural audio effects, it is therefore recommended to use headphones. 
