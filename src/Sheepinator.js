@@ -6,7 +6,7 @@ foodzoneWidth = 100
 foodzoneHeight = 100
 heightRect = 4;
 widthRect = 4;
-numpecore = 50;
+numpecore = 100;
 rectx = Array(numpecore).fill(0);
 recty = Array(numpecore).fill(0);
 vx = Array(numpecore).fill(0);
@@ -61,6 +61,9 @@ loseMusic = new Audio('You Lost.wav')
 beee = new Audio('bee.wav')
 sheepsdead = false
 gohomeaudio = new Audio('Sheep Bell.wav')
+boom = new Image;
+boom.src = "pf.png";
+Boom = new Audio('Boom.wav')
 
 //drums
 kick = new Audio('Kick.wav')
@@ -70,7 +73,6 @@ open_hat = new Audio('Open_Hat.wav')
 ride = new Audio('Ride.wav')
 snare = new Audio('Snare.wav')
 tom = new Audio('Tom.wav')
-
 pannerModel = 'HRTF';
 
 const innerCone = 60;
@@ -826,7 +828,8 @@ function play(n) {
   // var osc = con.createOscillator();
   osc.type = wave;
 
-  oscFreq = rootfreq * Math.pow(2, nScale / 12);
+  oscFreq = rootfreq/2 * Math.pow(2, nScale / 12);
+  if(Math.random()>=0.4){oscFreq = oscFreq * 2}
   while(oscFreq > 3000){
     oscFreq = oscFreq/2;
   }
@@ -843,8 +846,20 @@ function play(n) {
   osc_amp.connect(pannerB).connect(con.destination)
 
   //osc_amp.connect(con.destination)
-   osc.start();
-   osc.stop(now+(2)/(10*fps)*framesPermeasure) ;
+  noteduration = 1/(fps/framesPermeasure) * 0.25
+  attack = 0.1*noteduration
+  decay = 0.2*noteduration
+  sustain = 0.5*noteduration
+  release = 0.2*noteduration
+  osc_amp.gain.setValueAtTime(0, now);
+  osc_amp.gain.linearRampToValueAtTime(Math.random()*0.5+0.5, now + attack);
+  random = Math.random()*0.5
+  osc_amp.gain.linearRampToValueAtTime(random, now + attack +decay)
+  osc_amp.gain.linearRampToValueAtTime(random, now + attack +decay+sustain)
+  osc_amp.gain.exponentialRampToValueAtTime(0.001, now + attack+ decay + sustain +release);
+  osc_amp.gain.linearRampToValueAtTime(0, now + attack+ decay + sustain +release+0.001)
+  osc.start();
+  osc.stop(now + noteduration) ;
 
    fb.gain.value=0.75
   
@@ -1369,3 +1384,37 @@ function rewind(audio){
 }
 
 function bee(){rewind(beee)}
+
+
+function explosion(){
+  if(!gamemode){
+  stopAll();
+  clearInterval(countdown)
+  allHome=true
+  hungry=false
+  changeGS();
+  gsbutton.innerHTML = "Start"
+  rectxexpl = Array(numpecore).fill(0);
+  rectyexpl = Array(numpecore).fill(0);
+  render();
+  for (i=0;i<numpecore;i++){
+    rectxexpl[i] = rectx[i]
+    rectyexpl[i] = recty[i]
+    rectx[i] = width-70 ;
+    recty[i] = 50;
+  }
+  currentarg.fill(0);
+  currentv.fill(0);
+  shockCountdown.fill(0);
+  if(chaosState == true){
+    chaosState = false;
+    osc_amp_chaos.disconnect();
+  }
+  startupHappened = false;
+  render();
+}}
+
+function postexplosion(){
+  rewind(Boom)
+  for(i=0;i<numpecore;i++){ctx.drawImage(boom, rectxexpl[i], rectyexpl[i],20,20)}
+}

@@ -25,7 +25,20 @@
         box-shadow: 0 0 0 0 var(--hover);
     }
 }
-  
+ 
+.detonate{
+  position: absolute;
+  width: 240px;
+  height: 120px;
+  background-color: rgb(221, 137, 26);
+  border: solid 2px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  top: 100px;
+  left: 1035px;
+  vertical-align: middle;
+}
 .button{
   color:var(--color);
   transition:0.25s;
